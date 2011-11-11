@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Quelldateien">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Ressourcendateien">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Headerdateien\ADT">
+      <UniqueIdentifier>{f7e07c81-8b04-4737-b665-863c7c3e243b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Math">
+      <UniqueIdentifier>{c9e34594-1160-4c98-9a42-9035910a01c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\Algorithms">
+      <UniqueIdentifier>{886201bc-56fb-4923-8f2c-4f32738347c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\ADT">
+      <UniqueIdentifier>{e494c2a7-c05d-4efa-af01-99f32d20f0a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Algorithms">
+      <UniqueIdentifier>{97cc6579-4477-4ffc-814f-b1532928b628}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\Math">
+      <UniqueIdentifier>{a0fe9571-8f8a-4309-b3e5-bc9a6c856f7d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\OrBaseLib.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrTypeDef.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrADTObjects.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrAVLTree.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrBinaryTree.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrHuffman.h">
+      <Filter>Headerdateien\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrRandom.h">
+      <Filter>Headerdateien\Algorithms</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrSplayTree.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrFastMath.h">
+      <Filter>Headerdateien\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrVector2.h">
+      <Filter>Headerdateien\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrVector3.h">
+      <Filter>Headerdateien\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrVector4.h">
+      <Filter>Headerdateien\Math</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\OrAVLTree.cpp">
+      <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrBinaryTree.cpp">
+      <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrSplayTree.cpp">
+      <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrEntropyCoder.cpp">
+      <Filter>Quelldateien\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrHuffman.cpp">
+      <Filter>Quelldateien\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrRandom.cpp">
+      <Filter>Quelldateien\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrFastMath.cpp">
+      <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrVector4.cpp">
+      <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrVector2.cpp">
+      <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrVector3.cpp">
+      <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
