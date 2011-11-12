@@ -16,6 +16,7 @@
 #include "OrBinaryTree.h"
 #include "OrAVLTree.h"
 #include "OrSplayTree.h"
+#include "OrTrie.h"
 
 // Algorithms
 #include "OrHuffman.h"

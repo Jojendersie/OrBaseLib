@@ -32,6 +32,8 @@ __forceinline int OrMin(const int a, const int b)			{return a < b ? a : b;}
 __forceinline dword OrMinu(const dword a, const dword b)	{return a < b ? a : b;}
 __forceinline float OrClampf(const float a, const float min, const float max)	{return a < min ? min : (a > max ? max : a);}
 __forceinline dword OrClampu(const dword a, const dword min, const dword max)	{return a < min ? min : (a > max ? max : a);}
+__forceinline float OrAbsf(const float a)					{return a < 0 ? -a: a;}
+__forceinline int OrAbs(const int a)						{return a&0x7fffffff;}
 
 // ******************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )

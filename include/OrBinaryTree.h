@@ -52,6 +52,7 @@ public:
 	static bool IsRightChild(OrBinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pRight==_pNode:false;}
 	static OrBinaryTreeNodeP Min(OrBinaryTreeNodeP _pNode)	{while(_pNode->pLeft) _pNode = _pNode->pLeft; return _pNode;}
 	static OrBinaryTreeNodeP Max(OrBinaryTreeNodeP _pNode)	{while(_pNode->pRight) _pNode = _pNode->pRight; return _pNode;}
+	void SetDeleteCallback(OrADTDeleteObjectCallbackP _pDeleteCallback)	{m_pDeleteCallback = _pDeleteCallback;}
 };
 typedef OrBinaryTree* OrBinaryTreeP;
 

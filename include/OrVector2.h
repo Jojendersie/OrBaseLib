@@ -82,10 +82,10 @@ inline float		OrVec2Dot(const OrVector2& v1, const OrVector2& v2)									{retur
 inline float		OrVec2Cross(const OrVector2& v1, const OrVector2& v2)								{return v1.x * v2.y - v1.y * v2.x;}
 inline OrVector2	OrVec2Perpendicular(const OrVector2& v)												{return OrVector2(-v.y, v.x);}		// Senkrechter Vektor
 inline float		OrVec2Angle(const OrVector2& v1, const OrVector2& v2)								{return OrCos((v1.x * v2.x + v1.y * v2.y) * OrInvSqrt((v1.x * v1.x + v1.y * v1.y) * (v2.x * v2.x + v2.y * v2.y)));}
-inline OrVector2	OrVec2InterpolateCoords(const OrVector2& v1, const OrVector2& v2, const float p)	{return v1 + p * (v2 - v1);}
-inline OrVector2	OrVec2InterpolateNormal(const OrVector2& v1, const OrVector2& v2, const float p)	{return OrVec2NormalizeEx(v1 + p * (v2 - v1));}
+inline OrVector2	OrVec2LrpNormal(const OrVector2& v1, const OrVector2& v2, const float p)			{return OrVec2NormalizeEx(v1 + p * (v2 - v1));}
 inline OrVector2	OrVec2Min(const OrVector2& v1, const OrVector2& v2)									{return OrVector2(OrMinf(v1.x, v2.x), OrMinf(v1.y, v2.y));}
 inline OrVector2	OrVec2Max(const OrVector2& v1, const OrVector2& v2)									{return OrVector2(OrMaxf(v1.x, v2.x), OrMaxf(v1.y, v2.y));}
+inline OrVector2	OrVec2Lrp(const OrVector2& v1, const OrVector2& v2, const float f)					{return OrVector2(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y));}
 OrVector2			OrVec2Random();
 OrVector2			OrVec2Rotate(const OrVector2& _v, const float _fAlpha);		// Rotieren eines Punktes im 2D-Raum
 

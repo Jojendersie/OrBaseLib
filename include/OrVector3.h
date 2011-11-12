@@ -88,10 +88,17 @@ inline float		OrVec3CrossY(const float v1x, const float v1z, const float v2x, co
 inline float		OrVec3CrossZ(const float v1x, const float v1y, const float v2x, const float v2y)	{return v1x * v2y - v1y * v2x;}			// Nur die Z Coordinate berechnen
 inline float		OrVec3Dot(const OrVector3& v1, const OrVector3& v2)									{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;}
 inline float		OrVec3Angle(const OrVector3& v1, const OrVector3& v2)								{return OrCos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) * OrInvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z)));}
-inline OrVector3	OrVec3InterpolateCoords(const OrVector3& v1, const OrVector3& v2, const float p)	{return v1 + p * (v2 - v1);}
-inline OrVector3	OrVec3InterpolateNormal(const OrVector3& v1, const OrVector3& v2, const float p)	{return OrVec3NormalizeEx(v1 + p * (v2 - v1));}
+inline OrVector3	OrVec3LrpNormal(const OrVector3& v1, const OrVector3& v2, const float p)			{return OrVec3NormalizeEx(v1 + p * (v2 - v1));}
 inline OrVector3	OrVec3Min(const OrVector3& v1, const OrVector3& v2)									{return OrVector3(OrMinf(v1.x, v2.x), OrMinf(v1.y, v2.y), OrMinf(v1.z, v2.z));}
 inline OrVector3	OrVec3Max(const OrVector3& v1, const OrVector3& v2)									{return OrVector3(OrMaxf(v1.x, v2.x), OrMaxf(v1.y, v2.y), OrMaxf(v1.z, v2.z));}
+inline OrVector3	OrVec3Lrp(const OrVector3& v1, const OrVector3& v2, const float f)					{return OrVector3(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z));}
 OrVector3			OrVec3Random();
+
+OrVector3	OrVec3TransformCoords(const OrVector3& v, const OrMatrix& m, float* const pfOutW);																																									// 3D-Vektor mit Matrix multiplizieren
+OrVector3	OrVec3TransformCoords(const OrVector3& v, const OrMatrix& m);																																														// 3D-Vektor mit Matrix multiplizieren
+OrVector3	OrVec3TransformDirection(const OrVector3& v, const OrMatrix& m);																																													// 3D-Richtungsvektor mit Matrix multiplizieren
+/*OrVector3	OrVec3TransformNormal(const OrVector3& v, const OrMatrix& m);																																														// 3D-Normalenvektor mit Matrix multiplizieren
+OrVector3	OrVec3TransformNormal_TranspInv(const OrVector3& v, const OrMatrix& m);																																												// 3D-Normalenvektor mit Matrix multiplizieren
+*/
 
 // ******************************************************************** //

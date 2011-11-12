@@ -69,6 +69,12 @@
     <ClInclude Include="include\OrVector4.h">
       <Filter>Headerdateien\Math</Filter>
     </ClInclude>
+    <ClInclude Include="include\OrMatrix.h">
+      <Filter>Headerdateien\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrTrie.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -100,6 +106,12 @@
     </ClCompile>
     <ClCompile Include="src\OrVector3.cpp">
       <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrMatrix.cpp">
+      <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrTrie.cpp">
+      <Filter>Quelldateien\ADT</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

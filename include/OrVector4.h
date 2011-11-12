@@ -109,10 +109,11 @@ inline OrVector4	OrVec4Cross(const OrVector4& v1, const OrVector4& v2)								{r
 																														  (v1.x * v2.y - v1.y * v2.x + v1.y * v2.z - v1.z * v2.y + v1.x * v2.z - v1.z * v2.x));}
 inline float		OrVec4Dot(const OrVector4& v1, const OrVector4& v2)									{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
 inline float		OrVec4Angle(const OrVector4& v1, const OrVector4& v2)								{return OrCos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * OrInvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
-inline OrVector4	OrVec4InterpolateCoords(const OrVector4& v1, const OrVector4& v2, const float p)	{return v1 + p * (v2 - v1);}
-inline OrVector4	OrVec4InterpolateNormal(const OrVector4& v1, const OrVector4& v2, const float p)	{return OrVec4NormalizeEx(v1 + p * (v2 - v1));}
+inline OrVector4	OrVec4LrpNormal(const OrVector4& v1, const OrVector4& v2, const float p)			{return OrVec4NormalizeEx(v1 + p * (v2 - v1));}
 inline OrVector4	OrVec4Min(const OrVector4& v1, const OrVector4& v2)									{return OrVector4(OrMinf(v1.x, v2.x), OrMinf(v1.y, v2.y), OrMinf(v1.z, v2.z), OrMinf(v1.w, v2.w));}
 inline OrVector4	OrVec4Max(const OrVector4& v1, const OrVector4& v2)									{return OrVector4(OrMaxf(v1.x, v2.x), OrMaxf(v1.y, v2.y), OrMaxf(v1.z, v2.z), OrMaxf(v1.w, v2.w));}
+inline OrVector4	OrVec4Lrp(const OrVector4& v1, const OrVector4& v2, const float f)					{return OrVector4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
+OrVector4			OrVec4Transform(const OrVector3& v, const OrMatrix& m);																																														// 4D-Vektor mit Matrix multiplizieren
 OrVector4			OrVec4Random();
 
 
