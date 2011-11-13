@@ -138,7 +138,7 @@ void OrBinaryTree::DeleteAll(OrBinaryTreeNodeP _pNode)
 	// Redundant but not that worse
 	m_pRoot = nullptr;
 	// Release resources ...
-	m_pDeleteCallback(_pNode->pObject);
+	if(m_pDeleteCallback) m_pDeleteCallback(_pNode->pObject);
 	// ... children ...
 	if(_pNode->pLeft) DeleteAll(_pNode->pLeft);
 	if(_pNode->pRight) DeleteAll(_pNode->pRight);

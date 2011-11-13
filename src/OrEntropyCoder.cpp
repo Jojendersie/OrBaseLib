@@ -53,7 +53,7 @@ int OrBitBufferStream::GetBit()
 
 // ******************************************************************************* //
 // Encodes the given buffer into a new one, returns false if encoding is larger then the buffer
-bool OrEntropyCoder::EncodeFile(unsigned char* _pSrc, int _iSize, OrBitBufferStreamP _pDest)
+bool OrEntropyCoder::EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest)
 {
 	bool bNoError = true;
 	dword c;
@@ -68,7 +68,7 @@ bool OrEntropyCoder::EncodeFile(unsigned char* _pSrc, int _iSize, OrBitBufferStr
 
 // ******************************************************************************* //
 // Decode into a buffer
-int OrEntropyCoder::DecodeFile(OrBitBufferStreamP _pSrc, unsigned char* _pDest, int _iMaxSize)
+int OrEntropyCoder::DecodeFile(OrBitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
 {
 	dword c;
 	int i=-1;

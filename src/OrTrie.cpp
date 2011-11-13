@@ -20,6 +20,7 @@
 #include <string.h>
 // include for malloc
 #include <stdlib.h>
+#include <assert.h>
 
 #include "..\Include\OrTypeDef.h"
 #include "..\Include\OrADTObjects.h"
@@ -103,7 +104,7 @@ int OrTrie::Add(char* _pcName, void* _pData, bool _bOverrideData)
 				{
 					// Knoten identisch mit Restnamen -> Knoten beibehalten, Daten Neu/Überschreiben
 					if(!pCurrent->pData
-						|| _bOverrideData) // Do not notify the override if _bOverrideData==true
+						|| _bOverrideData) // Do not notify the override (in return) if _bOverrideData==true
 					{
 						pCurrent->pData = _pData;
 						return 0;
@@ -208,25 +209,26 @@ OrTrieNodeP OrTrie::Match(const char** _ppcName)
 		if(dwEqual)
 		{
 			(*_ppcName) = (*_ppcName)+dwEqual;
+			//pLastPossibleData = pCurrent;
 
-			// Fehler, wenn Baumknoten länger als Name, aber gleichen Anfangsteil
+			// Baumknoten länger als Name, aber gleichen Anfangsteil
 			if(pCurrent->pcSubString[dwEqual])
-			{
-				(*_ppcName) = pcLastPossibleName;
-				//OrSE_Error("Funktionsname zu kurz (unbekannter Teilname einer Funktion).");
-				return pLastPossibleData;
-			}
+				return pCurrent;
 
 			// 1.Fall: Name zu Ende und Fund.
-			if(!*(*_ppcName)) if(pCurrent->pData) return pCurrent;
-			else{
-				// Fehler: aktueller Knoten enthält keine Funktion
-				//OrSE_Error("Funktionsname enthält keine Funktion.");
-				return pLastPossibleData;
+			if(!*(*_ppcName)) 
+			{
+				if(pCurrent->pData) return pCurrent;
+				else{
+					 (*_ppcName) = pcLastPossibleName;
+					// Fehler: aktueller Knoten enthält keine Daten
+					//OrSE_Error("Funktionsname enthält keine Daten.");
+					return pLastPossibleData;
+				}
 			}
 
 			// 2.Fall: Name geht weiter -> Subbaum durchsuchen.
-			// Wenn der aktuelle Knoten eine gültige Funktion ist merken.
+			// Wenn der aktuelle Knoten daten enthält merken.
 			if(pCurrent->pData)
 			{
 				pLastPossibleData = pCurrent;
@@ -238,7 +240,8 @@ OrTrieNodeP OrTrie::Match(const char** _ppcName)
 			pCurrent = pCurrent->pNext;
 	}
 	// kein Fund
-	(*_ppcName) = pcLastPossibleName;
+	assert((*_ppcName) == pcLastPossibleName);
+	//(*_ppcName) = pcLastPossibleName;
 	return pLastPossibleData;
 }
 
@@ -273,8 +276,9 @@ void OrTrie::Remove(const char* _pcName, void* _pData)
 			// Fehler, wenn Baumknoten länger als Name, aber gleichen Anfangsteil
 			if(pCurrent->pcSubString[dwEqual])
 			{
+				assert(pCurrent->pData != _pData);
 				//OrSE_Error("Funktionsname zu kurz (unbekannter Teilname einer Funktion).");
-				return;
+				break;
 			}
 
 			// 1.Fall: Name zu Ende und Fund.
@@ -283,6 +287,7 @@ void OrTrie::Remove(const char* _pcName, void* _pData)
 				if(pCurrent->pData == _pData || !pCurrent->pData)
 				{
 					// Aktuellen Knoten auch noch auf den Stack packen (zur einheitlichen Verarbeitung)
+					pCurrent->pData = nullptr;
 					__asm push pPrevious;
 					__asm push pCurrent;
 					++iNumStacked;		// Ein potentiell zu löschender Knoten mehr
@@ -305,6 +310,7 @@ void OrTrie::Remove(const char* _pcName, void* _pData)
 							free(pCurrent->pcSubString);
 							delete pCurrent;
 						}
+						iNumStacked = 0;
 					}
 					break;
 				} else {
@@ -330,8 +336,10 @@ void OrTrie::Remove(const char* _pcName, void* _pData)
 				iNumStacked = 0;	// Neubeginn
 			}
 			pPrevious = pCurrent;
+			_pcName = &_pcName[dwEqual];
 			pCurrent = pCurrent->pChild;
 		} else {
+			assert(pCurrent->pData != _pData);
 			// Auf dieser Ebene Suche Fortführen
 			pPrevious = pCurrent;
 			pCurrent = pCurrent->pNext;

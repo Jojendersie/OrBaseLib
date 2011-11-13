@@ -158,6 +158,8 @@ public:
 	//	Don't declare this parameter. Correct use: ReleaseTrie();			// 
 	// ******************************************************************** //
 	void ReleaseTrie(OrTrieNodeP _pNode = 0);
+
+	~OrTrie()	{ReleaseTrie();}
 };
 
 

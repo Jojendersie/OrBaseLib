@@ -446,12 +446,20 @@ OrMatrix OrMatrixProjection(const float fFOV,
 							const float fFarPlane)
 {
 	const float s = 1.0f / OrTan(fFOV * 0.5f);
+	const float fFrustumLengthInv = 1.0f / (fNearPlane - fFarPlane);
+
+	return OrMatrix(s / fAspect, 0.0f, 0.0f,										0.0f,
+		            0.0f,		 s,	   0.0f,										0.0f,
+					0.0f,		 0.0f, (fNearPlane + fFarPlane)*fFrustumLengthInv,	(2.0f*fNearPlane*fFarPlane)*fFrustumLengthInv,
+					0.0f,		 0.0f, -1.0f,										0.0f);
+	// DirectX compatible version:
+/*	const float s = 1.0f / OrTan(fFOV * 0.5f);
 	const float Q = fFarPlane / (fFarPlane - fNearPlane);
 
 	return OrMatrix(s / fAspect, 0.0f, 0.0f,			0.0f,
 		            0.0f,		 s,	   0.0f,			0.0f,
 					0.0f,		 0.0f, Q,				1.0f,
-					0.0f,		 0.0f, -Q * fNearPlane, 0.0f);
+					0.0f,		 0.0f, -Q * fNearPlane, 0.0f);*/
 }
 
 // ******************************************************************** //

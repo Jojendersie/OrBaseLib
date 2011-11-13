@@ -113,5 +113,8 @@
     <ClCompile Include="src\OrTrie.cpp">
       <Filter>Quelldateien\ADT</Filter>
     </ClCompile>
+    <ClCompile Include="src\OrAVCoder.cpp">
+      <Filter>Quelldateien\Algorithms</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

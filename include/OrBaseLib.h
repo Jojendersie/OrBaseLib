@@ -10,6 +10,7 @@
 #include "OrVector2.h"
 #include "OrVector3.h"
 #include "OrVector4.h"
+#include "OrMatrix.h"
 
 // ADT
 #include "OrADTObjects.h"
