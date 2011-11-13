@@ -47,18 +47,21 @@ OrHuffmanTree_Splay::OrHuffmanTree_Splay(unsigned int _uiNumCharacters):OrSplayT
 // ******************************************************************************** //
 bool OrHuffmanTree_Splay::Encode(dword _c, OrBitBufferStreamP _pDest)
 {
+	// Stop if we could use more bits than remaining buffer.
+	if(_pDest->GetUsedSize()+70 > _pDest->GetSize()) return false;
+
 	// Search the char in the tree and write down the path.
 	OrBinaryTreeNodeP pCurrent = m_pRoot;
 	qword qwKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=qwKey)
 	{
 		// It should be impossible, that there is missing one character (initialisation)
-		if(pCurrent->qwKey<qwKey)								// Search in the right tree
+		if(pCurrent->qwKey<qwKey)				// Search in the right tree
 		{
-			if(!_pDest->SetBit(1)) return false;		// report buffer overflow
+			_pDest->SetBit(1);					// report buffer overflow
 			pCurrent = pCurrent->pRight;
-		} else {										// Search in the left tree
-			if(!_pDest->SetBit(0)) return false;		// report buffer overflow
+		} else {								// Search in the left tree
+			_pDest->SetBit(0);					// report buffer overflow
 			pCurrent = pCurrent->pLeft;
 		}
 	}
@@ -98,18 +101,21 @@ bool OrHuffmanTree_Splay::Decode(OrBitBufferStreamP _pSrc, dword& _Dest)
 // ******************************************************************************** //
 bool OrHuffmanTree_SemiSplay::Encode(dword _c, OrBitBufferStreamP _pDest)
 {
+	// Stop if we could use more bits than remaining buffer.
+	if(_pDest->GetUsedSize()+70 > _pDest->GetSize()) return false;
+
 	// Search the char in the tree and write down the path.
 	OrBinaryTreeNodeP pCurrent = m_pRoot;
 	unsigned __int64 uiKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=uiKey)
 	{
 		// It should be impossible, that there is missing one character (initialisation)
-		if(pCurrent->qwKey<uiKey)								// Search in the right tree
+		if(pCurrent->qwKey<uiKey)			// Search in the right tree
 		{
-			if(!_pDest->SetBit(1)) return false;		// report buffer overflow
+			_pDest->SetBit(1);				// report buffer overflow
 			pCurrent = pCurrent->pRight;
-		} else {										// Search in the left tree
-			if(!_pDest->SetBit(0)) return false;		// report buffer overflow
+		} else {							// Search in the left tree
+			_pDest->SetBit(0);				// report buffer overflow
 			pCurrent = pCurrent->pLeft;
 		}
 	}

@@ -30,13 +30,11 @@ OrBitBufferStream::~OrBitBufferStream()
 
 // ******************************************************************************** //
 // Writes one bit an moves to the next one. Returns false if buffer overflow.
-bool OrBitBufferStream::SetBit(int _iBit)
+/*void OrBitBufferStream::SetBit(int _iBit)
 {
-	if(m_iBufferPos>=m_iSize) return false;
-	m_pBuffer[m_iBufferPos] |= _iBit<<m_iBitPos++;
+	m_pBuffer[m_iBufferPos] |= _iBit<<(7-m_iBitPos++);
 	m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
 	m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
-	return true;
 }
 
 // ******************************************************************************** //
@@ -44,12 +42,35 @@ bool OrBitBufferStream::SetBit(int _iBit)
 int OrBitBufferStream::GetBit()
 {
 	if(m_iBufferPos>=m_iSize) return -1;
-	int iRet = (m_pBuffer[m_iBufferPos] >> m_iBitPos++) & 1;
+	int iRet = (m_pBuffer[m_iBufferPos] >> (7-m_iBitPos++)) & 1;
 	m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
 	m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
 	return iRet;
-}
+}*/
 
+// ******************************************************************************** //
+// Writes _iNum bits and move.
+bool OrBitBufferStream::SetBits(dword _dwBits, int _iNum)
+{
+	// Buffer overflow?
+	if((m_iBitPos+_iNum)/8+m_iBufferPos >= m_iSize) return false;
+
+	// Copy as much as in the one byte matches
+	int iOverfill = _iNum-(8-m_iBitPos);
+	if(iOverfill >= 0) {
+		m_pBuffer[m_iBufferPos] |= _dwBits>>iOverfill;						// adds 8-m_iBitPos bits
+		(*(dword*)&m_pBuffer[m_iBufferPos+1]) |= _dwBits<<(32-iOverfill);	// adds all remaining bits
+	} else
+	{
+		m_pBuffer[m_iBufferPos] |= _dwBits<<-iOverfill;						// copies all new bits
+	}
+
+	m_iBitPos += _iNum;					// Adds number of new bits
+	m_iBufferPos += (m_iBitPos>>3);		// Adds 1 to 4 if m_iBitPos>=8
+	m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
+
+	return true;
+}
 
 // ******************************************************************************* //
 // Encodes the given buffer into a new one, returns false if encoding is larger then the buffer

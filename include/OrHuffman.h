@@ -44,11 +44,27 @@ public:
 	OrBitBufferStream(void* _pBuffer, int _iSize);
 	~OrBitBufferStream();
 
-	bool SetBit(int _iBit);		// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
-	int GetBit();				// Returns the parity of the next bit and moves the cursors.
+	inline void SetBit(int _iBit)		// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
+	{
+		m_pBuffer[m_iBufferPos] |= _iBit<<(7-m_iBitPos++);
+		m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
+		m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
+	}
+
+	inline int GetBit()					// Returns the parity of the next bit and moves the cursors.
+	{
+		if(m_iBufferPos>=m_iSize) return -1;
+		int iRet = (m_pBuffer[m_iBufferPos] >> (7-m_iBitPos++)) & 1;
+		m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
+		m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
+		return iRet;
+	}
+
+	bool SetBits(dword _dwBits, int _iNum);		// Writes _iNum bits and move.
 	void const* GetBuffer()		{return m_pBuffer;}
 	int GetSize()				{return m_iSize;}
 	int GetUsedSize()			{return m_iBufferPos+(m_iBitPos?1:0);}
+	bool IsEof()				{return m_iBufferPos>=m_iSize;}
 };
 typedef OrBitBufferStream* OrBitBufferStreamP;
 
