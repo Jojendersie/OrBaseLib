@@ -17,11 +17,38 @@
 #pragma once
 
 // ******************************************************************** //
+class OrTrieString
+{
+private:
+	bool m_bDel;
+
+	OrTrieString(dword _dwLen, char *_pcString):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(true)	{}
+public:
+	dword m_dwLen;
+	char* m_pcString;
+
+	OrTrieString(char *_pcString, dword _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
+	~OrTrieString();
+
+	// ******************************************************************** //
+	// Auxiliary function to create a copy of a subsrting.
+	// Parameter:
+	//	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
+	//	_dwTo - 0-indexed imdex of last char to copy (inclusive)
+	//			or 0xffffffff to copy the whole postfix begining in _dwFrom
+	OrTrieString* substr(const dword _dwFrom, dword _dwTo) const;
+
+	// ******************************************************************** //
+	// Auxiliary function to estimate length of the prefix match
+	dword match(const OrTrieString* _pStr) const;
+};
+
+// ******************************************************************** //
 struct OrTrieNode
 {
 	OrTrieNode*				pNext;
 	OrTrieNode*				pChild;
-	char*					pcSubString;	// Knotenbeschriftung
+	OrTrieString*			pSubString;		// Knotenbeschriftung
 
 	void*					pData;			// Beliebige Daten
 };
@@ -74,7 +101,7 @@ public:
 	//	return value is always 0 or 2).										//
 	//	2 - unknown failure													//
 	// ******************************************************************** //
-	int Add(char* _pcName, void* _pData, bool _bOverrideData);
+	int Add(OrTrieString _Name, void* _pData, bool _bOverrideData);
 
 
 
@@ -102,7 +129,7 @@ public:
 	// Return: The found node or 0 if there is no such function.			//
 	// Note: Case sensitive!												//
 	// ******************************************************************** //
-	OrTrieNodeP Match(const char** _ppcName);
+	OrTrieNodeP Match(OrTrieString& _Name);
 
 
 	// ******************************************************************** //
@@ -119,7 +146,7 @@ public:
 	//	[in] _pcName - A Pointer to the name we are searching for.			//
 	// Note: Case sensitive!												//
 	// ******************************************************************** //
-	void Remove(const char* _pcName, void* _pData);
+	void Remove(OrTrieString& _Name, void* _pData);
 
 
 	// ******************************************************************** //

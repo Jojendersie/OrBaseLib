@@ -4,8 +4,10 @@
 #include "..\include\OrSplayTree.h"
 #include "..\include\OrHuffman.h"
 
+//#include <iostream>
+
 // Used to guarantee leaf storage without double using of a character
-#define NODE_VALUE_FACTOR 3
+#define NODE_VALUE_FACTOR 512
 
 // ******************************************************************************** //
 // Build an AVL Tree recursive so that the characters are leaf orientated data.
@@ -15,14 +17,18 @@ OrBinaryTreeNodeP OrHuffmanTree_Splay::Init(unsigned int _uiFrom, unsigned int _
 {
 	// End of recursion
 	if(_uiRange==1)
+	{
+	//	std::cout << _uiFrom*NODE_VALUE_FACTOR << "  ";
 		return new OrBinaryTreeNode(nullptr, nullptr, _uiFrom*NODE_VALUE_FACTOR);
+	}
 	
 	// Build two subtrees with Num/2 nodes each
 	OrBinaryTreeNodeP pLeft  = Init(_uiFrom,			_uiRange/2);
 	OrBinaryTreeNodeP pRight = Init(_uiFrom+_uiRange/2, _uiRange-_uiRange/2);
 
 	// Merge
-	OrBinaryTreeNodeP pNew = new OrBinaryTreeNode(nullptr, nullptr, (pLeft->qwKey + pRight->qwKey)/2);
+//	std::cout << (pLeft->qwKey + pRight->qwKey)/2 << "  ";
+	OrBinaryTreeNodeP pNew = new OrBinaryTreeNode(nullptr, nullptr, (Min(pRight)->qwKey+Max(pLeft)->qwKey)/2/*_uiFrom*NODE_VALUE_FACTOR + _uiRange-1*/);
 	pLeft->pParent = pNew;	pNew->pLeft = pLeft;
 	pRight->pParent = pNew;	pNew->pRight = pRight;
 	return pNew;
