@@ -61,6 +61,7 @@ public:
 	}
 
 	bool SetBits(dword _dwBits, int _iNum);		// Writes _iNum bits and move.
+	bool GetBits(dword& _dwBits, int _iNum);	// Reads iNum bits and move !Only use _iNum <= 25!
 	void const* GetBuffer()		{return m_pBuffer;}
 	int GetSize()				{return m_iSize;}
 	int GetUsedSize()			{return m_iBufferPos+(m_iBitPos?1:0);}
@@ -124,7 +125,8 @@ class OrTrie;
 class OrAVCoder : public OrHuffmanTree_Splay
 {
 private:
-	OrTrie* m_pDict;		// The Dictionary of vectors
+	//OrTrie* m_pDict;		// The Dictionary of vectors
+
 public:
 	OrAVCoder();
 	~OrAVCoder();
