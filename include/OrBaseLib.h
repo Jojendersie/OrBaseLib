@@ -18,6 +18,9 @@
 #include "OrAVLTree.h"
 #include "OrSplayTree.h"
 #include "OrTrie.h"
+#include "OrBuffer.h"
+#include "OrHeap.h"
+#include "OrHash.h"
 
 // Algorithms
 #include "OrHuffman.h"

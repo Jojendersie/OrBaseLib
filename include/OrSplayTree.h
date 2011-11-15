@@ -6,6 +6,15 @@
 //	rotation case.																	//
 //																					//
 // Implementation: Bottom-Up-Splaying												//
+//																					//																					//
+//	Insert()					O(log n)											//
+//	Search()					O(log n)											//
+//	Delete(Key)					O(log n)											//
+//	Delete(Element)				O(log n)											//
+//	GetFirst()					O(log n)											//
+//	GetLast()					O(log n)											//
+//	GetNext()					O(log n)											//
+//	GetPrevious()				O(log n)											//
 // ******************************************************************************** //
 
 #pragma once

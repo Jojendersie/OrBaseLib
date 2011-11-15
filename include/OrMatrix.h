@@ -28,6 +28,8 @@ inline OrMatrix operator * (const OrMatrix& a, const OrMatrix& b);
 // mathematische Gleichheit.
 //static dword Or_MatrixIDCounter = 1;
 
+//struct float4 {float x,y,z,w;};
+
 // ******************************************************************** //
 // Die Matrixklasse
 class OrMatrix
@@ -46,9 +48,7 @@ public:
 
 		float		m[4][4];			// Zweidimensionales Array der Elemente
 		float		n[16];				// Eindimensionales Array der Elemente
-//		Orfloat4	f4[4];				// Array mit 4 Zeilen
-//		OrVector4	v[4];				// Array mit 4 4D-Vektoren
-//		OrColor		c[4];				// Array mit 4 Farben
+		//float4		v[4];				// Array mit 4 4D-Vektoren (Zeilen)
 	};
 
 //	dword dwMatrixID;

@@ -115,6 +115,8 @@ float OrInvSqrtEx( float r );
 // ******************************************************************** //
 // natürlicher Logarithmus
 float OrLn( float r );
+// Logarithmus dualis
+inline float OrLd( float r )	{return OrLn(r)*1.442695041f;}
 
 // ******************************************************************** //
 // Funktion für den gerundeten 2er Logarithmus (ganzzahl)

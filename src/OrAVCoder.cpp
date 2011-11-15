@@ -77,7 +77,7 @@ void OrKMPCreatePrefixTable(byte* _pIn, int _iLen, int* _piOut)
 void OrKMPMatch(byte* _pText, byte* _pPattern, int _iTextLen, int _iPatternLen, int* _piPrefix, int& _iOutL, int& _iOutO)
 {
 	// Create prefixtable for pattern
-	OrKMPCreatePrefixTable(_pPattern, _iPatternLen, piPrefix);
+	OrKMPCreatePrefixTable(_pPattern, _iPatternLen, _piPrefix);
 
 	int i = 0;		// Text position
 	int j = -1;		// Length of matching prefix

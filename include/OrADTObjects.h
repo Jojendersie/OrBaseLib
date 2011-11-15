@@ -6,6 +6,8 @@ typedef void (*OrADTDeleteObjectCallbackP)(void* _pObject);
 
 // ******************************************************************************** //
 // Interface for all nodes,... of ADTs
+// The ADTs will not make copies of the data. It will just hold the pointer and eventually
+// destroy the resource.
 struct OrADTElement
 {
 private:
@@ -24,7 +26,10 @@ typedef OrADTElement* OrADTElementP;
 // Interface class for all ADTs of the OrBaseLib
 class OrADT
 {
+protected
+	OrADTDeleteObjectCallbackP m_pDeleteCallback;
 public:
+	OrADT():m_pDeleteCallback(nullptr);
 	virtual OrADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
 	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
 	virtual void Delete(OrADTElementP _pElement) = 0;				// Sometimes faster operation delete (no search)
@@ -34,6 +39,8 @@ public:
 	virtual OrADTElementP GetLast() = 0;
 	virtual OrADTElementP GetNext(OrADTElementP _pCurrent) = 0;
 	virtual OrADTElementP GetPrevious(OrADTElementP _pCurrent) = 0;
+
+	void SetDeleteCallback(OrADTDeleteObjectCallbackP _pDeleteCallback)	{m_pDeleteCallback = _pDeleteCallback;}
 };
 typedef OrADT* OrADTP;
 

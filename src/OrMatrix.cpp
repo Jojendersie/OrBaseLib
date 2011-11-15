@@ -268,6 +268,34 @@ inline void OrSwap32(void* p1, void* p2)
 // Wenn nicht invertierbar, so wird die Einheitsmatrix angegeben.
 OrMatrix OrMatrixInvert(const OrMatrix& m)
 {
+	OrMatrix mSolution;
+	OrVector4 v, vec[3];
+	float fDet;
+
+	fDet = OrMatrixDet(m);
+
+	if(!fDet)
+		return OrMatrixIdentity();
+
+	// Tausche Vorzeichen in jedem Durchlauf
+	float fSignDet = 1.0f/fDet;
+
+	for(int i=0; i<4; i++)
+	{
+		// Determinantenentwicklung als Kreuzprodukt
+		v = OrVec4Cross(m.m[0<i?0:1], m.m[1<i?1:2], m.m[2<i?2:3]);
+
+		// Vorzeichen * Determinante_i / Determinante
+		mSolution.m[0][i] = fSignDet * v.x;
+		mSolution.m[1][i] = fSignDet * v.y;
+		mSolution.m[2][i] = fSignDet * v.z;
+		mSolution.m[3][i] = fSignDet * v.w;
+		fSignDet *= -1.0f;
+	}
+
+	return mSolution;
+}
+/*{
 	// Zur Beschleunigung wird Loop-entrolling angewendet
 	// Zur Kürzung des Quelltexts wird auf Kommentare verzichtet.
 	// Siehe OrMatrixSolveEquation für genauere Erklärungen.
@@ -425,7 +453,7 @@ OrMatrix OrMatrixInvert(const OrMatrix& m)
 	}
 
 	return mSolution;
-}
+}*/
 
 // ******************************************************************** //
 // Transponierte Matrix berechnen

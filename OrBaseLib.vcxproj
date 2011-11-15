@@ -80,7 +80,10 @@
     <ClInclude Include="include\OrAVLTree.h" />
     <ClInclude Include="include\OrBaseLib.h" />
     <ClInclude Include="include\OrBinaryTree.h" />
+    <ClInclude Include="include\OrBuffer.h" />
     <ClInclude Include="include\OrFastMath.h" />
+    <ClInclude Include="include\OrHash.h" />
+    <ClInclude Include="include\OrHeap.h" />
     <ClInclude Include="include\OrHuffman.h" />
     <ClInclude Include="include\OrMatrix.h" />
     <ClInclude Include="include\OrRandom.h" />
@@ -95,8 +98,11 @@
     <ClCompile Include="src\OrAVCoder.cpp" />
     <ClCompile Include="src\OrAVLTree.cpp" />
     <ClCompile Include="src\OrBinaryTree.cpp" />
+    <ClCompile Include="src\OrBuffer.cpp" />
     <ClCompile Include="src\OrEntropyCoder.cpp" />
     <ClCompile Include="src\OrFastMath.cpp" />
+    <ClCompile Include="src\OrHash.cpp" />
+    <ClCompile Include="src\OrHeap.cpp" />
     <ClCompile Include="src\OrHuffman.cpp" />
     <ClCompile Include="src\OrMatrix.cpp" />
     <ClCompile Include="src\OrRandom.cpp" />

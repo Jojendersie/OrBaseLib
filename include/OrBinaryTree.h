@@ -1,3 +1,16 @@
+// ******************************************************************************** //
+// Baseclass for trees. Implements a subset of the ADT interface.					//
+//																					//
+//	Insert()					abstract											//
+//	Search()					O(h)	h - height of tree							//
+//	Delete(Key)					abstract											//
+//	Delete(Element)				abstract											//
+//	GetFirst()					O(h)												//
+//	GetLast()					O(h)												//
+//	GetNext()					O(h)												//
+//	GetPrevious()				O(h)												//
+// ******************************************************************************** //
+
 #pragma once
 
 // ******************************************************************************** //
@@ -31,18 +44,17 @@ private:
 	void DeleteAll(OrBinaryTreeNodeP _pNode);
 protected:
 	OrBinaryTreeNodeP m_pRoot;
-	OrADTDeleteObjectCallbackP m_pDeleteCallback;
 	virtual OrBinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
 
 	void Swap(OrBinaryTreeNodeP _pN1, OrBinaryTreeNodeP _pN2);		// Exchange two nodes
 	OrBinaryTreeNodeP RotateRight(OrBinaryTreeNodeP _pNode);		// Replaces the current node by its left child. Does nothing if there is no child.
 	OrBinaryTreeNodeP RotateLeft(OrBinaryTreeNodeP _pNode);			// Replaces the current node by its right child. Does nothing if there is no child.
 public:
-	OrBinaryTree():m_pRoot(nullptr),m_pDeleteCallback(nullptr) {}
+	OrBinaryTree():m_pRoot(nullptr) {}
 	~OrBinaryTree();
 
 	// Only implement the navigation the rest is overwritten by special trees
-	virtual OrBinaryTreeNodeP Search(qword _qwKey) override;		// Standard search with a key
+	virtual OrBinaryTreeNodeP Search(qword _qwKey) override;					// Standard search with a key
 	virtual OrBinaryTreeNodeP GetFirst() override;
 	virtual OrBinaryTreeNodeP GetLast() override;
 	virtual OrBinaryTreeNodeP GetNext(OrADTElementP _pCurrent) override;		// Slow inorder traverse
@@ -52,7 +64,6 @@ public:
 	static bool IsRightChild(OrBinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pRight==_pNode:false;}
 	static OrBinaryTreeNodeP Min(OrBinaryTreeNodeP _pNode)	{while(_pNode->pLeft) _pNode = _pNode->pLeft; return _pNode;}
 	static OrBinaryTreeNodeP Max(OrBinaryTreeNodeP _pNode)	{while(_pNode->pRight) _pNode = _pNode->pRight; return _pNode;}
-	void SetDeleteCallback(OrADTDeleteObjectCallbackP _pDeleteCallback)	{m_pDeleteCallback = _pDeleteCallback;}
 };
 typedef OrBinaryTree* OrBinaryTreeP;
 

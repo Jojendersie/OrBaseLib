@@ -75,6 +75,15 @@
     <ClInclude Include="include\OrTrie.h">
       <Filter>Headerdateien\ADT</Filter>
     </ClInclude>
+    <ClInclude Include="include\OrBuffer.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrHeap.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrHash.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -115,6 +124,15 @@
     </ClCompile>
     <ClCompile Include="src\OrAVCoder.cpp">
       <Filter>Quelldateien\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrBuffer.cpp">
+      <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrHeap.cpp">
+      <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrHash.cpp">
+      <Filter>Quelldateien\ADT</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

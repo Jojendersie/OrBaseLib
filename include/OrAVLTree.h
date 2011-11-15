@@ -5,7 +5,26 @@
 // Idea: The height of the two subtrees of any node differs by at most one.			//
 //																					//
 // Using OrBinaryTreeNode.iParam to save the height of the subtree.					//
-// NOT TESTED
+//																					//
+// OrAVLTree:																		//
+//	Insert()					O(log n)											//
+//	Search()					O(log n)											//
+//	Delete(Key)					O(log n)											//
+//	Delete(Element)				O(log n)											//
+//	GetFirst()					O(log n)											//
+//	GetLast()					O(log n)											//
+//	GetNext()					O(log n)											//
+//	GetPrevious()				O(log n)											//
+//																					//
+// OrLinkedAVLTree:																	//
+//	Insert()					O(log n)											//
+//	Search()					O(log n)											//
+//	Delete(Key)					O(log n)											//
+//	Delete(Element)				O(log n)											//
+//	GetFirst()					O(log n)											//
+//	GetLast()					O(log n)											//
+//	GetNext()					O(1)												//
+//	GetPrevious()				O(1)												//
 // ******************************************************************************** //
 
 #pragma once
@@ -15,13 +34,13 @@
 class OrAVLTree : public OrBinaryTree
 {
 protected:
-	void Rebalance(OrBinaryTreeNodeP _pNode);				// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
+	void Rebalance(OrBinaryTreeNodeP _pNode);							// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
 	OrBinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key (searches for nearest element)
 public:
 	OrAVLTree():OrBinaryTree()	{}
 	OrBinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
-	void Delete(qword _qwKey) override;								// Standard operation delete
-	void Delete(OrADTElementP _pNode) override;					// Faster delete operation without search
+	void Delete(qword _qwKey) override;									// Standard operation delete
+	void Delete(OrADTElementP _pNode) override;							// Faster delete operation without search
 
 	static int GetHeight(OrBinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
 };
