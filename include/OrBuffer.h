@@ -32,16 +32,9 @@ public:
 	OrBuffer(int _iSize);
 	~OrBuffer();
 
-//	OrADTElementP Insert(void* _pObject, qword _qwKey) override;
-//	OrADTElementP Search(qword _qwKey) override;
-
 	bool Push(void* _pObject);	// Insertion at m_iHeadCursor with a key value of 0
 	void* Pop();				// Stack operation: removes the instance at m_iHeadCursor from the buffer and returns the Object reference
 	void* Dequeue();			// FIFO operation: removes the instance at m_iTailCursor and returns the object instance
-
-	// Deletion not possible!
-	void Delete(qword _qwKey) override				{}
-	void Delete(OrADTElementP _pElement) override	{}
 
 	void Extend(int iAdditionalSize);				// Speicher vergrößern
 
@@ -50,10 +43,8 @@ public:
 	bool IsFull()			{return (m_iHeadCursor+1)%m_iMax == m_iTailCursor%m_iMax;}
 
 	// Iteration over the objects
-	void* GetFirst() override;											// Head element
-	void* GetLast() override;											// Tail element
-	//OrADTElementP GetNext(OrADTElementP _pCurrent) override;			// Moving to the tail
-	//OrADTElementP GetPrevious(OrADTElementP _pCurrent) override;		// Moving to the head
+	void* GetFirst();											// Head element
+	void* GetLast();											// Tail element
 };
 
 // *************************************EOF**************************************** //

@@ -26,10 +26,10 @@ typedef OrADTElement* OrADTElementP;
 // Interface class for all ADTs of the OrBaseLib
 class OrADT
 {
-protected
+protected:
 	OrADTDeleteObjectCallbackP m_pDeleteCallback;
 public:
-	OrADT():m_pDeleteCallback(nullptr);
+	OrADT():m_pDeleteCallback(nullptr)	{}
 	virtual OrADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
 	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
 	virtual void Delete(OrADTElementP _pElement) = 0;				// Sometimes faster operation delete (no search)
@@ -45,6 +45,11 @@ public:
 typedef OrADT* OrADTP;
 
 // ******************************************************************************** //
+// Type should be the ADTElement type or a derivate from this.
+// Usage example:
+//		OrIterator<OrBinaryTreeNode> It(&MyAVLTree);
+//		while(--It) oder while(++It)
+//			std::cout << It->qwKey << "\n";
 template <typename Type> class OrIterator
 {
 private:

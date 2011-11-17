@@ -52,7 +52,7 @@ inline dword OrCreateCRCCCITT16Hash(void* pData, dword dwSize)	{return OrCreateC
 inline dword OrCreateCRC16Hash(void* pData, dword dwSize)	{return OrCreateCRCHash(0x00018006, pData, dwSize);}
 
 // ******************************************************************************** //
-enum OrHashMapResizeMode
+enum OrHashMapMode
 {
 	OR_HM_NO_RESIZE = 0,			// Konstante Größe (keine Autoresize beim Hinzufügen); Hohe Kollisionszahl
 	OR_HM_PREFER_SIZE = 1,			// Langsames Wachstum (sqrt); Mittlere Kollisionszahl; Häufiges Resize
@@ -65,38 +65,49 @@ enum OrHashMapResizeMode
 // Hashmap - Datenstruktur zum Schnellen finden von Elementen.
 struct OrBucket: public OrADTElement
 {
+	OrBucket(void* _pObj, const qword& _qwKey, OrBucket* _pParent) :
+			OrADTElement(_pObj, _qwKey),
+			pLeft(nullptr),
+			pRight(nullptr),
+			pParent(_pParent) {}
 private:
 	OrBucket* pLeft;
 	OrBucket* pRight;
+	OrBucket* pParent;
 
 	friend class OrHashMap;
 };
+typedef OrBucket* OrBucketP;
 
 // ******************************************************************************** //
 class OrHashMap: public OrADT
 {
-	OrBucket*			m_pBuckets;				// Ein Array mit Eimern (Bin-Trees)
+	OrBucketP			m_pBuckets;				// Ein Array mit Eimern (Bin-Trees)
 	dword				m_dwSize;				// Größe des Arrays
 	dword				m_dwNumElements;		// Anzahl Elemente in der Hashmap (kann größer als Arraygröße sein)
-	OrHashMapResizeMode m_Mode;					// Resizemodus und optinal String Modus
+	OrHashMapMode		m_Mode;					// Resizemodus und optinal String Modus
 
-	void RecursiveReAdd(OrBucket* _pBucket);
+	void RemoveData(OrBucketP _pBucket);
+	void RecursiveReAdd(OrBucketP _pBucket);
+	void RecursiveRelease(OrBucketP _pBucket);
+	void TestSize();							// Checks if a resize is required in the current mode
 public:
-	OrHashMap(dword _dwSize, OrHashMapResizeMode _Mode, bool _bUsingStringMode);
+	OrHashMap(dword _dwSize, OrHashMapMode _Mode);
 	~OrHashMap();
 
 	void Resize(const dword _dwSize);								// Tabelle neu erzeugen und alle Elemente neu hinzufügen
 
-	OrADTElementP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert
+	OrADTElementP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert; If already exists the object is NOT overwritten, but referenccounter is increased
 	void Delete(qword _qwKey) override;								// Standard operation delete
 	void Delete(OrADTElementP _pElement) override;					// Faster operation delete (no search)
 	OrADTElementP Search(qword _qwKey) override;					// Standard search with a key
 
 	// String-Mode functions
-	OrADTElementP Insert(void* _pObject, const char* _pcKey);		// insert using strings
+	OrADTElementP Insert(void* _pObject, const char* _pcKey);		// insert using strings; If already exists the object is NOT overwritten, but referenccounter is increased
+	void Delete(const char* _pcKey);								// Standard operation delete for strings
 	OrADTElementP Search(const char* _pcKey);						// search using strings
 
-	OrADTElementP GetFirst() override;
+	OrADTElementP GetFirst() override;								// Erstes Objekt aus dem ersten nichtleeren Eimer
 	OrADTElementP GetLast() override;
 	OrADTElementP GetNext(OrADTElementP _pCurrent) override;
 	OrADTElementP GetPrevious(OrADTElementP _pCurrent) override;
