@@ -108,8 +108,8 @@ OrMatrix OrMatrixRotationZ(const float f)
 // ******************************************************************** //
 // Rotiert um alle drei Achsen
 OrMatrix OrMatrixRotation(const float x,
-									  const float y,
-									  const float z)
+						  const float y,
+						  const float z)
 {
 	float fSinX = OrSin(x), fSinY = OrSin(y), fSinZ = OrSin(z);
 	float fCosX = OrCos(x), fCosY = OrCos(y), fCosZ = OrCos(z);
@@ -295,165 +295,6 @@ OrMatrix OrMatrixInvert(const OrMatrix& m)
 
 	return mSolution;
 }
-/*{
-	// Zur Beschleunigung wird Loop-entrolling angewendet
-	// Zur Kürzung des Quelltexts wird auf Kommentare verzichtet.
-	// Siehe OrMatrixSolveEquation für genauere Erklärungen.
-	// Allgemein wird mit dem Gauß-Jordan verfahren und 4 parallelen
-	// Lösungsvektoren gearbeitet
-	// TODO: Pointerarithmetik beschleunigen!!!
-	OrMatrix mSolution( 1.0f, 0.0f, 0.0f, 0.0f,
-						0.0f, 1.0f, 0.0f, 0.0f,
-						0.0f, 0.0f, 1.0f, 0.0f,
-						0.0f, 0.0f, 0.0f, 1.0f );
-	OrMatrix mA(m);
-
-	// Pivot-Prüfung
-	if(mA.m[0][0]==0.0f)
-	{
-		dword j=1;
-		for(;j<4;++j)
-			if(mA.m[0][j]!=0.0f && mA.m[j][0]!=0)
-			{
-				OrSwap32(&mA.m[0][0],&mA.m[j][0]);
-				OrSwap32(&mA.m[0][1],&mA.m[j][1]);
-				OrSwap32(&mA.m[0][2],&mA.m[j][2]);
-				OrSwap32(&mA.m[0][3],&mA.m[j][3]);
-				OrSwap32(&mSolution.m[0][0],&mSolution.m[j][0]);
-				OrSwap32(&mSolution.m[0][1],&mSolution.m[j][1]);
-				OrSwap32(&mSolution.m[0][2],&mSolution.m[j][2]);
-				OrSwap32(&mSolution.m[0][3],&mSolution.m[j][3]);
-				break;
-			}
-		if(j>=4) return OrMatrixIdentity();
-	}
-
-	// Das Pivot-Element ist != 0 => teilen der Zeile
-	float fInvPivot = 1.0f/mA.m[0][0];
-	mA.m[0][0] = 1.0f;
-	mA.m[0][1] *= fInvPivot;
-	mA.m[0][2] *= fInvPivot;
-	mA.m[0][3] *= fInvPivot;
-	mSolution.m[0][0] *= fInvPivot;
-	mSolution.m[0][1] *= fInvPivot;
-	mSolution.m[0][2] *= fInvPivot;
-	mSolution.m[0][3] *= fInvPivot;
-
-	// Die neue Zeile von allen anderen subtrahieren
-	for(dword j=1;j<4;++j)
-	{
-		float fFactor = mA.m[j][0];
-		mA.m[j][0] = 0.0f;
-		mA.m[j][1] -= fFactor*mA.m[0][1];
-		mA.m[j][2] -= fFactor*mA.m[0][2];
-		mA.m[j][3] -= fFactor*mA.m[0][3];
-		mSolution.m[j][0] -= fFactor*mSolution.m[0][0];
-		mSolution.m[j][1] -= fFactor*mSolution.m[0][1];
-		mSolution.m[j][2] -= fFactor*mSolution.m[0][2];
-		mSolution.m[j][3] -= fFactor*mSolution.m[0][3];
-	}
-
-	if(mA.m[1][1]==0.0f)
-	{
-		dword j=2;
-		for(;j<4;++j)
-			if(mA.m[1][j]!=0.0f && mA.m[j][1]!=0)
-			{
-				OrSwap32(&mA.m[1][1],&mA.m[j][1]);
-				OrSwap32(&mA.m[1][2],&mA.m[j][2]);
-				OrSwap32(&mA.m[1][3],&mA.m[j][3]);
-				OrSwap32(&mSolution.m[1][0],&mSolution.m[j][0]);
-				OrSwap32(&mSolution.m[1][1],&mSolution.m[j][1]);
-				OrSwap32(&mSolution.m[1][2],&mSolution.m[j][2]);
-				OrSwap32(&mSolution.m[1][3],&mSolution.m[j][3]);
-				break;
-			}
-		if(j>=4) return OrMatrixIdentity();
-	}
-
-	// Das Pivot-Element ist != 0 => teilen der Zeile
-	fInvPivot = 1.0f/mA.m[1][1];
-	mA.m[1][1] = 1.0f;
-	mA.m[1][2] *= fInvPivot;
-	mA.m[1][3] *= fInvPivot;
-	mSolution.m[1][0] *= fInvPivot;
-	mSolution.m[1][1] *= fInvPivot;
-	mSolution.m[1][2] *= fInvPivot;
-	mSolution.m[1][3] *= fInvPivot;
-
-	// Die neue Zeile von allen anderen subtrahieren
-	for(dword j=0;j<4;++j)
-		if(1!=j)
-		{
-			float fFactor = mA.m[j][1];
-			mA.m[j][1] = 0.0f;
-			mA.m[j][2] -= fFactor*mA.m[1][2];
-			mA.m[j][3] -= fFactor*mA.m[1][3];
-			mSolution.m[j][0] -= fFactor*mSolution.m[1][0];
-			mSolution.m[j][1] -= fFactor*mSolution.m[1][1];
-			mSolution.m[j][2] -= fFactor*mSolution.m[1][2];
-			mSolution.m[j][3] -= fFactor*mSolution.m[1][3];
-		}
-
-	if(mA.m[2][2]==0.0f)
-	{
-		if(mA.m[2][3]!=0.0f && mA.m[3][2]!=0)
-		{
-			OrSwap32(&mA.m[2][2],&mA.m[3][2]);
-			OrSwap32(&mA.m[2][3],&mA.m[3][3]);
-			OrSwap32(&mSolution.m[2][0],&mSolution.m[3][0]);
-			OrSwap32(&mSolution.m[2][1],&mSolution.m[3][1]);
-			OrSwap32(&mSolution.m[2][2],&mSolution.m[3][2]);
-			OrSwap32(&mSolution.m[2][3],&mSolution.m[3][3]);
-		} else
-			return OrMatrixIdentity();
-	}
-
-	// Das Pivot-Element ist != 0 => teilen der Zeile
-	fInvPivot = 1.0f/mA.m[2][2];
-	mA.m[2][2] = 1.0f;
-	mA.m[2][3] *= fInvPivot;
-	mSolution.m[2][0] *= fInvPivot;
-	mSolution.m[2][1] *= fInvPivot;
-	mSolution.m[2][2] *= fInvPivot;
-	mSolution.m[2][3] *= fInvPivot;
-
-	// Die neue Zeile von allen anderen subtrahieren
-	for(dword j=0;j<4;++j)
-		if(2!=j)
-		{
-			float fFactor = mA.m[j][2];
-			mA.m[j][2] = 0.0f;
-			mA.m[j][3] -= fFactor*mA.m[2][3];
-			mSolution.m[j][0] -= fFactor*mSolution.m[2][0];
-			mSolution.m[j][1] -= fFactor*mSolution.m[2][1];
-			mSolution.m[j][2] -= fFactor*mSolution.m[2][2];
-			mSolution.m[j][3] -= fFactor*mSolution.m[2][3];
-		}
-
-	if(mA.m[3][3]==0.0f) return OrMatrixIdentity();
-
-	// Das Pivot-Element ist != 0 => teilen der Zeile
-	fInvPivot = 1.0f/mA.m[3][3];
-	//mA.m[3][3] = 1.0f;
-	mSolution.m[3][0] *= fInvPivot;
-	mSolution.m[3][1] *= fInvPivot;
-	mSolution.m[3][2] *= fInvPivot;
-	mSolution.m[3][3] *= fInvPivot;
-
-	// Die neue Zeile von allen anderen subtrahieren
-	for(dword j=0;j<3;++j)
-	{
-		float fFactor = mA.m[j][3];
-		//mA.m[j][3] = 0.0f;
-		mSolution.m[j][0] -= fFactor*mSolution.m[3][0];
-		mSolution.m[j][1] -= fFactor*mSolution.m[3][1];
-		mSolution.m[j][2] -= fFactor*mSolution.m[3][2];
-		mSolution.m[j][3] -= fFactor*mSolution.m[3][3];
-	}
-
-	return mSolution;
-}*/
 
 // ******************************************************************** //
 // Transponierte Matrix berechnen
@@ -636,6 +477,97 @@ OrMatrix OrMatrixOrthonormal(const OrVector3& vNormal)
 	//				v2.x,		v2.y,		v2.z,		0.0f,
 	//				v3.x,		v3.y,		v3.z,		0.0f,
 	//				0.0f,		0.0f,		0.0f,		1.0f);
+}
+
+
+
+// ******************************************************************** //
+// ******************************************************************** //
+// ******************************************************************** //
+// Die Funktionen simmulieren alle eine 3x3 matrix
+
+// ******************************************************************** //
+// Translationsmatrix (Verschiebungsmatrix) berechnen
+OrMatrix2x3	OrMatrix2x3Translation(const OrVector2& v)
+{
+	return OrMatrix2x3(1.0f, 0.0f, v.x,
+					   0.0f, 1.0f, v.y);
+}
+
+// ******************************************************************** //
+// Translationsmatrix (Verschiebungsmatrix) berechnen
+OrMatrix2x3	OrMatrix2x3Translation(const float x, const float y)
+{
+	return OrMatrix2x3(1.0f, 0.0f, x,
+					   0.0f, 1.0f, y);
+}
+
+// ******************************************************************** //
+// Rotationsmatrix um die "Z-Achse" berechnen
+OrMatrix2x3	OrMatrix2x3Rotation(const float f)
+{
+	float fCos = OrCos(f);
+	float fSin = OrSin(f);
+	return OrMatrix2x3(fCos, -fSin, 0.0f,
+					   fSin , fCos, 0.0f);
+}
+
+// ******************************************************************** //
+// Skalierungsmatrix berechnen
+OrMatrix2x3	OrMatrix2x3Scaling(const OrVector2& v)
+{
+	return OrMatrix2x3(v.x , 0.0f, 0.0f,
+					   0.0f, v.y , 0.0f);
+}
+
+// ******************************************************************** //
+// Skalierungsmatrix berechnen
+OrMatrix2x3	OrMatrix2x3Scaling(const float f)
+{
+	return OrMatrix2x3(f , 0.0f, 0.0f,
+					   0.0f, f , 0.0f);
+}
+
+// ******************************************************************** //
+// Liefert eine Achsenmatrix
+OrMatrix2x3	OrMatrix2x3Axis(const OrVector2& vXAxis, const OrVector2& vYAxis)
+{
+	return OrMatrix2x3(vXAxis.x, vXAxis.y, 0.0f,
+					   vYAxis.x, vYAxis.y, 0.0f);
+}
+
+// ******************************************************************** //
+// Invertierte (umgekehrte) Matrix berechnen
+OrMatrix2x3	OrMatrix2x3Invert(const OrMatrix2x3& m)
+{
+	float fDet = 1.0f/OrMatrix2x3Det(m);
+	// Simuliere 3x3 Matrix mit (0,0,1) in der 3. Zeile
+	return OrMatrix2x3(m.m22*fDet, -m.m12*fDet, (m.m12*m.m23-m.m13*m.m22)*fDet,
+					   -m.m21*fDet, m.m11*fDet, (m.m13*m.m21-m.m11*m.m23)*fDet);
+}
+
+// ******************************************************************** //
+// Scherungs Matrix berechnen
+OrMatrix2x3	OrMatrix2x3Transvection(const OrVector2& v)
+{
+	return OrMatrix2x3(1.0f, v.x , 0.0f,
+					   v.y , 1.0f, 0.0f);
+}
+
+// ******************************************************************** //
+// Scherungs Matrix berechnen
+OrMatrix2x3	OrMatrix2x3Transvection(const float x, const float y)
+{
+	return OrMatrix2x3(1.0f, x   , 0.0f,
+					   y   , 1.0f, 0.0f);
+}
+
+// ******************************************************************** //
+// Determinante berechnen (Laplaceches Entwicklungsschema)
+float		OrMatrix2x3Det(const OrMatrix2x3& m)
+{
+	return m.m11 * m.m22 -
+           m.m12 * m.m21;
 }
 
 // ******************************************************************** //

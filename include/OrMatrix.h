@@ -16,7 +16,9 @@
 
 // Verwendete Symbole vordefinieren
 class OrMatrix;
+class OrMatrix2x3;
 OrMatrix OrMatrixInvert(const OrMatrix& m);
+OrMatrix2x3 OrMatrix2x3Invert(const OrMatrix2x3& m);
 inline OrMatrix operator * (const OrMatrix& a, const OrMatrix& b);
 
 // ******************************************************************** //
@@ -28,10 +30,8 @@ inline OrMatrix operator * (const OrMatrix& a, const OrMatrix& b);
 // mathematische Gleichheit.
 //static dword Or_MatrixIDCounter = 1;
 
-//struct float4 {float x,y,z,w;};
-
 // ******************************************************************** //
-// Die Matrixklasse
+// Die 4D - Matrixklasse (Für 3D Transformationen)
 class OrMatrix
 {
 public:
@@ -48,7 +48,6 @@ public:
 
 		float		m[4][4];			// Zweidimensionales Array der Elemente
 		float		n[16];				// Eindimensionales Array der Elemente
-		//float4		v[4];				// Array mit 4 4D-Vektoren (Zeilen)
 	};
 
 //	dword dwMatrixID;
@@ -301,5 +300,208 @@ inline	OrMatrix	OrMatrixIdentity() {return OrMatrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f
 //		OrMatrix	OrMatrixMirror_Normalize(const OrPlane& p);																													// Eine Spiegelmatrix an gegebener Ebene (wird normalisiert) berechnen
 		bool		OrMatrixSolveEquation(OrMatrix _A, OrVector4* _pV_X);																										// Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
 		OrMatrix	OrMatrixOrthonormal(const OrVector3& vNormal);
+		OrMatrix	OrMatrixTransvection(const OrVector3& v);																													// Scherungsmatrix berechnen TODO
+
+
+// ******************************************************************** //
+// 2x3 Matrixklasse für 2D Transformationen
+// Die Transfornation erfolgt durch Matrix*(u,v,1)' (2x3 * 3x1 = 2x1)
+class OrMatrix2x3
+{
+public:
+	// Variablen
+	union
+	{
+		struct
+		{
+			float m11, m12, m13,		// Elemente der Matrix
+				  m21, m22, m23;
+		};
+
+		float		m[2][3];			// Zweidimensionales Array der Elemente
+		float		n[6];				// Eindimensionales Array der Elemente
+	};
+
+	// Konstruktoren
+	OrMatrix2x3() {}
+
+	OrMatrix2x3(const OrMatrix2x3& m) : m11(m.m11), m12(m.m12), m13(m.m13),
+										m21(m.m21), m22(m.m22), m23(m.m23) {}
+
+	OrMatrix2x3(float _m11, float _m12, float _m13,
+			    float _m21, float _m22, float _m23) : m11(_m11), m12(_m12), m13(_m13),
+													  m21(_m21), m22(_m22), m23(_m23) {}
+
+	OrMatrix2x3(const float* pfValue) : m11(pfValue[0]), m12(pfValue[1]), m13(pfValue[2]),
+									    m21(pfValue[3]), m22(pfValue[4]), m23(pfValue[5])	{}
+
+	// Casting-Opeatoren
+	operator float* ()					{return (float*)(n);}
+	operator const float* () const		{return (float*)(n);}
+
+	// Zugriffsoperatoren
+	float& operator () (int iRow, int iColumn) {return m[iRow][iColumn];}
+	float operator () (int iRow, int iColumn) const {return m[iRow][iColumn];}
+
+	// Zuweisungsoperatoren
+	OrMatrix2x3& operator = (const OrMatrix2x3& m)
+	{
+		m11 = m.m11; m12 = m.m12; m13 = m.m13;
+		m21 = m.m21; m22 = m.m22; m23 = m.m23;
+	}
+	
+	OrMatrix2x3& operator += (const OrMatrix2x3& m)
+	{
+		m11 += m.m11; m12 += m.m12; m13 += m.m13;
+		m21 += m.m21; m22 += m.m22; m23 += m.m23;
+		return *this;
+	}
+
+	OrMatrix2x3& operator -= (const OrMatrix2x3& m)
+	{
+		m11 -= m.m11; m12 -= m.m12; m13 -= m.m13;
+		m21 -= m.m21; m22 -= m.m22; m23 -= m.m23;
+		return *this;
+	}
+
+	OrMatrix2x3& operator *= (const OrMatrix2x3& m)
+	{
+		return *this = OrMatrix2x3(m.m11 * m11 + m.m21 * m12,
+								   m.m12 * m11 + m.m22 * m12,
+								   m.m13 * m11 + m.m23 * m12 + m13,
+								   m.m11 * m21 + m.m21 * m22,
+								   m.m12 * m21 + m.m22 * m22,
+								   m.m13 * m21 + m.m23 * m22 + m23);
+	}
+
+	OrMatrix2x3& operator *= (const float f)
+	{
+		m11 *= f; m12 *= f; m13 *= f;
+		m21 *= f; m22 *= f; m23 *= f;
+		return *this;
+	}
+	
+	OrMatrix2x3& operator /= (const OrMatrix2x3& m)
+	{
+		return *this *= OrMatrix2x3Invert(m);
+	}
+
+	OrMatrix2x3& operator /= (float f)
+	{
+		f = 1/f;
+		m11 *= f; m12 *= f; m13 *= f;
+		m21 *= f; m22 *= f; m23 *= f;
+		return *this;
+	}
+
+	// Unäre Operatoren
+	OrMatrix2x3 operator + () const
+	{
+		return *this;
+	}
+
+	OrMatrix2x3 operator - () const
+	{
+		return OrMatrix2x3(-m11, -m12, -m13,
+						   -m21, -m22, -m23);
+	}
+};
+
+typedef OrMatrix2x3* OrMatrix2x3P;
+
+
+// Arithmetische Operatoren
+inline OrMatrix2x3 operator + (const OrMatrix2x3& a, const OrMatrix2x3& b)	{return OrMatrix2x3(a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23);}
+inline OrMatrix2x3 operator - (const OrMatrix2x3& a, const OrMatrix2x3& b)	{return OrMatrix2x3(a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23);}
+inline OrMatrix2x3 operator - (const OrMatrix2x3& m)						{return OrMatrix2x3(-m.m11, -m.m12, -m.m13, -m.m21, -m.m22, -m.m23);}
+
+inline OrMatrix2x3 operator * (const OrMatrix2x3& a,
+							   const OrMatrix2x3& b)
+{
+	return OrMatrix2x3(b.m11 * a.m11 + b.m21 * a.m12,
+					   b.m12 * a.m11 + b.m22 * a.m12,
+					   b.m13 * a.m11 + b.m23 * a.m12 + a.m13,
+					   b.m11 * a.m21 + b.m21 * a.m22,
+					   b.m12 * a.m21 + b.m22 * a.m22,
+					   b.m13 * a.m21 + b.m23 * a.m22 + a.m23);
+}
+
+inline OrMatrix2x3 operator * (const OrMatrix2x3& m,
+							   const float f)
+{
+	return OrMatrix2x3(m.m11 * f, m.m12 * f, m.m13 * f,
+			           m.m21 * f, m.m22 * f, m.m23 * f);
+}
+
+inline OrMatrix2x3 operator * (const float f,
+							   const OrMatrix2x3& m)
+{
+	return OrMatrix2x3(m.m11 * f, m.m12 * f, m.m13 * f,
+			           m.m21 * f, m.m22 * f, m.m23 * f);
+}
+
+inline OrVector2 operator * (const OrVector2& v,
+							 const OrMatrix2x3& m)
+{
+	return OrVec2Transform(v, m);
+}
+
+inline OrVector2 operator * (const OrMatrix2x3& m,
+							 const OrVector2& v)
+{
+	return OrVec2Transform(v, m);
+}
+
+inline OrMatrix2x3 operator / (const OrMatrix2x3& a, const OrMatrix2x3& b) {return a * OrMatrix2x3Invert(b);}
+
+inline OrMatrix2x3 operator / (const OrMatrix2x3& m,
+							   float f)
+{
+	f = 1/f;
+	return OrMatrix2x3(m.m11 * f, m.m12 * f, m.m13 * f,
+			           m.m21 * f, m.m22 * f, m.m23 * f);
+}
+
+// Vergleichsoperatoren
+#define ORMATRIX_EPSILON	0.001f
+inline bool operator == (const OrMatrix2x3& a,
+						 const OrMatrix2x3& b)
+{
+	if(OrAbsf(a.m11 - b.m11) > ORMATRIX_EPSILON) return false;
+	if(OrAbsf(a.m12 - b.m12) > ORMATRIX_EPSILON) return false;
+	if(OrAbsf(a.m13 - b.m13) > ORMATRIX_EPSILON) return false;
+	if(OrAbsf(a.m21 - b.m21) > ORMATRIX_EPSILON) return false;
+	if(OrAbsf(a.m22 - b.m22) > ORMATRIX_EPSILON) return false;
+	if(OrAbsf(a.m23 - b.m23) > ORMATRIX_EPSILON) return false;
+	return (OrAbsf(a.m23 - b.m23) <= ORMATRIX_EPSILON);
+}
+
+// Vergleichsoperatoren
+inline bool operator != (const OrMatrix2x3& a,
+						 const OrMatrix2x3& b)
+{
+	if(OrAbsf(a.m11 - b.m11) > ORMATRIX_EPSILON) return true;
+	if(OrAbsf(a.m12 - b.m12) > ORMATRIX_EPSILON) return true;
+	if(OrAbsf(a.m13 - b.m13) > ORMATRIX_EPSILON) return true;
+	if(OrAbsf(a.m21 - b.m21) > ORMATRIX_EPSILON) return true;
+	if(OrAbsf(a.m22 - b.m22) > ORMATRIX_EPSILON) return true;
+	if(OrAbsf(a.m23 - b.m23) > ORMATRIX_EPSILON) return true;
+	return (OrAbsf(a.m23 - b.m23) > ORMATRIX_EPSILON);
+}
+
+// ******************************************************************** //
+// Die Funktionen simmulieren alle eine 3x3 matrix
+inline	OrMatrix2x3	OrMatrix2x3Identity() {return OrMatrix2x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);}																				// Identitätsmatrix liefern
+		OrMatrix2x3	OrMatrix2x3Translation(const OrVector2& v);																													// Translationsmatrix (Verschiebungsmatrix) berechnen
+		OrMatrix2x3	OrMatrix2x3Translation(const float x, const float y);																										// Translationsmatrix (Verschiebungsmatrix) berechnen
+		OrMatrix2x3	OrMatrix2x3Rotation(const float f);																															// Rotationsmatrix um die "Z-Achse" berechnen
+		OrMatrix2x3	OrMatrix2x3Scaling(const OrVector2& v);																														// Skalierungsmatrix berechnen
+		OrMatrix2x3	OrMatrix2x3Scaling(const float f);																															// Skalierungsmatrix berechnen
+		OrMatrix2x3	OrMatrix2x3Axis(const OrVector2& vXAxis, const OrVector2& vYAxis);																							// Liefert eine Achsenmatrix
+		OrMatrix2x3	OrMatrix2x3Invert(const OrMatrix2x3& m);																													// Invertierte (umgekehrte) Matrix berechnen
+		OrMatrix2x3	OrMatrix2x3Transvection(const OrVector2& v);																												// Scherungs Matrix berechnen
+		OrMatrix2x3	OrMatrix2x3Transvection(const float x, const float y);																										// Scherungs Matrix berechnen
+		float		OrMatrix2x3Det(const OrMatrix2x3& m);																															// Determinante berechnen (Laplaceches Entwicklungsschema)
+
 
 // ******************************************************************** //

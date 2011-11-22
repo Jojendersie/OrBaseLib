@@ -87,6 +87,7 @@ inline OrVector2	OrVec2Min(const OrVector2& v1, const OrVector2& v2)									{re
 inline OrVector2	OrVec2Max(const OrVector2& v1, const OrVector2& v2)									{return OrVector2(OrMaxf(v1.x, v2.x), OrMaxf(v1.y, v2.y));}
 inline OrVector2	OrVec2Lrp(const OrVector2& v1, const OrVector2& v2, const float f)					{return OrVector2(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y));}
 OrVector2			OrVec2Random();
-OrVector2			OrVec2Rotate(const OrVector2& _v, const float _fAlpha);		// Rotieren eines Punktes im 2D-Raum
+OrVector2			OrVec2Rotate(const OrVector2& _v, const float _fAlpha);											// Rotieren eines Punktes im 2D-Raum
+OrVector2			OrVec2Transform(const OrVector2& v, const OrMatrix2x3& m);										// 2D-Vektor mit Matrix multiplizieren
 
 // ******************************************************************** //

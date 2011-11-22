@@ -15,6 +15,7 @@
 #include "..\Include\OrFastMath.h"
 #include "..\Include\OrRandom.h"
 #include "..\Include\OrVector3.h"
+#include "..\Include\OrVector2.h"
 #include "..\Include\OrMatrix.h"
 
 // ******************************************************************** //

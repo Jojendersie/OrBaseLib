@@ -15,6 +15,7 @@ class OrVector2;
 class OrVector3;
 class OrVector4;
 class OrMatrix;
+class OrMatrix2x3;
 
 // ******************************************************************** //
 // Atomare Funktion zum Sichern kritischer Bereiche
