@@ -348,6 +348,7 @@ public:
 	{
 		m11 = m.m11; m12 = m.m12; m13 = m.m13;
 		m21 = m.m21; m22 = m.m22; m23 = m.m23;
+		return *this;
 	}
 	
 	OrMatrix2x3& operator += (const OrMatrix2x3& m)
@@ -496,12 +497,13 @@ inline	OrMatrix2x3	OrMatrix2x3Identity() {return OrMatrix2x3(1.0f, 0.0f, 0.0f, 0
 		OrMatrix2x3	OrMatrix2x3Translation(const float x, const float y);																										// Translationsmatrix (Verschiebungsmatrix) berechnen
 		OrMatrix2x3	OrMatrix2x3Rotation(const float f);																															// Rotationsmatrix um die "Z-Achse" berechnen
 		OrMatrix2x3	OrMatrix2x3Scaling(const OrVector2& v);																														// Skalierungsmatrix berechnen
+		OrMatrix2x3	OrMatrix2x3Scaling(const float x, const float y);																											// Skalierungsmatrix berechnen
 		OrMatrix2x3	OrMatrix2x3Scaling(const float f);																															// Skalierungsmatrix berechnen
 		OrMatrix2x3	OrMatrix2x3Axis(const OrVector2& vXAxis, const OrVector2& vYAxis);																							// Liefert eine Achsenmatrix
 		OrMatrix2x3	OrMatrix2x3Invert(const OrMatrix2x3& m);																													// Invertierte (umgekehrte) Matrix berechnen
 		OrMatrix2x3	OrMatrix2x3Transvection(const OrVector2& v);																												// Scherungs Matrix berechnen
 		OrMatrix2x3	OrMatrix2x3Transvection(const float x, const float y);																										// Scherungs Matrix berechnen
-		float		OrMatrix2x3Det(const OrMatrix2x3& m);																															// Determinante berechnen (Laplaceches Entwicklungsschema)
+		float		OrMatrix2x3Det(const OrMatrix2x3& m);																														// Determinante berechnen (Laplaceches Entwicklungsschema)
 
 
 // ******************************************************************** //

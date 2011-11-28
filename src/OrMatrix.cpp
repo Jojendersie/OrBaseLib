@@ -522,6 +522,14 @@ OrMatrix2x3	OrMatrix2x3Scaling(const OrVector2& v)
 
 // ******************************************************************** //
 // Skalierungsmatrix berechnen
+OrMatrix2x3	OrMatrix2x3Scaling(const float x, const float y)
+{
+	return OrMatrix2x3(x   , 0.0f, 0.0f,
+					   0.0f, y   , 0.0f);
+}
+
+// ******************************************************************** //
+// Skalierungsmatrix berechnen
 OrMatrix2x3	OrMatrix2x3Scaling(const float f)
 {
 	return OrMatrix2x3(f , 0.0f, 0.0f,
