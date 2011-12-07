@@ -11,11 +11,16 @@ typedef unsigned __int8 byte;
 
 // ******************************************************************************** //
 // Classes
-class OrVector2;
-class OrVector3;
-class OrVector4;
-class OrMatrix;
-class OrMatrix2x3;
+
+namespace OrE {
+namespace Math {
+class Vector2;
+class Vector3;
+class Vector4;
+class Matrix;
+class Matrix2x3;
+}; // namespace Math
+}; // namespace OrE
 
 // ******************************************************************** //
 // Atomare Funktion zum Sichern kritischer Bereiche

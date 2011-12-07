@@ -1,6 +1,6 @@
 // ******************************************************************************** //
 // Different ADTs for buffering objects.											//
-//	OrBuffer: a ring buffer of constant size. The buffer can be used as FIFO		//
+//	Buffer: a ring buffer of constant size. The buffer can be used as FIFO		//
 //	(first in first out) buffer or as a stack (LIFO buffer - last in first out).	//
 //																					//
 //	Both have the same speed asymptoticly:											//
@@ -18,9 +18,12 @@
 
 #pragma once
 
+namespace OrE {
+namespace ADT {
+
 // ******************************************************************************** //
 // The ring buffer class
-class OrBuffer
+class Buffer
 {
 	int				m_iHeadCursor;		// Pointer to the next "free" element (Head-1==newest instance)
 	int				m_iTailCursor;		// Pointer to the last element (oldest)
@@ -29,8 +32,8 @@ class OrBuffer
 	void**			m_Buffer;			// The storage array for all elements
 
 public:
-	OrBuffer(int _iSize);
-	~OrBuffer();
+	Buffer(int _iSize);
+	~Buffer();
 
 	bool Push(void* _pObject);	// Insertion at m_iHeadCursor with a key value of 0
 	void* Pop();				// Stack operation: removes the instance at m_iHeadCursor from the buffer and returns the Object reference
@@ -47,4 +50,6 @@ public:
 	void* GetLast();											// Tail element
 };
 
+}; // namespace ADT
+}; // namespace OrE
 // *************************************EOF**************************************** //

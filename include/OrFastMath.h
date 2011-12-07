@@ -13,6 +13,9 @@
 
 #pragma once
 
+namespace OrE {
+namespace Math {
+
 const float fPi = 3.14159265358979f;
 const double dPi = 3.1415926535897932384626433832795;
 const float f2Pi = fPi*2.0f;
@@ -22,54 +25,54 @@ const double dPi_2 = dPi*0.5;
 
 // ******************************************************************** //
 // Min und Max - Funktionen, damit nicht irgendwelche Dinge importiert werden.
-__forceinline float OrMaxf(const float a, const float b)	{return a > b ? a : b;}
-__forceinline double OrMaxd(const double a, const double b)	{return a > b ? a : b;}
-__forceinline int OrMax(const int a, const int b)			{return a > b ? a : b;}
-__forceinline dword OrMaxu(const dword a, const dword b)	{return a > b ? a : b;}
-__forceinline float OrMinf(const float a, const float b)	{return a < b ? a : b;}
-__forceinline double OrMind(const double a, const double b)	{return a < b ? a : b;}
-__forceinline int OrMin(const int a, const int b)			{return a < b ? a : b;}
-__forceinline dword OrMinu(const dword a, const dword b)	{return a < b ? a : b;}
-__forceinline float OrClampf(const float a, const float min, const float max)	{return a < min ? min : (a > max ? max : a);}
-__forceinline dword OrClampu(const dword a, const dword min, const dword max)	{return a < min ? min : (a > max ? max : a);}
-__forceinline float OrAbsf(const float a)					{return a < 0 ? -a: a;}
-__forceinline int OrAbs(const int a)						{return a&0x7fffffff;}
+__forceinline float Maxf(const float a, const float b)	{return a > b ? a : b;}
+__forceinline double Maxd(const double a, const double b)	{return a > b ? a : b;}
+__forceinline int Max(const int a, const int b)			{return a > b ? a : b;}
+__forceinline dword Maxu(const dword a, const dword b)	{return a > b ? a : b;}
+__forceinline float Minf(const float a, const float b)	{return a < b ? a : b;}
+__forceinline double Mind(const double a, const double b)	{return a < b ? a : b;}
+__forceinline int Min(const int a, const int b)			{return a < b ? a : b;}
+__forceinline dword Minu(const dword a, const dword b)	{return a < b ? a : b;}
+__forceinline float Clampf(const float a, const float min, const float max)	{return a < min ? min : (a > max ? max : a);}
+__forceinline dword Clampu(const dword a, const dword min, const dword max)	{return a < min ? min : (a > max ? max : a);}
+__forceinline float Absf(const float a)					{return a < 0 ? -a: a;}
+__forceinline int Abs(const int a)						{return a&0x7fffffff;}
 
 // ******************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
-float OrArccos( float r );
+float Arccos( float r );
 
 // ******************************************************************** //
 // Berechnet den Arcussinus: arctan( r / -sqr( 1.0f - r * r ) )
-float OrArcsin( float r );
+float Arcsin( float r );
 
 // ******************************************************************** //
 // Berechnet den Arcustangens: arctan( r )
-float OrArctan( float r );
+float Arctan( float r );
 
 // ******************************************************************** //
 // Berechnet den Sinus (Bogenmaß)
-float OrSin( float r );
+float Sin( float r );
 
 // ******************************************************************** //
 // Berechnet den Kosinus (Bogenmaß)
-float OrCos( float r );
+float Cos( float r );
 
 // ******************************************************************** //
 // Berechnet den Tangens (Bogenmaß)
-float OrTan( float r );
+float Tan( float r );
 
 // ******************************************************************** //
 // quadriert eine Zahl
-float OrSqr( float r );
+float Sqr( float r );
 
 // ******************************************************************** //
 // Zieht die Wurzel eines Floatwertes
-float OrSqrt( float r );
+float Sqrt( float r );
 
 // ******************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
-inline __declspec(naked) float __fastcall OrInvSqrt(float fValue)
+inline __declspec(naked) float __fastcall InvSqrt(float fValue)
 {
 	__asm
 	{
@@ -110,20 +113,22 @@ inline __declspec(naked) float __fastcall OrInvSqrt(float fValue)
 // ******************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
 // etwas sicherer, aber auch ungenauer und langsamer
-float OrInvSqrtEx( float r );
+float InvSqrtEx( float r );
 
 // ******************************************************************** //
 // natürlicher Logarithmus
-float OrLn( float r );
+float Ln( float r );
 // Logarithmus dualis
-inline float OrLd( float r )	{return OrLn(r)*1.442695041f;}
+inline float Ld( float r )	{return Ln(r)*1.442695041f;}
 
 // ******************************************************************** //
 // Funktion für den gerundeten 2er Logarithmus (ganzzahl)
-int OrLog2(int iValue);
+int Log2(int iValue);
 
 // ******************************************************************** //
 // Exponentialfunktion
-float __fastcall OrPow(float fBase, float fExponent);
+float __fastcall Pow(float fBase, float fExponent);
 
+}; // namespace Math
+}; // namespace OrE
 // ******************************************************************** //

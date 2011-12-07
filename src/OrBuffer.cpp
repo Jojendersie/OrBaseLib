@@ -5,7 +5,7 @@
 
 // TODO test with threads
 // ******************************************************************************** //
-OrBuffer::OrBuffer(int _iSize)
+OrE::ADT::Buffer::Buffer(int _iSize)
 {
 	m_Buffer = (void**)malloc(sizeof(void*)*_iSize);
 	// Make buffer unuseable if out of memory (IsFull() == IsEmpty() == false);
@@ -14,7 +14,7 @@ OrBuffer::OrBuffer(int _iSize)
 	m_iTailCursor = 0;
 }
 
-OrBuffer::~OrBuffer()
+OrE::ADT::Buffer::~Buffer()
 {
 	// Delete without warning even if there are still elements in buffer
 	// TODO warn (Logsystem)
@@ -23,7 +23,7 @@ OrBuffer::~OrBuffer()
 
 // ******************************************************************************** //
 // Insertion at m_iHeadCursor with a key value of 0
-bool OrBuffer::Push(void* _pObject)
+bool OrE::ADT::Buffer::Push(void* _pObject)
 {
 	bool bRet = false;
 	OrLock(&m_dwSemaphore);
@@ -39,7 +39,7 @@ bool OrBuffer::Push(void* _pObject)
 
 // ******************************************************************************** //
 // Stack operation: removes the instance at m_iHeadCursor from the buffer and returns the Object reference
-void* OrBuffer::Pop()
+void* OrE::ADT::Buffer::Pop()
 {
 	void* pObj = nullptr;
 	OrLock(&m_dwSemaphore);
@@ -54,7 +54,7 @@ void* OrBuffer::Pop()
 
 // ******************************************************************************** //
 // FIFO operation: removes the instance at m_iTailCursor and returns the object instance
-void* OrBuffer::Dequeue()
+void* OrE::ADT::Buffer::Dequeue()
 {
 	void* pObj = nullptr;
 	OrLock(&m_dwSemaphore);
@@ -69,7 +69,7 @@ void* OrBuffer::Dequeue()
 
 // ******************************************************************************** //
 // Speicher vergrößern
-void OrBuffer::Extend(int iAdditionalSize)
+void OrE::ADT::Buffer::Extend(int iAdditionalSize)
 {
 	OrLock(&m_dwSemaphore);
 
@@ -82,14 +82,14 @@ void OrBuffer::Extend(int iAdditionalSize)
 // ******************************************************************************** //
 // Iteration over the objects
 // Head element
-void* OrBuffer::GetFirst()
+void* OrE::ADT::Buffer::GetFirst()
 {
 	return IsEmpty() ? nullptr : m_Buffer[(m_iHeadCursor+m_iMax-1)%m_iMax];
 }
 
 // ******************************************************************************** //
 // Tail element
-void* OrBuffer::GetLast()
+void* OrE::ADT::Buffer::GetLast()
 {
 	return IsEmpty() ? nullptr : m_Buffer[m_iTailCursor];
 }

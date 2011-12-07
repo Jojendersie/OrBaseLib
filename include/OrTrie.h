@@ -1,6 +1,6 @@
 /***********************************************************************
 
-	OrTrie.h
+	Trie.h
 	========
 	Diese Datei ist Teil der Orkteck-Script-Engine.
 
@@ -16,19 +16,22 @@
 
 #pragma once
 
+namespace OrE {
+namespace ADT {
+
 // ******************************************************************** //
-class OrTrieString
+class TrieString
 {
 private:
 	bool m_bDel;
 
-	OrTrieString(dword _dwLen, char *_pcString):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(true)	{}
+	TrieString(dword _dwLen, char *_pcString):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(true)	{}
 public:
 	dword m_dwLen;
 	char* m_pcString;
 
-	OrTrieString(char *_pcString, dword _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
-	~OrTrieString();
+	TrieString(char *_pcString, dword _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
+	~TrieString();
 
 	// ******************************************************************** //
 	// Auxiliary function to create a copy of a subsrting.
@@ -36,34 +39,34 @@ public:
 	//	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
 	//	_dwTo - 0-indexed imdex of last char to copy (inclusive)
 	//			or 0xffffffff to copy the whole postfix begining in _dwFrom
-	OrTrieString* substr(const dword _dwFrom, dword _dwTo) const;
+	TrieString* substr(const dword _dwFrom, dword _dwTo) const;
 
 	// ******************************************************************** //
 	// Auxiliary function to estimate length of the prefix match
-	dword match(const OrTrieString* _pStr) const;
+	dword match(const TrieString* _pStr) const;
 };
 
 // ******************************************************************** //
-struct OrTrieNode
+struct TrieNode
 {
-	OrTrieNode*				pNext;
-	OrTrieNode*				pChild;
-	OrTrieString*			pSubString;		// Knotenbeschriftung
+	TrieNode*				pNext;
+	TrieNode*				pChild;
+	TrieString*				pSubString;		// Knotenbeschriftung
 
 	void*					pData;			// Beliebige Daten
 };
-typedef OrTrieNode* OrTrieNodeP;
+typedef TrieNode* TrieNodeP;
 
 // ******************************************************************** //
-class OrTrie
+class Trie
 {
 private:
 	// Oberster Knoten mit der leeren Zeichenkette
-	OrTrieNodeP	m_pFirstNode;
-	OrADTDeleteObjectCallbackP m_pDeleteCallback;
+	TrieNodeP	m_pFirstNode;
+	ADTDeleteObjectCallbackP m_pDeleteCallback;
 public:
 	// Konstruktor
-	OrTrie(): m_pDeleteCallback(0),m_pFirstNode(0)	{}
+	Trie(): m_pDeleteCallback(0),m_pFirstNode(0)	{}
 
 
 	// ******************************************************************** //
@@ -101,7 +104,7 @@ public:
 	//	return value is always 0 or 2).										//
 	//	2 - unknown failure													//
 	// ******************************************************************** //
-	int Add(OrTrieString _Name, void* _pData, bool _bOverrideData);
+	int Add(TrieString _Name, void* _pData, bool _bOverrideData);
 
 
 
@@ -129,7 +132,7 @@ public:
 	// Return: The found node or 0 if there is no such function.			//
 	// Note: Case sensitive!												//
 	// ******************************************************************** //
-	OrTrieNodeP Match(OrTrieString& _Name);
+	TrieNodeP Match(TrieString& _Name);
 
 
 	// ******************************************************************** //
@@ -146,7 +149,7 @@ public:
 	//	[in] _pcName - A Pointer to the name we are searching for.			//
 	// Note: Case sensitive!												//
 	// ******************************************************************** //
-	void Remove(OrTrieString& _Name, void* _pData);
+	void Remove(TrieString& _Name, void* _pData);
 
 
 	// ******************************************************************** //
@@ -162,7 +165,7 @@ public:
 	//	[in] _pDeleteCallback - Pointer to a function, which releases a		//
 	//	dataset.															//
 	// ******************************************************************** //
-	void SetDeleteCallback(OrADTDeleteObjectCallbackP _pDeleteCallback)
+	void SetDeleteCallback(ADTDeleteObjectCallbackP _pDeleteCallback)
 	{
 		m_pDeleteCallback = _pDeleteCallback;
 	}
@@ -184,10 +187,12 @@ public:
 	//	[in] _pNode - The current node to delete. Is set by recursion.		//
 	//	Don't declare this parameter. Correct use: ReleaseTrie();			// 
 	// ******************************************************************** //
-	void ReleaseTrie(OrTrieNodeP _pNode = 0);
+	void ReleaseTrie(TrieNodeP _pNode = 0);
 
-	~OrTrie()	{ReleaseTrie();}
+	~Trie()	{ReleaseTrie();}
 };
 
 
+}; // namespace ADT
+}; // namespace OrE
 // ******************************************************************** //

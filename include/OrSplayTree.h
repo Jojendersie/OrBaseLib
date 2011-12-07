@@ -19,19 +19,24 @@
 
 #pragma once
 
+namespace OrE {
+namespace ADT {
+
 // ******************************************************************************** //
 // Override abstract binary Tree
-class OrSplayTree : public OrBinaryTree
+class SplayTree : public BinaryTree
 {
 protected:
-	void Splay(OrBinaryTreeNodeP _pNode);					// Splay: reorganization through rotations (move the node to the root)
-	void SemiSplay(OrBinaryTreeNodeP _pNode);				// Semi-Splay: reorganization through rotations (half the path length to the root)
-	virtual OrBinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key and splay (searches for nearest element)
+	void Splay(BinaryTreeNodeP _pNode);					// Splay: reorganization through rotations (move the node to the root)
+	void SemiSplay(BinaryTreeNodeP _pNode);				// Semi-Splay: reorganization through rotations (half the path length to the root)
+	virtual BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key and splay (searches for nearest element)
 public:
-	OrSplayTree():OrBinaryTree()	{}
-	virtual OrBinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation with splay
+	SplayTree():BinaryTree()	{}
+	virtual BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation with splay
 	virtual void Delete(qword _qwKey) override;									// Standard operation delete
-	virtual void Delete(OrADTElementP _pNode) override;							// Delete operation without search (not much faster)
+	virtual void Delete(ADTElementP _pNode) override;							// Delete operation without search (not much faster)
 };
 
+}; // namespace ADT
+}; // namespace OrE
 // *************************************EOF**************************************** //

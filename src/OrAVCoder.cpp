@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+using namespace OrE::Algorithm;
 
 const dword OR_AVC_NUMVEC			= 5;
 const dword OR_AVC_OFFSET_BITS[]	= {4,7,10,12,14};
@@ -102,13 +103,13 @@ void OrKMPMatch(byte* _pText, byte* _pPattern, int _iTextLen, int _iPatternLen, 
 
 // ******************************************************************************** //
 // Constructor: initialisate huffman tree for 256+ characters (OR_AVC_NUMVEC Vector-Meta-Characters)
-OrAVCoder::OrAVCoder() : OrHuffmanTree_Splay(256+OR_AVC_NUMVEC)
+OrE::Algorithm::AVCoder::AVCoder() : HuffmanTree_Splay(256+OR_AVC_NUMVEC)
 {
-	//m_pDict = new OrTrie();
+	//m_pDict = new Trie();
 }
 
 // ******************************************************************************** //
-OrAVCoder::~OrAVCoder()
+OrE::Algorithm::AVCoder::~AVCoder()
 {
 	// Delete self created rescources
 	//delete m_pDict;
@@ -122,7 +123,7 @@ struct OrDictCharEntry
 
 // ******************************************************************************** //
 // Implements description at the beginning of the file
-bool OrAVCoder::EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest)
+bool OrE::Algorithm::AVCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest)
 {
 	// Create freelist dict for the first chars
 	OrDictCharEntry* pDict[256];						// The Dictionary of vectors
@@ -140,7 +141,7 @@ bool OrAVCoder::EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest)
 	// Encode each character
 	for(dword i=0; i<(dword)_iSize; ++i)
 	{
-		dword dwMaxVSize = OrMin(_iSize-i, OR_AVC_MAX_LENGTH);
+		dword dwMaxVSize = Math::Min(_iSize-i, OR_AVC_MAX_LENGTH);
 		if(dwNoCode) --dwNoCode;
 		else
 		{
@@ -160,9 +161,9 @@ bool OrAVCoder::EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest)
 				}
 				pCur = pCur->pNext;
 			}
-			//dwLength = OrMinu(dwLength, dwMaxVSize);
-			/*OrTrieString Cursor = OrTrieString((char*)&_pSrc[i], dwMaxVSize);
-			OrTrieNodeP pMatchV = m_pDict->Match(Cursor);
+			//dwLength = Minu(dwLength, dwMaxVSize);
+			/*TrieString Cursor = TrieString((char*)&_pSrc[i], dwMaxVSize);
+			TrieNodeP pMatchV = m_pDict->Match(Cursor);
 			dword dwLength = dwMaxVSize-Cursor.m_dwLen; //(dword)Cursor.m_pcString - (dword)&_pSrc[i];
 			dword dwOffset = pMatchV?(i + 1 - (dword)pMatchV->pData):1000000;*/
 			// There is the possibility, that the vector has even an longer match than in dict (could be used for 1024-1029 bytes (gaining 5 extrabytes)
@@ -250,7 +251,7 @@ SkipSingleChar:;
 //	_pSrc - A Bit-Buffer containing the file data.
 //	_pDest - Already allocated buffer with at least _iMaxSize bytes.
 //	_iMaxSize - Size of uncompressed file.
-int OrAVCoder::DecodeFile(OrBitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
+int OrE::Algorithm::AVCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
 {
 	dword c;
 	int i=-1;

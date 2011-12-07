@@ -1,7 +1,7 @@
 // ******************************************************************************** //
 // Implementing a priority queue (Fibonacci Heap).									//
 //																					//
-// OrHashMap:																		//
+// HashMap:																		//
 //	Insert()					O()											//
 //	Search()					O()											//
 //	Delete(Key)					O()											//
@@ -14,4 +14,9 @@
 
 #pragma once
 
+namespace OrE {
+namespace ADT {
+
+}; // namespace ADT
+}; // namespace OrE
 // *************************************EOF**************************************** //

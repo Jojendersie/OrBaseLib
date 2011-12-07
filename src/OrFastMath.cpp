@@ -14,9 +14,11 @@
 
 const float asm_one = 1.0f;
 
+//using namespace OrE::Math;
+
 // ******************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
-float OrArccos( float r )
+float OrE::Math::Arccos( float r )
 {
 	//float asm_half_pi = half_pi;
 	__asm {
@@ -35,7 +37,7 @@ float OrArccos( float r )
 
 // ******************************************************************** //
 // Berechnet den Arcussinus: arctan( r / -sqr( 1.0f - r * r ) )
-float OrArcsin( float r )
+float OrE::Math::Arcsin( float r )
 {
 	__asm {
 		fld r // r0 = r
@@ -51,7 +53,7 @@ float OrArcsin( float r )
 
 // ******************************************************************** //
 // Berechnet den Arcustangens: arctan( r )
-float OrArctan( float r )
+float OrE::Math::Arctan( float r )
 {
 	__asm {
 		fld r // r0 = r
@@ -62,7 +64,7 @@ float OrArctan( float r )
 
 // ******************************************************************** //
 // Berechnet den Sinus (Bogenmaß)
-float OrSin( float r )
+float OrE::Math::Sin( float r )
 {
 	__asm {
 		fld r // r0 = r
@@ -72,7 +74,7 @@ float OrSin( float r )
 
 // ******************************************************************** //
 // Berechnet den Kosinus (Bogenmaß)
-float OrCos( float r )
+float OrE::Math::Cos( float r )
 {
 	__asm {
 		fld r // r0 = r
@@ -82,7 +84,7 @@ float OrCos( float r )
 
 // ******************************************************************** //
 // Berechnet den Tangens (Bogenmaß)
-float OrTan( float r )
+float OrE::Math::Tan( float r )
 {
 	// return sin( r ) / cos( r );
 	__asm {
@@ -96,7 +98,7 @@ float OrTan( float r )
 
 // ******************************************************************** //
 // quadriert eine Zahl
-float OrSqr( float r )
+float OrE::Math::Sqr( float r )
 {
 	__asm {
 		fld r // r0 = r
@@ -107,7 +109,7 @@ float OrSqr( float r )
 
 // ******************************************************************** //
 // Zieht die Wurzel eines Floatwertes
-float OrSqrt( float r )
+float OrE::Math::Sqrt( float r )
 {
 	__asm {
 		fld r // r0 = r
@@ -118,7 +120,7 @@ float OrSqrt( float r )
 // ******************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
 // etwas sicherer, aber auch ungenauer und langsamer
-float OrInvSqrtEx( float r )
+float OrE::Math::InvSqrtEx( float r )
 {
 	const float asm_dot5 = 0.5f;
 	const float asm_1dot5 = 1.5f;
@@ -140,7 +142,7 @@ float OrInvSqrtEx( float r )
 
 // ******************************************************************** //
 // natürlicher Logarithmus
-float OrLn( float r )
+float OrE::Math::Ln( float r )
 {
 	const float asm_1_div_log2_e = 0.693147180559f;
 	const float asm_neg1_div_3 = -0.33333333333333333333333333333f;
@@ -177,7 +179,7 @@ float OrLn( float r )
 
 // ******************************************************************** //
 // Funktion für den gerundeten 2er Logarithmus (ganzzahl)
-int OrLog2(int iValue)
+int OrE::Math::Log2(int iValue)
 {
 	__asm bsf eax, iValue
 //	__asm mov dword ptr[iValue], eax
@@ -186,7 +188,7 @@ int OrLog2(int iValue)
 
 // ******************************************************************** //
 // Exponentialfunktion
-float __fastcall OrPow(float fBase, float fExponent)
+float __fastcall OrE::Math::Pow(float fBase, float fExponent)
 {
 	const float asm_1 = 1.0f;
 	__asm

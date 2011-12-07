@@ -2,62 +2,63 @@
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrBinaryTree.h"
 
+using namespace OrE::ADT;
 
 // ******************************************************************************** //
 // Standard search with a key
-OrBinaryTreeNodeP OrBinaryTree::Search(qword _qwKey)
+BinaryTreeNodeP OrE::ADT::BinaryTree::Search(qword _qwKey)
 {
 	// Use internal search, but do not return the node if it's just a "near by case".
-	OrBinaryTreeNodeP pN = SearchNode(_qwKey);
+	BinaryTreeNodeP pN = SearchNode(_qwKey);
 	return (pN && pN->qwKey == _qwKey)?pN:nullptr;
 }
 
 // ******************************************************************************** //
-OrBinaryTreeNodeP OrBinaryTree::GetFirst()
+BinaryTreeNodeP OrE::ADT::BinaryTree::GetFirst()
 {
 	return Min(m_pRoot);
 }
 
 // ******************************************************************************** //
-OrBinaryTreeNodeP OrBinaryTree::GetLast()
+BinaryTreeNodeP OrE::ADT::BinaryTree::GetLast()
 {
 	return Max(m_pRoot);
 }
 
 // ******************************************************************************** //
-OrBinaryTreeNodeP OrBinaryTree::GetNext(OrADTElementP _pCurrent)
+BinaryTreeNodeP OrE::ADT::BinaryTree::GetNext(ADTElementP _pCurrent)
 {
 	// Inorder traverse -> left site was seen before
-	if(OrBinaryTreeNodeP(_pCurrent)->pRight) return Min(OrBinaryTreeNodeP(_pCurrent)->pRight);
+	if(BinaryTreeNodeP(_pCurrent)->pRight) return Min(BinaryTreeNodeP(_pCurrent)->pRight);
 	else {
 		// With no right child we have to move to the parent. We could have seen this,
 		// if we are in the right branch now. Then we have to move much more upwards
 		// until we come back from an left branch.
-		while(IsRightChild(OrBinaryTreeNodeP(_pCurrent))) _pCurrent = OrBinaryTreeNodeP(_pCurrent)->pParent;
-		return _pCurrent?OrBinaryTreeNodeP(_pCurrent)->pParent:nullptr;
+		while(IsRightChild(BinaryTreeNodeP(_pCurrent))) _pCurrent = BinaryTreeNodeP(_pCurrent)->pParent;
+		return _pCurrent?BinaryTreeNodeP(_pCurrent)->pParent:nullptr;
 	}
 }
 
 // ******************************************************************************** //
-OrBinaryTreeNodeP OrBinaryTree::GetPrevious(OrADTElementP _pCurrent)
+BinaryTreeNodeP OrE::ADT::BinaryTree::GetPrevious(ADTElementP _pCurrent)
 {
 	// Inorder traverse -> right site was seen before
-	if(OrBinaryTreeNodeP(_pCurrent)->pLeft) return Max(OrBinaryTreeNodeP(_pCurrent)->pLeft);
+	if(BinaryTreeNodeP(_pCurrent)->pLeft) return Max(BinaryTreeNodeP(_pCurrent)->pLeft);
 	else {
-		while(IsLeftChild(OrBinaryTreeNodeP(_pCurrent))) _pCurrent = OrBinaryTreeNodeP(_pCurrent)->pParent;
-		return _pCurrent?OrBinaryTreeNodeP(_pCurrent)->pParent:nullptr;
+		while(IsLeftChild(BinaryTreeNodeP(_pCurrent))) _pCurrent = BinaryTreeNodeP(_pCurrent)->pParent;
+		return _pCurrent?BinaryTreeNodeP(_pCurrent)->pParent:nullptr;
 	}
 }
 
 
 // ******************************************************************************** //
 // Exchange two nodes
-void OrBinaryTree::Swap(OrBinaryTreeNodeP _pN1, OrBinaryTreeNodeP _pN2)
+void OrE::ADT::BinaryTree::Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2)
 {
 	// Save all pointers of one node in temporary swap memory.
-	OrBinaryTreeNodeP pP = _pN1->pParent;
-	OrBinaryTreeNodeP pL = _pN1->pLeft;
-	OrBinaryTreeNodeP pR = _pN1->pRight;
+	BinaryTreeNodeP pP = _pN1->pParent;
+	BinaryTreeNodeP pL = _pN1->pLeft;
+	BinaryTreeNodeP pR = _pN1->pRight;
 	// Copy nodepointers from one to the other.
 	_pN1->pParent = _pN2->pParent;
 	_pN1->pLeft = _pN2->pLeft;
@@ -70,7 +71,7 @@ void OrBinaryTree::Swap(OrBinaryTreeNodeP _pN1, OrBinaryTreeNodeP _pN2)
 
 // ******************************************************************************** //
 // Replaces the current node by its left child
-OrBinaryTreeNodeP OrBinaryTree::RotateRight(OrBinaryTreeNodeP _pNode)
+BinaryTreeNodeP OrE::ADT::BinaryTree::RotateRight(BinaryTreeNodeP _pNode)
 {
 	// Right rotation from node N
 	//     -->
@@ -82,7 +83,7 @@ OrBinaryTreeNodeP OrBinaryTree::RotateRight(OrBinaryTreeNodeP _pNode)
 	if(_pNode->pLeft)
 	{
 		// Just replace some pointers (look in the picture)
-		OrBinaryTreeNodeP pO = _pNode->pLeft;
+		BinaryTreeNodeP pO = _pNode->pLeft;
 		_pNode->pLeft = pO->pRight;
 		pO->pRight = _pNode;// change parents of all changed childs
 		pO->pParent = _pNode->pParent;
@@ -102,7 +103,7 @@ OrBinaryTreeNodeP OrBinaryTree::RotateRight(OrBinaryTreeNodeP _pNode)
 
 // ******************************************************************************** //
 // Replaces the current node by its right child
-OrBinaryTreeNodeP OrBinaryTree::RotateLeft(OrBinaryTreeNodeP _pNode)
+BinaryTreeNodeP OrE::ADT::BinaryTree::RotateLeft(BinaryTreeNodeP _pNode)
 {
 	// Left rotation from node N
 	//     <--
@@ -114,7 +115,7 @@ OrBinaryTreeNodeP OrBinaryTree::RotateLeft(OrBinaryTreeNodeP _pNode)
 	if(_pNode->pRight)
 	{
 		// Just replace some pointers (look in the picture)
-		OrBinaryTreeNodeP pO = _pNode->pRight;
+		BinaryTreeNodeP pO = _pNode->pRight;
 		_pNode->pRight = pO->pLeft;
 		pO->pLeft = _pNode;
 		pO->pParent = _pNode->pParent;
@@ -133,7 +134,7 @@ OrBinaryTreeNodeP OrBinaryTree::RotateLeft(OrBinaryTreeNodeP _pNode)
 }
 
 // ******************************************************************************** //
-void OrBinaryTree::DeleteAll(OrBinaryTreeNodeP _pNode)
+void OrE::ADT::BinaryTree::DeleteAll(BinaryTreeNodeP _pNode)
 {
 	// Redundant but not that worse
 	m_pRoot = nullptr;
@@ -147,7 +148,7 @@ void OrBinaryTree::DeleteAll(OrBinaryTreeNodeP _pNode)
 }
 
 // ******************************************************************************** //
-OrBinaryTree::~OrBinaryTree()
+OrE::ADT::BinaryTree::~BinaryTree()
 {
 	DeleteAll(m_pRoot);
 }

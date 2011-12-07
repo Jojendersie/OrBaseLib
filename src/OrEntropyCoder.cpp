@@ -6,7 +6,7 @@
 #include <string.h>
 
 // ******************************************************************************** //
-OrBitBufferStream::OrBitBufferStream(int _iSize)
+OrE::Algorithm::BitBufferStream::BitBufferStream(int _iSize)
 {
 	m_pBuffer = new unsigned char[_iSize];
 	memset(m_pBuffer, 0, _iSize);
@@ -14,7 +14,8 @@ OrBitBufferStream::OrBitBufferStream(int _iSize)
 	m_iBitPos = 0;
 	m_iBufferPos = 0;
 }
-OrBitBufferStream::OrBitBufferStream(void* _pBuffer, int _iSize)
+
+OrE::Algorithm::BitBufferStream::BitBufferStream(void* _pBuffer, int _iSize)
 {
 	m_pBuffer = new unsigned char[_iSize];
 	memcpy(m_pBuffer, _pBuffer, _iSize);
@@ -23,14 +24,14 @@ OrBitBufferStream::OrBitBufferStream(void* _pBuffer, int _iSize)
 	m_iBufferPos = 0;
 }
 
-OrBitBufferStream::~OrBitBufferStream()
+OrE::Algorithm::BitBufferStream::~BitBufferStream()
 {
 	delete[] m_pBuffer;
 }
 
 // ******************************************************************************** //
 // Writes one bit an moves to the next one. Returns false if buffer overflow.
-/*void OrBitBufferStream::SetBit(int _iBit)
+/*void OrE::Algorithm::BitBufferStream::SetBit(int _iBit)
 {
 	m_pBuffer[m_iBufferPos] |= _iBit<<(7-m_iBitPos++);
 	m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
@@ -39,7 +40,7 @@ OrBitBufferStream::~OrBitBufferStream()
 
 // ******************************************************************************** //
 // Returns the parity of the next bit and moves the cursors.
-int OrBitBufferStream::GetBit()
+int OrE::Algorithm::BitBufferStream::GetBit()
 {
 	if(m_iBufferPos>=m_iSize) return -1;
 	int iRet = (m_pBuffer[m_iBufferPos] >> (7-m_iBitPos++)) & 1;
@@ -50,7 +51,7 @@ int OrBitBufferStream::GetBit()
 
 // ******************************************************************************** //
 // Writes _iNum bits and move.
-bool OrBitBufferStream::SetBits(dword _dwBits, int _iNum)
+bool OrE::Algorithm::BitBufferStream::SetBits(dword _dwBits, int _iNum)
 {
 	// Buffer overflow?
 	if(((m_iBitPos+_iNum)>>3)+m_iBufferPos >= m_iSize) return false;
@@ -77,7 +78,7 @@ bool OrBitBufferStream::SetBits(dword _dwBits, int _iNum)
 
 // ******************************************************************************* //
 // Reads iNum bits and move
-bool OrBitBufferStream::GetBits(dword& _dwBits, int _iNum)
+bool OrE::Algorithm::BitBufferStream::GetBits(dword& _dwBits, int _iNum)
 {
 	// Buffer overflow?
 	if(((m_iBitPos+_iNum)>>3)+m_iBufferPos >= m_iSize) return false;
@@ -104,7 +105,7 @@ bool OrBitBufferStream::GetBits(dword& _dwBits, int _iNum)
 
 // ******************************************************************************* //
 // Encodes the given buffer into a new one, returns false if encoding is larger then the buffer
-bool OrEntropyCoder::EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest)
+bool OrE::Algorithm::EntropyCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest)
 {
 	bool bNoError = true;
 	dword c;
@@ -119,7 +120,7 @@ bool OrEntropyCoder::EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDe
 
 // ******************************************************************************* //
 // Decode into a buffer
-int OrEntropyCoder::DecodeFile(OrBitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
+int OrE::Algorithm::EntropyCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
 {
 	dword c;
 	int i=-1;

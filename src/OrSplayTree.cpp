@@ -3,9 +3,11 @@
 #include "..\include\OrBinaryTree.h"
 #include "..\include\OrSplayTree.h"
 
+using namespace OrE::ADT;
+
 // ******************************************************************************** //
 // Search with a key and splay (make sure the object with uiKey exists)
-void OrSplayTree::Splay(OrBinaryTreeNodeP _pNode)
+void OrE::ADT::SplayTree::Splay(BinaryTreeNodeP _pNode)
 {
 	while(_pNode->pParent)
 	{
@@ -35,7 +37,7 @@ void OrSplayTree::Splay(OrBinaryTreeNodeP _pNode)
 
 // ******************************************************************************** //
 // Semi-Splay: reorganization through rotations (half the path length to the root)
-void OrSplayTree::SemiSplay(OrBinaryTreeNodeP _pNode)
+void OrE::ADT::SplayTree::SemiSplay(BinaryTreeNodeP _pNode)
 {
 	_pNode = _pNode->pParent;
 	while(_pNode && _pNode->pParent)
@@ -69,10 +71,10 @@ void OrSplayTree::SemiSplay(OrBinaryTreeNodeP _pNode)
 
 // ******************************************************************************** //
 // Search with a key and splay
-OrBinaryTreeNodeP OrSplayTree::SearchNode(qword _qwKey)
+BinaryTreeNodeP OrE::ADT::SplayTree::SearchNode(qword _qwKey)
 {
 	// Search normal
-	OrBinaryTreeNodeP pCurrent = m_pRoot;
+	BinaryTreeNodeP pCurrent = m_pRoot;
 	while(pCurrent->qwKey!=_qwKey)
 	{
 		if(pCurrent->qwKey<_qwKey)	// Search in the right tree
@@ -92,21 +94,21 @@ OrBinaryTreeNodeP OrSplayTree::SearchNode(qword _qwKey)
 
 // ******************************************************************************** //
 // Insert operation with splay
-OrBinaryTreeNodeP OrSplayTree::Insert(void* _pObject, qword _qwKey)
+BinaryTreeNodeP OrE::ADT::SplayTree::Insert(void* _pObject, qword _qwKey)
 {
 	// Insert as usual
-	OrBinaryTreeNodeP pCurrent = m_pRoot;
+	BinaryTreeNodeP pCurrent = m_pRoot;
 	while(pCurrent->qwKey!=_qwKey)
 	{
 		if(pCurrent->qwKey<_qwKey)	// Search in the right tree
 		{
 			if(!pCurrent->pRight)	// Insert as right
-				pCurrent->pRight = new OrBinaryTreeNode(pCurrent, _pObject, _qwKey);
+				pCurrent->pRight = new BinaryTreeNode(pCurrent, _pObject, _qwKey);
 			else if(pCurrent->pRight->qwKey==_qwKey) pCurrent->pRight->AddRef();
 			pCurrent = pCurrent->pRight;
 		} else {			// Search in the left tree
 			if(!pCurrent->pLeft)	// Insert as left
-				pCurrent->pLeft = new OrBinaryTreeNode(pCurrent, _pObject, _qwKey);
+				pCurrent->pLeft = new BinaryTreeNode(pCurrent, _pObject, _qwKey);
 			else if(pCurrent->pLeft->qwKey==_qwKey) pCurrent->pLeft->AddRef();
 			pCurrent = pCurrent->pLeft;
 		}
@@ -119,14 +121,14 @@ OrBinaryTreeNodeP OrSplayTree::Insert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Standard operation delete
-void OrSplayTree::Delete(qword _qwKey)
+void OrE::ADT::SplayTree::Delete(qword _qwKey)
 {
 	// Search with splay (access)
 	SearchNode(_qwKey);
 	if((m_pRoot->qwKey == _qwKey) && (m_pRoot->Release() <= 0))
 	{
 		// Rebuild Tree without the node
-		OrBinaryTreeNodeP pDel = m_pRoot;
+		BinaryTreeNodeP pDel = m_pRoot;
 		m_pRoot = m_pRoot->pLeft;
 		m_pRoot->pParent = nullptr;
 		// Splay rightmost node
@@ -142,10 +144,10 @@ void OrSplayTree::Delete(qword _qwKey)
 
 // ******************************************************************************** //
 // Delete operation without search
-void OrSplayTree::Delete(OrADTElementP _pNode)
+void OrE::ADT::SplayTree::Delete(ADTElementP _pNode)
 {
 	if(!_pNode) return;
-	OrBinaryTreeNodeP pNode = (OrBinaryTreeNodeP)_pNode;
+	BinaryTreeNodeP pNode = (BinaryTreeNodeP)_pNode;
 	// Force Splay
 	Splay(pNode);
 	

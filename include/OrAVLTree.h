@@ -4,9 +4,9 @@
 // Type of a binary tree with worstcase costs of O(log n) for each Operation.		//
 // Idea: The height of the two subtrees of any node differs by at most one.			//
 //																					//
-// Using OrBinaryTreeNode.iParam to save the height of the subtree.					//
+// Using BinaryTreeNode.iParam to save the height of the subtree.					//
 //																					//
-// OrAVLTree:																		//
+// AVLTree:																			//
 //	Insert()					O(log n)											//
 //	Search()					O(log n)											//
 //	Delete(Key)					O(log n)											//
@@ -16,7 +16,7 @@
 //	GetNext()					O(log n)											//
 //	GetPrevious()				O(log n)											//
 //																					//
-// OrLinkedAVLTree:																	//
+// LinkedAVLTree:																	//
 //	Insert()					O(log n)											//
 //	Search()					O(log n)											//
 //	Delete(Key)					O(log n)											//
@@ -29,50 +29,55 @@
 
 #pragma once
 
+namespace OrE {
+namespace ADT {
+
 // ******************************************************************************** //
 // Override abstract binary Tree
-class OrAVLTree : public OrBinaryTree
+class AVLTree : public BinaryTree
 {
 protected:
-	void Rebalance(OrBinaryTreeNodeP _pNode);							// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
-	OrBinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key (searches for nearest element)
+	void Rebalance(BinaryTreeNodeP _pNode);							// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
+	BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key (searches for nearest element)
 public:
-	OrAVLTree():OrBinaryTree()	{}
-	OrBinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
+	AVLTree():BinaryTree()	{}
+	BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
 	void Delete(qword _qwKey) override;									// Standard operation delete
-	void Delete(OrADTElementP _pNode) override;							// Faster delete operation without search
+	void Delete(ADTElementP _pNode) override;							// Faster delete operation without search
 
-	static int GetHeight(OrBinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
+	static int GetHeight(BinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
 };
 
 // ******************************************************************************** //
 // Advanced node for binary trees (containing a double linked list)
-struct OrBinaryTreeLinkedNode: public OrBinaryTreeNode
+struct BinaryTreeLinkedNode: public BinaryTreeNode
 {
 	// Make nodes uneditable for all users except the trees. So the trees kann return
 	// references to non constant nodes without any (large) risk.
-	friend class OrLinkedAVLTree;
+	friend class LinkedAVLTree;
 private:
-	OrBinaryTreeLinkedNode* pNext;
-	OrBinaryTreeLinkedNode* pPrev;
+	BinaryTreeLinkedNode* pNext;
+	BinaryTreeLinkedNode* pPrev;
 
-	OrBinaryTreeLinkedNode(OrBinaryTreeLinkedNode* _pParent, void* _pObj, const qword& _qwKey):OrBinaryTreeNode(_pParent, _pObj, _qwKey), pNext(nullptr), pPrev(nullptr)	{}
+	BinaryTreeLinkedNode(BinaryTreeLinkedNode* _pParent, void* _pObj, const qword& _qwKey):BinaryTreeNode(_pParent, _pObj, _qwKey), pNext(nullptr), pPrev(nullptr)	{}
 };
-typedef OrBinaryTreeLinkedNode* OrBinaryTreeLinkedNodeP;
-typedef OrBinaryTreeLinkedNode const* OrBinaryTreeLinkedNodePC;
+typedef BinaryTreeLinkedNode* BinaryTreeLinkedNodeP;
+typedef BinaryTreeLinkedNode const* BinaryTreeLinkedNodePC;
 
 // ******************************************************************************** //
 // AVL Tree with more informations in the nodes (double linked list of the nodes)
 // Allows faster navigation by iterators.
-class OrLinkedAVLTree : public OrAVLTree
+class LinkedAVLTree : public AVLTree
 {
 public:
-	OrLinkedAVLTree():OrAVLTree()	{}
-	virtual OrBinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
-	virtual void Delete(OrADTElementP _pNode) override;								// Faster delete operation without search
+	LinkedAVLTree():AVLTree()	{}
+	virtual BinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
+	virtual void Delete(ADTElementP _pNode) override;								// Faster delete operation without search
 
-	virtual OrBinaryTreeLinkedNodeP GetNext(OrADTElementP _pCurrent) override;		// Fast inorder traverse
-	virtual OrBinaryTreeLinkedNodeP GetPrevious(OrADTElementP _pCurrent) override;	// Fast inorder traverse
+	virtual BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;		// Fast inorder traverse
+	virtual BinaryTreeLinkedNodeP GetPrevious(ADTElementP _pCurrent) override;	// Fast inorder traverse
 };
 
+}; // namespace ADT
+}; // namespace OrE
 // *************************************EOF**************************************** //

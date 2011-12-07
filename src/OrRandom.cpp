@@ -7,6 +7,9 @@
 #include "..\include\OrRandom.h"
 #include "..\include\OrFastMath.h"
 
+using namespace OrE::Math;
+using namespace OrE::Algorithm;
+
 // ******************************************************************************** //
 // Interne Zufallsgeneratorzahlen - Mersenne Twister
 const int       OR_MT_W		=	34;
@@ -28,7 +31,7 @@ dword g_dwMTIndex = 0;
 
 // ******************************************************************************** //
 // Initialisate Mersenne Twister
-void OrSRand(dword _dwSeed)
+void OrE::Algorithm::SRand(dword _dwSeed)
 {
 	// fill table
 	for(int i=0; i<OR_MT_N; i++)
@@ -62,7 +65,7 @@ void OrMTReCreate()
 
 // ******************************************************************************** //
 // Creates a integral random number between _iMin and _iMax (inclusive)
-int	OrRand(int _iMin, int _iMax)
+int	OrE::Algorithm::Rand(int _iMin, int _iMax)
 {
 	dword y;
 
@@ -82,7 +85,7 @@ int	OrRand(int _iMin, int _iMax)
 
 // ******************************************************************************** //
 // Creates a random number between 0 and 1 (inclusive)
-float OrRand()
+float OrE::Algorithm::Rand()
 {
 	dword y;
 
@@ -101,23 +104,23 @@ float OrRand()
 
 // ******************************************************************************** //
 // Creates a random number of an exponential distribution [0,+Inf]
-float OrExpRand(float _fLambda)
+float OrE::Algorithm::ExpRand(float _fLambda)
 {
-	return -OrLn(OrRand()+0.000000000000000000000000000000000000000000001f)/_fLambda;
+	return -Ln(Rand()+0.000000000000000000000000000000000000000000001f)/_fLambda;
 }	
 
 // ******************************************************************************** //
 // Creates a random number of a normal distribution [-Inf,+Inf]
-float OrStdNormRand(float _fMean, float _fVariance)
+float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 {
 	// Slow but stable, there are faster ways
-	return _fMean + _fVariance*OrSqrt(OrMaxf(0.0f,-2.0f*OrLn(OrRand()+0.000000000000000000000000000000000000000000001f))) * OrCos(f2Pi*OrRand());
+	return _fMean + _fVariance*Sqrt(Maxf(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
 }
 
 // ******************************************************************************** //
 // Creates a random number of a normal distribution [-Inf,+Inf]
-float OrNormRand()
+float OrE::Algorithm::NormRand()
 {
 	// Slow but stable, there are faster ways
-	return OrSqrt(OrMaxf(0.0f,-2.0f*OrLn(OrRand()+0.000000000000000000000000000000000000000000001f))) * OrCos(f2Pi*OrRand());
+	return Sqrt(Maxf(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
 }

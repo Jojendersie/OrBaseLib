@@ -6,17 +6,21 @@
 #include <stdlib.h>
 #include <string.h>
 
+using namespace OrE::Algorithm;
+using namespace OrE::ADT;
+using namespace OrE::Math;
+
 // ******************************************************************************** //
 // erstellt einen 32 Bit-Hashwert aus einem Datensatz
-dword OrCreateHash32(const void* pData, const int iSize)
+dword OrE::Algorithm::CreateHash32(const void* pData, const int iSize)
 {
-	qword qwHash = OrCreateHash64(pData, iSize);
+	qword qwHash = CreateHash64(pData, iSize);
 	return ((dword)qwHash) ^ ((dword)(qwHash >> 32));
 }
 
 // ******************************************************************************** //
 // erstellt einen 64 Bit-Hashwert aus einem Datensatz
-qword OrCreateHash64(const void* pData, const int iSize)
+qword OrE::Algorithm::CreateHash64(const void* pData, const int iSize)
 {
 	qword qwHash = 0x84222325cbf29ce4ULL;
 
@@ -34,14 +38,14 @@ qword OrCreateHash64(const void* pData, const int iSize)
 
 // ******************************************************************************** //
 // erstellt einen 32 Bit-Hashwert aus einem nullterminierten Datensatz
-dword OrCreateHash32(const void* pData)
+dword OrE::Algorithm::CreateHash32(const void* pData)
 {
-	return ((dword)OrCreateHash64(pData)) ^ (((dword)OrCreateHash64(pData) >> 16) >> 16);
+	return ((dword)CreateHash64(pData)) ^ (((dword)CreateHash64(pData) >> 16) >> 16);
 }
 
 // ******************************************************************************** //
 // erstellt einen 64 Bit-Hashwert aus einem nullterminierten Datensatz
-qword OrCreateHash64(const void* pData)
+qword OrE::Algorithm::CreateHash64(const void* pData)
 {
 	qword qwHash = 0x84222325cbf29ce4ULL;
 
@@ -59,7 +63,7 @@ qword OrCreateHash64(const void* pData)
 // ******************************************************************************** //
 // CRC - Fehlerüberprüfender Hash
 // Erzeugt einen CRC Hash mit beliebigen Polynom bis zum Grad 31
-dword OrCreateCRCHash(dword dwPolynom, void* pData, dword dwSize)
+dword OrE::Algorithm::CreateCRCHash(dword dwPolynom, void* pData, dword dwSize)
 {
 	dword dwCRC = 0;	// Das Schieberegister
 	for(dword i=0; i<dwSize*8; ++i)
@@ -109,7 +113,7 @@ static dword OrStringHash(const char* _pcString)
 }
 
 // ******************************************************************************** //
-void OrHashMap::RecursiveReAdd(OrBucket* _pBucket)
+void OrE::ADT::HashMap::RecursiveReAdd(Bucket* _pBucket)
 {
 	// During resize it is nessecary to re-add every thing into the new copie
 	if(_pBucket->pObject) Insert(_pBucket->pObject, _pBucket->qwKey);	// If the key contains a char* pointer it is unique and not touched through reinsertion
@@ -119,12 +123,12 @@ void OrHashMap::RecursiveReAdd(OrBucket* _pBucket)
 
 // ******************************************************************************** //
 // Initialisierung mit Startgröße
-OrHashMap::OrHashMap(dword _dwSize, OrHashMapMode _Mode)
+OrE::ADT::HashMap::HashMap(dword _dwSize, HashMapMode _Mode)
 {
 	// Einfach nur Speicher bestellen für eine leere Tabelle
-	m_pBuckets = (OrBucket*)malloc(sizeof(OrBucket)*_dwSize);
+	m_pBuckets = (Bucket*)malloc(sizeof(Bucket)*_dwSize);
 	if(!m_pBuckets) return;	// TODO report error
-	memset(m_pBuckets, 0, sizeof(OrBucket)*_dwSize);
+	memset(m_pBuckets, 0, sizeof(Bucket)*_dwSize);
 	// Statische Größen setzen
 	m_dwSize = _dwSize;
 	m_dwNumElements = 0;
@@ -133,10 +137,10 @@ OrHashMap::OrHashMap(dword _dwSize, OrHashMapMode _Mode)
 
 // ******************************************************************** //
 // Daten löschen
-void OrHashMap::RemoveData(OrBucketP _pBucket)
+void OrE::ADT::HashMap::RemoveData(BucketP _pBucket)
 {
 	if(m_pDeleteCallback && _pBucket->pObject) m_pDeleteCallback(_pBucket->pObject);
-	if(m_Mode & OR_HM_USE_STRING_MODE)
+	if(m_Mode & HM_USE_STRING_MODE)
 	{
 		char* pcString = (char*)(_pBucket->qwKey>>32);
 		if(pcString) free(pcString);
@@ -145,7 +149,7 @@ void OrHashMap::RemoveData(OrBucketP _pBucket)
 
 // ******************************************************************** //
 // Freigeben alles Ressourcen
-void OrHashMap::RecursiveRelease(OrBucketP _pBucket)
+void OrE::ADT::HashMap::RecursiveRelease(BucketP _pBucket)
 {
 	// Daten löschen
 	RemoveData(_pBucket);
@@ -157,7 +161,7 @@ void OrHashMap::RecursiveRelease(OrBucketP _pBucket)
 }
 
 // ******************************************************************************** //
-OrHashMap::~OrHashMap()
+OrE::ADT::HashMap::~HashMap()
 {
 	// Alle Eimer freigeben. Dazu alle Daten traversieren und löschen.
 	for(dword i=0;i<m_dwSize;++i)
@@ -175,16 +179,15 @@ OrHashMap::~OrHashMap()
 }
 
 // ******************************************************************************** //
-// TODO
 // Tabelle neu erzeugen und alle Elemente neu hinzufügen
-void OrHashMap::Resize(const dword _dwSize)
+void OrE::ADT::HashMap::Resize(const dword _dwSize)
 {
-	OrBucket* pOldList = m_pBuckets;
+	Bucket* pOldList = m_pBuckets;
 	dword dwOldSize = m_dwSize;
 	// Einfach nur Speicher bestellen für eine leere Tabelle
-	m_pBuckets = (OrBucket*)malloc(sizeof(OrBucket)*_dwSize);
+	m_pBuckets = (Bucket*)malloc(sizeof(Bucket)*_dwSize);
 	if(!m_pBuckets) return;	// TODO report error
-	memset(m_pBuckets, 0, sizeof(OrBucket)*_dwSize);
+	memset(m_pBuckets, 0, sizeof(Bucket)*_dwSize);
 	// Statische Größen setzen
 	m_dwSize = _dwSize;
 	m_dwNumElements = 0;
@@ -208,23 +211,23 @@ void OrHashMap::Resize(const dword _dwSize)
 
 // ******************************************************************************** //
 // Checks if a resize is required in the current mode
-void OrHashMap::TestSize()
+void OrE::ADT::HashMap::TestSize()
 {
 	// Zur Verbesserung der Performance dynamisch erweitern (verdoppeln?)
 	switch(m_Mode & 3)
 	{
 		// Langsames Wachstum (sqrt); Mittlere Kollisionszahl; Häufiges Resize
-		case OR_HM_PREFER_SIZE: 
+		case HM_PREFER_SIZE: 
 			if(m_dwNumElements >= m_dwSize*3)
-				Resize(m_dwSize+3*(dword)OrSqrt((float)m_dwSize));
+				Resize(m_dwSize+3*(dword)Sqrt((float)m_dwSize));
 			break;
 		// Mittleres Wachstum (sqrt/linear); Mittlere Kollisionszahl; Häufiges Resize
-		case OR_HM_RESIZE_MODERATE:
+		case HM_RESIZE_MODERATE:
 			if(m_dwNumElements >= (dword)(m_dwSize*1.5f))
-				Resize(m_dwSize+OrMaxu(6*(dword)OrSqrt((float)m_dwSize), 128));
+				Resize(m_dwSize+Maxu(6*(dword)Sqrt((float)m_dwSize), 128));
 			break;
 		// Schnelles Wachstum (exponentiell); Geringe Kollisionszahl; Seltenes Resize
-		case OR_HM_PREFER_PERFORMANCE:
+		case HM_PREFER_PERFORMANCE:
 			if(m_dwNumElements >= m_dwSize)
 				Resize((dword)((m_dwSize+100)*1.5f));
 			break;
@@ -232,9 +235,8 @@ void OrHashMap::TestSize()
 }
 
 // ******************************************************************************** //
-// TODO
 // Standard operation insert
-OrADTElementP OrHashMap::Insert(void* _pObject, qword _qwKey)
+ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 {
 #ifdef DEBUG
 	if(!m_pBuckets) return nullptr;		// TODO report error
@@ -245,14 +247,14 @@ OrADTElementP OrHashMap::Insert(void* _pObject, qword _qwKey)
 
 	TestSize();
 
-	if(m_Mode & OR_HM_USE_STRING_MODE)
+	if(m_Mode & HM_USE_STRING_MODE)
 		_qwKey &= 0xffffffff;
 	
 	// Neues Element einsortieren
 	dword dwHash = _qwKey%m_dwSize;
 	if(m_pBuckets[dwHash].pObject)
 	{
-		OrBucket* pBucket = &m_pBuckets[dwHash];
+		Bucket* pBucket = &m_pBuckets[dwHash];
 		while(true)
 		{
 #ifdef _DEBUG
@@ -261,10 +263,10 @@ OrADTElementP OrHashMap::Insert(void* _pObject, qword _qwKey)
 			// Schlüssel vollständig verlgeichen -> Baumsuche
 			if(_qwKey < pBucket->qwKey)
 				if(pBucket->pLeft) pBucket = pBucket->pLeft;	// Traversieren
-				else {pBucket->pLeft = new OrBucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pLeft;}
+				else {pBucket->pLeft = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pLeft;}
 			else if(_qwKey > pBucket->qwKey)
 				if(pBucket->pRight) pBucket = pBucket->pRight;	// Traversieren
-				else {pBucket->pRight = new OrBucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pRight;}
+				else {pBucket->pRight = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pRight;}
 			else {pBucket->AddRef(); return pBucket;}			// Mehr oder weniger ein Fehler, aber der Datensatz existiert schon (wird überschrieben)
 		}
 	} else
@@ -278,32 +280,32 @@ OrADTElementP OrHashMap::Insert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Standard operation delete
-void OrHashMap::Delete(qword _qwKey)
+void OrE::ADT::HashMap::Delete(qword _qwKey)
 {
 	Delete(Search(_qwKey));
 }
 
 // ******************************************************************************** //
 // Faster operation delete (no search)
-void OrHashMap::Delete(OrADTElementP _pElement)
+void OrE::ADT::HashMap::Delete(ADTElementP _pElement)
 {
 	if(!_pElement) return;
 
 	// Repariere Baum
 	// Wenn _pElement Kinder hat suche nach einer Ersetzung und lösche
 	// stattdessen diesen Knoten.
-	if((OrBucketP(_pElement))->pLeft)
+	if((BucketP(_pElement))->pLeft)
 	{
 		// Es existiert ein linker Teilbaum -> maximum davon erhält Baumeigenschaft
-		OrBucketP pBuck = (OrBucketP(_pElement))->pLeft;
+		BucketP pBuck = (BucketP(_pElement))->pLeft;
 		while(pBuck->pRight) pBuck = pBuck->pRight;
 		_pElement->pObject = pBuck->pObject;
 		_pElement->qwKey = pBuck->qwKey;
 		Delete(pBuck);
-	} else if((OrBucketP(_pElement))->pRight)
+	} else if((BucketP(_pElement))->pRight)
 	{
 		// Es existiert ein rechter Teilbaum -> minimum davon erhält Baumeigenschaft
-		OrBucketP pBuck = (OrBucketP(_pElement))->pRight;
+		BucketP pBuck = (BucketP(_pElement))->pRight;
 		while(pBuck->pLeft) pBuck = pBuck->pLeft;
 		_pElement->pObject = pBuck->pObject;
 		_pElement->qwKey = pBuck->qwKey;
@@ -311,24 +313,24 @@ void OrHashMap::Delete(OrADTElementP _pElement)
 	} else
 	{
 		// Listenelement?
-		if(!(OrBucketP(_pElement))->pParent)
+		if(!(BucketP(_pElement))->pParent)
 		{
 			// Daten löschen
-			RemoveData((OrBucketP)_pElement);
+			RemoveData((BucketP)_pElement);
 			// Inhalt auf 0 setzen
 			_pElement->pObject = nullptr;
 			_pElement->qwKey = 0;
 		} else
 		{
 			// Referencen auf diesen Teil des Eimers entfernen
-			if(OrBucketP(_pElement)->pParent->pLeft == _pElement)
-				OrBucketP(_pElement)->pParent->pLeft = nullptr;
+			if(BucketP(_pElement)->pParent->pLeft == _pElement)
+				BucketP(_pElement)->pParent->pLeft = nullptr;
 			else
-				OrBucketP(_pElement)->pParent->pRight = nullptr;
+				BucketP(_pElement)->pParent->pRight = nullptr;
 
 			// Das Element hat keine Kinder mehr (und wenn dann würden wir die Referenz verlieren)
 			// Daher kann es gefahrlos mit dem Standard freigegeben werden
-			RecursiveRelease((OrBucketP)_pElement);
+			RecursiveRelease((BucketP)_pElement);
 		}
 		// Jetzt ist es definitiv weg
 		--m_dwNumElements;
@@ -337,11 +339,11 @@ void OrHashMap::Delete(OrADTElementP _pElement)
 
 // ******************************************************************************** //
 // Standard search with a key
-OrADTElementP OrHashMap::Search(qword _qwKey)
+ADTElementP OrE::ADT::HashMap::Search(qword _qwKey)
 {
 	// Listeneintrag?
-	dword dwHash = (m_Mode & OR_HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
-	OrBucket* pBucket = &m_pBuckets[dwHash];
+	dword dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
+	Bucket* pBucket = &m_pBuckets[dwHash];
 	if(!pBucket->pObject) return 0;
 	// Baumsuche
 	while(pBucket)
@@ -357,9 +359,9 @@ OrADTElementP OrHashMap::Search(qword _qwKey)
 // TODO equality for data is other then in the upper date (last step) -> everything reimplement
 // String-Mode functions
 // insert using strings
-OrADTElementP OrHashMap::Insert(void* _pObject, const char* _pcKey)
+ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 {
-	if(!(m_Mode & OR_HM_USE_STRING_MODE)) return nullptr;
+	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
 	#ifdef DEBUG
 	if(!m_pBuckets) return nullptr;		// TODO report error
 	int iCollision = 0;
@@ -372,7 +374,7 @@ OrADTElementP OrHashMap::Insert(void* _pObject, const char* _pcKey)
 	dword dwHash = dwH%m_dwSize;
 	if(m_pBuckets[dwHash].pObject)
 	{
-		OrBucket* pBucket = &m_pBuckets[dwHash];
+		Bucket* pBucket = &m_pBuckets[dwHash];
 		bool bAdded = false;
 		while(!bAdded)
 		{
@@ -389,16 +391,16 @@ OrADTElementP OrHashMap::Insert(void* _pObject, const char* _pcKey)
 			{
 				if(pBucket->pRight)
 					pBucket = pBucket->pRight;
-				else {pBucket->pRight = new OrBucket(_pObject, 0, pBucket); pBucket = pBucket->pRight; bAdded = true;}
+				else {pBucket->pRight = new Bucket(_pObject, 0, pBucket); pBucket = pBucket->pRight; bAdded = true;}
 			} else
 			{
 				int iCmp = strcmp(_pcKey,pcBucketString);
 				if(iCmp < 0)
 					if(pBucket->pLeft) pBucket = pBucket->pLeft;	// Traversieren
-					else {pBucket->pLeft = new OrBucket(_pObject, 0, pBucket); pBucket = pBucket->pLeft; bAdded = true;}
+					else {pBucket->pLeft = new Bucket(_pObject, 0, pBucket); pBucket = pBucket->pLeft; bAdded = true;}
 				else if(iCmp > 0)
 					if(pBucket->pRight) pBucket = pBucket->pRight;	// Traversieren
-					else {pBucket->pRight = new OrBucket(_pObject, 0, pBucket); pBucket = pBucket->pRight; bAdded = true;}
+					else {pBucket->pRight = new Bucket(_pObject, 0, pBucket); pBucket = pBucket->pRight; bAdded = true;}
 				else {pBucket->AddRef(); return pBucket;}			// Mehr oder weniger ein Fehler, aber der Datensatz existiert schon (wird überschrieben)
 			}
 		}
@@ -429,20 +431,20 @@ OrADTElementP OrHashMap::Insert(void* _pObject, const char* _pcKey)
 
 // ******************************************************************************** //
 // Standard operation delete for strings
-void OrHashMap::Delete(const char* _pcKey)
+void OrE::ADT::HashMap::Delete(const char* _pcKey)
 {
-	if(m_Mode & OR_HM_USE_STRING_MODE)
+	if(m_Mode & HM_USE_STRING_MODE)
 		Delete(Search(_pcKey));
 }
 
 // ******************************************************************************** //
 // search using strings
-OrADTElementP OrHashMap::Search(const char* _pcKey)
+ADTElementP OrE::ADT::HashMap::Search(const char* _pcKey)
 {
-	if(!(m_Mode & OR_HM_USE_STRING_MODE)) return nullptr;
+	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
 	// Listeneintrag?
 	dword dwHash = OrStringHash(_pcKey)%m_dwSize;
-	OrBucket* pBucket = &m_pBuckets[dwHash];
+	Bucket* pBucket = &m_pBuckets[dwHash];
 	if(!pBucket->pObject) return 0;
 	// Baumsuche
 	while(pBucket)
@@ -460,13 +462,13 @@ OrADTElementP OrHashMap::Search(const char* _pcKey)
 }
 
 // ******************************************************************************** //
-OrADTElementP OrHashMap::GetFirst()
+ADTElementP OrE::ADT::HashMap::GetFirst()
 {
 	for(dword i=0;i<m_dwSize;++i)
 		// Wenn die Stelle im Array leer ist einfach überspringen.
 		if(m_pBuckets[i].pObject)
 		{
-			OrBucket* pBuck = m_pBuckets+i;
+			Bucket* pBuck = m_pBuckets+i;
 			// Kleinstes Element
 			while(pBuck->pLeft) pBuck = pBuck->pLeft;
 			return pBuck;
@@ -476,13 +478,13 @@ OrADTElementP OrHashMap::GetFirst()
 }
 
 // ******************************************************************************** //
-OrADTElementP OrHashMap::GetLast()
+ADTElementP OrE::ADT::HashMap::GetLast()
 {
 	for(dword i=m_dwSize-1;i>=0;--i)
 		// Wenn die Stelle im Array leer ist einfach überspringen.
 		if(m_pBuckets[i].pObject)
 		{
-			OrBucketP pBuck = m_pBuckets+i;
+			BucketP pBuck = m_pBuckets+i;
 			// Größtes Element
 			while(pBuck->pRight) pBuck = pBuck->pRight;
 			return pBuck;
@@ -492,9 +494,9 @@ OrADTElementP OrHashMap::GetLast()
 }
 
 // ******************************************************************************** //
-OrADTElementP OrHashMap::GetNext(OrADTElementP _pCurrent)
+ADTElementP OrE::ADT::HashMap::GetNext(ADTElementP _pCurrent)
 {
-	OrBucketP pBuck = (OrBucketP)_pCurrent;
+	BucketP pBuck = (BucketP)_pCurrent;
 	// In Eimern Baumnavigation
 	// Inorder traverse -> left site was seen before
 	if(pBuck->pRight) 
@@ -527,9 +529,9 @@ ListSearch:
 }
 
 // ******************************************************************************** //
-OrADTElementP OrHashMap::GetPrevious(OrADTElementP _pCurrent)
+ADTElementP OrE::ADT::HashMap::GetPrevious(ADTElementP _pCurrent)
 {
-	OrBucketP pBuck = (OrBucketP)_pCurrent;
+	BucketP pBuck = (BucketP)_pCurrent;
 	// In Eimern Baumnavigation
 	// Inorder traverse -> left site was seen before
 	if(pBuck->pLeft) 

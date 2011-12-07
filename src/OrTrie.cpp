@@ -1,6 +1,6 @@
 /*************************************************************************
 
-	OrTrie.cpp
+	Trie.cpp
 	==========
 	Diese Datei ist Teil der Orkteck-Script-Engine.
 
@@ -27,6 +27,9 @@
 #include "..\Include\OrTrie.h"
 #include "..\Include\OrFastMath.h"
 
+using namespace OrE::ADT;
+using namespace OrE::Math;
+
 // ******************************************************************** //
 // Robust auxiliary function to check if *p1 != *p2
 /*bool strneq(const char* p1, const char* p2)
@@ -38,7 +41,7 @@
 }*/
 
 // ******************************************************************** //
-OrTrieString::~OrTrieString()	{if(m_bDel) free(m_pcString);}
+OrE::ADT::TrieString::~TrieString()	{if(m_bDel) free(m_pcString);}
 
 // ******************************************************************** //
 // Auxiliary function to create a copy of a subsrting.
@@ -46,7 +49,7 @@ OrTrieString::~OrTrieString()	{if(m_bDel) free(m_pcString);}
 //	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
 //	_dwTo - 0-indexed imdex of last char to copy (inclusive)
 //			or 0xffffffff to copy the whole postfix begining in _dwFrom
-OrTrieString* OrTrieString::substr(const dword _dwFrom, dword _dwTo) const
+TrieString* OrE::ADT::TrieString::substr(const dword _dwFrom, dword _dwTo) const
 {
 	// Spezialfall: String bis zum Ende
 	if(_dwTo == 0xffffffff) _dwTo = m_dwLen?(m_dwLen-1):0;
@@ -57,25 +60,25 @@ OrTrieString* OrTrieString::substr(const dword _dwFrom, dword _dwTo) const
 	for(;i<=_dwTo;++i)
 		pcRet[i-_dwFrom] = m_pcString[i];
 
-	return new OrTrieString(_dwTo+1-_dwFrom, pcRet);
+	return new TrieString(_dwTo+1-_dwFrom, pcRet);
 }
 
 // ******************************************************************** //
-dword OrTrieString::match(const OrTrieString* _pStr) const
+dword OrE::ADT::TrieString::match(const TrieString* _pStr) const
 {
-	dword dwMax = OrMinu(_pStr->m_dwLen, m_dwLen);
+	dword dwMax = Minu(_pStr->m_dwLen, m_dwLen);
 	dword i;
 	for(i=0; (i<dwMax) && (_pStr->m_pcString[i]==m_pcString[i]); ++i);
 	return i;
 }
 
 // ******************************************************************** //
-int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
+int OrE::ADT::Trie::Add(TrieString _Name, void* _pData, bool _bOverrideData)
 {
 	// Name merken, falls Fehler
-	//OrTrieString* pName = _pName;
+	//TrieString* pName = _pName;
 	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
-	OrTrieNodeP pCurrent = m_pFirstNode;
+	TrieNodeP pCurrent = m_pFirstNode;
 	while(pCurrent)
 	{
 		// Strings vergleichen
@@ -95,9 +98,9 @@ int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
 				if(pCurrent->pSubString->m_dwLen > dwEqual)
 				{
 					// Neuen zwischenknoten erstellen.
-					OrTrieNodeP pNew = new OrTrieNode;
+					TrieNodeP pNew = new TrieNode;
 					// String zerteilen und alten löschen
-					OrTrieString* pTemp = pCurrent->pSubString;
+					TrieString* pTemp = pCurrent->pSubString;
 					pNew->pSubString = pTemp->substr(dwEqual, 0xffffffff);
 					pCurrent->pSubString = pTemp->substr(0, dwI);
 					delete pTemp;
@@ -136,7 +139,7 @@ int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
 					_Name.m_dwLen -= dwEqual;
 				} else {
 					// Fall 3: Baum zu Ende -> neues Kind mit Restnamen.
-					pCurrent->pChild = new OrTrieNode;
+					pCurrent->pChild = new TrieNode;
 					pCurrent->pChild->pSubString = _Name.substr(dwEqual, 0xffffffff);
 					pCurrent->pChild->pChild = 0;
 					pCurrent->pChild->pNext = 0;
@@ -149,15 +152,15 @@ int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
 				// den anderen mit Rest des Namens.
 
 				// Neue Kindsknoten erstellem
-				OrTrieNodeP pNew_Name = new OrTrieNode;
-				OrTrieNodeP pNew_Old = new OrTrieNode;
+				TrieNodeP pNew_Name = new TrieNode;
+				TrieNodeP pNew_Old = new TrieNode;
 				pNew_Name->pSubString = _Name.substr(dwEqual, 0xffffffff);
 				pNew_Name->pChild = 0;
 				pNew_Name->pNext = pNew_Old;
 				pNew_Name->pData = _pData;
 
 				// String zerteilen und alten löschen
-				OrTrieString* pTemp = pCurrent->pSubString;
+				TrieString* pTemp = pCurrent->pSubString;
 				pNew_Old->pChild = pCurrent->pChild;
 				pNew_Old->pSubString = pTemp->substr(dwEqual, 0xffffffff);
 				pNew_Old->pNext = 0;
@@ -176,7 +179,7 @@ int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
 				pCurrent = pCurrent->pNext;
 			else {
 				// Baum zu Ende -> neuer Unterknoten.
-				pCurrent->pNext = new OrTrieNode;
+				pCurrent->pNext = new TrieNode;
 				pCurrent->pNext->pSubString = _Name.substr(0, 0xffffffff);
 				pCurrent->pNext->pChild = 0;
 				pCurrent->pNext->pNext = 0;
@@ -189,7 +192,7 @@ int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
 	if(!m_pFirstNode)
 	{
 		// Baum noch leer -> ersten Kindsknoten anlegen
-		m_pFirstNode = new OrTrieNode;
+		m_pFirstNode = new TrieNode;
 		m_pFirstNode->pSubString = _Name.substr(0, 0xffffffff);
 		m_pFirstNode->pChild = 0;
 		m_pFirstNode->pNext = 0;
@@ -201,14 +204,14 @@ int OrTrie::Add(OrTrieString _Name, void* _pData, bool _bOverrideData)
 }
 
 // ******************************************************************** //
-OrTrieNodeP OrTrie::Match(OrTrieString& _Name)
+TrieNodeP OrE::ADT::Trie::Match(TrieString& _Name)
 {
 	// Da größtmögliche Teilfunktion gesucht einen Merker einführen.
-	OrTrieNodeP pLastPossibleData = 0;
+	TrieNodeP pLastPossibleData = 0;
 	char* pcLastPossibleName = _Name.m_pcString;
 	dword dwLastPossibleLen = _Name.m_dwLen;
 	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
-	OrTrieNodeP pCurrent = m_pFirstNode;
+	TrieNodeP pCurrent = m_pFirstNode;
 	while(pCurrent)
 	{
 		// Strings vergleichen
@@ -256,7 +259,7 @@ OrTrieNodeP OrTrie::Match(OrTrieString& _Name)
 }
 
 // ******************************************************************** //
-void OrTrie::Remove(OrTrieString& _Name, void* _pData)
+void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 {
 	// Daten freigeben egal was passiert. Die Speicheradresse benötigen wir
 	// aber noch zum vergleichen.
@@ -271,8 +274,8 @@ void OrTrie::Remove(OrTrieString& _Name, void* _pData)
 	// Am Ende alle auf dem Stack befindlichen Knoten löschen.
 
 	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
-	OrTrieNodeP pCurrent = m_pFirstNode;
-	OrTrieNodeP pPrevious = nullptr;
+	TrieNodeP pCurrent = m_pFirstNode;
+	TrieNodeP pPrevious = nullptr;
 	while(pCurrent)
 	{
 		// Strings vergleichen
@@ -358,7 +361,7 @@ void OrTrie::Remove(OrTrieString& _Name, void* _pData)
 }
 
 // ******************************************************************** //
-void OrTrie::ReleaseTrie(OrTrieNodeP _pNode)
+void OrE::ADT::Trie::ReleaseTrie(TrieNodeP _pNode)
 {
 	// Rekursionsstart im obersten Knoten
 	if(!_pNode)

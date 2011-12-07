@@ -13,59 +13,68 @@
 
 #pragma once
 
+namespace OrE {
+	namespace Algorithm {
+		class HuffmanTree_Splay;
+		class HuffmanTree_SemiSplay;
+	};	// Algorithm
+namespace ADT {
+
 // ******************************************************************************** //
 // Simple node for all binary trees
-struct OrBinaryTreeNode: public OrADTElement
+struct BinaryTreeNode: public ADTElement
 {
 	// Make nodes uneditable for all users except the trees. So the trees kann return
 	// references to non constant nodes without any (large) risk.
-	friend class OrBinaryTree;
-	friend class OrSplayTree;
-	friend class OrAVLTree;
-	friend class OrLinkedAVLTree;
-	friend class OrHuffmanTree_Splay;
-	friend class OrHuffmanTree_SemiSplay;
+	friend class BinaryTree;
+	friend class SplayTree;
+	friend class AVLTree;
+	friend class LinkedAVLTree;
+	friend class Algorithm::HuffmanTree_Splay;
+	friend class Algorithm::HuffmanTree_SemiSplay;
 protected:
-	OrBinaryTreeNode* pLeft;
-	OrBinaryTreeNode* pRight;
-	OrBinaryTreeNode* pParent;
+	BinaryTreeNode* pLeft;
+	BinaryTreeNode* pRight;
+	BinaryTreeNode* pParent;
 	int iParam;					// Statistic information to mark nodes (usecase differs on application)
 
-	OrBinaryTreeNode(OrBinaryTreeNode* _pParent, void* _pObj, const qword& _qwKey):OrADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr),pParent(_pParent)	{}
+	BinaryTreeNode(BinaryTreeNode* _pParent, void* _pObj, const qword& _qwKey):ADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr),pParent(_pParent)	{}
 };
-typedef OrBinaryTreeNode* OrBinaryTreeNodeP;
-typedef OrBinaryTreeNode const * OrBinaryTreeNodePC;
+typedef BinaryTreeNode* BinaryTreeNodeP;
+typedef BinaryTreeNode const * BinaryTreeNodePC;
 
 // ******************************************************************************** //
 // Interface class for all ADT Trees
-class OrBinaryTree: public OrADT
+class BinaryTree: public ADT
 {
 private:
-	void DeleteAll(OrBinaryTreeNodeP _pNode);
+	void DeleteAll(BinaryTreeNodeP _pNode);
 protected:
-	OrBinaryTreeNodeP m_pRoot;
-	virtual OrBinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
+	BinaryTreeNodeP m_pRoot;
+	virtual BinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
 
-	void Swap(OrBinaryTreeNodeP _pN1, OrBinaryTreeNodeP _pN2);		// Exchange two nodes
-	OrBinaryTreeNodeP RotateRight(OrBinaryTreeNodeP _pNode);		// Replaces the current node by its left child. Does nothing if there is no child.
-	OrBinaryTreeNodeP RotateLeft(OrBinaryTreeNodeP _pNode);			// Replaces the current node by its right child. Does nothing if there is no child.
+	void Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2);		// Exchange two nodes
+	BinaryTreeNodeP RotateRight(BinaryTreeNodeP _pNode);		// Replaces the current node by its left child. Does nothing if there is no child.
+	BinaryTreeNodeP RotateLeft(BinaryTreeNodeP _pNode);			// Replaces the current node by its right child. Does nothing if there is no child.
 public:
-	OrBinaryTree():m_pRoot(nullptr) {}
-	~OrBinaryTree();
+	BinaryTree():m_pRoot(nullptr) {}
+	~BinaryTree();
 
 	// Only implement the navigation the rest is overwritten by special trees
-	virtual OrBinaryTreeNodeP Search(qword _qwKey) override;					// Standard search with a key
-	virtual OrBinaryTreeNodeP GetFirst() override;
-	virtual OrBinaryTreeNodeP GetLast() override;
-	virtual OrBinaryTreeNodeP GetNext(OrADTElementP _pCurrent) override;		// Slow inorder traverse
-	virtual OrBinaryTreeNodeP GetPrevious(OrADTElementP _pCurrent) override;	// Slow inorder traverse
+	virtual BinaryTreeNodeP Search(qword _qwKey) override;					// Standard search with a key
+	virtual BinaryTreeNodeP GetFirst() override;
+	virtual BinaryTreeNodeP GetLast() override;
+	virtual BinaryTreeNodeP GetNext(ADTElementP _pCurrent) override;		// Slow inorder traverse
+	virtual BinaryTreeNodeP GetPrevious(ADTElementP _pCurrent) override;	// Slow inorder traverse
 
-	static bool IsLeftChild(OrBinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pLeft==_pNode:false;}
-	static bool IsRightChild(OrBinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pRight==_pNode:false;}
-	static OrBinaryTreeNodeP Min(OrBinaryTreeNodeP _pNode)	{while(_pNode->pLeft) _pNode = _pNode->pLeft; return _pNode;}
-	static OrBinaryTreeNodeP Max(OrBinaryTreeNodeP _pNode)	{while(_pNode->pRight) _pNode = _pNode->pRight; return _pNode;}
+	static bool IsLeftChild(BinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pLeft==_pNode:false;}
+	static bool IsRightChild(BinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pRight==_pNode:false;}
+	static BinaryTreeNodeP Min(BinaryTreeNodeP _pNode)	{while(_pNode->pLeft) _pNode = _pNode->pLeft; return _pNode;}
+	static BinaryTreeNodeP Max(BinaryTreeNodeP _pNode)	{while(_pNode->pRight) _pNode = _pNode->pRight; return _pNode;}
 };
-typedef OrBinaryTree* OrBinaryTreeP;
+typedef BinaryTree* BinaryTreeP;
 
 
+}; // namespace ADT
+}; // namespace OrE
 // *************************************EOF**************************************** //

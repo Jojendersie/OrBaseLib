@@ -7,6 +7,8 @@
 
 #pragma once
 
+namespace OrE {
+namespace Algorithm {
 // ******************************************************************************** //
 // Coding relavant data structs. Defining an alphabet with an arbitary number of	//
 // characters																		//
@@ -32,7 +34,7 @@ public:
 
 // ******************************************************************************** //
 // A littel Streamer buffer to make bitoperations easyer
-class OrBitBufferStream
+class BitBufferStream
 {
 private:
 	int m_iBufferPos;			// Position in full bytes
@@ -40,9 +42,9 @@ private:
 	int m_iSize;				// Number of bytes in the buffer
 	unsigned char* m_pBuffer;
 public:
-	OrBitBufferStream(int _iSize);
-	OrBitBufferStream(void* _pBuffer, int _iSize);
-	~OrBitBufferStream();
+	BitBufferStream(int _iSize);
+	BitBufferStream(void* _pBuffer, int _iSize);
+	~BitBufferStream();
 
 	inline void SetBit(int _iBit)		// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
 	{
@@ -67,80 +69,82 @@ public:
 	int GetUsedSize()			{return m_iBufferPos+(m_iBitPos?1:0);}
 	bool IsEof()				{return m_iBufferPos>=m_iSize;}
 };
-typedef OrBitBufferStream* OrBitBufferStreamP;
+typedef BitBufferStream* BitBufferStreamP;
 
 // ******************************************************************************** //
 // Interface for entropy coder
-class OrEntropyCoder
+class EntropyCoder
 {
 protected:
-	virtual bool Encode(dword _c, OrBitBufferStreamP _pDest) = 0;
-	virtual bool Decode(OrBitBufferStreamP _pSrc, dword& _Dest) = 0;
+	virtual bool Encode(dword _c, BitBufferStreamP _pDest) = 0;
+	virtual bool Decode(BitBufferStreamP _pSrc, dword& _Dest) = 0;
 
 public:
 	// Encodes the given buffer into a new one, returns false if encoding is larger then the buffer
-	virtual bool EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest);
+	virtual bool EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest);
 
 	// Decode into a buffer
 	// Parameter:
 	//	_pSrc - A Bit-Buffer containing the file data.
 	//	_pDest - Already allocated buffer with at least _iMaxSize bytes.
 	//	_iMaxSize - Size of uncompressed file.
-	virtual int DecodeFile(OrBitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize);
+	virtual int DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize);
 };
 
 // ******************************************************************************** //
 // Adaptive variante 1: using splay trees
-class OrHuffmanTree_Splay : public OrSplayTree, public OrEntropyCoder
+class HuffmanTree_Splay : public OrE::ADT::SplayTree, public EntropyCoder
 {
 private:
 	// Build an AVL Tree recursive so that the characters are leaf orientated data.
 	// inclusive the character _uiFrom
 	// exclusive _uiRange
-	OrBinaryTreeNodeP Init(unsigned int _uiFrom, unsigned int _uiRange);
+	OrE::ADT::BinaryTreeNodeP Init(unsigned int _uiFrom, unsigned int _uiRange);
 protected:
-	bool Encode(dword _c, OrBitBufferStreamP _pDest) override;
-	bool Decode(OrBitBufferStreamP _pSrc, dword& _Dest) override;
+	bool Encode(dword _c, BitBufferStreamP _pDest) override;
+	bool Decode(BitBufferStreamP _pSrc, dword& _Dest) override;
 public:
-	OrHuffmanTree_Splay(unsigned int _uiNumCharacters);
+	HuffmanTree_Splay(unsigned int _uiNumCharacters);
 };
-typedef OrHuffmanTree_Splay* OrHuffmanTree_SplayP;
+typedef HuffmanTree_Splay* HuffmanTree_SplayP;
 
 // ******************************************************************************** //
 // Adaptive variante 2: using semi-splay trees
-class OrHuffmanTree_SemiSplay : public OrHuffmanTree_Splay
+class HuffmanTree_SemiSplay : public HuffmanTree_Splay
 {
 protected:
-	bool Encode(dword _c, OrBitBufferStreamP _pDest) override;
-	bool Decode(OrBitBufferStreamP _pSrc, dword& _Dest) override;
+	bool Encode(dword _c, BitBufferStreamP _pDest) override;
+	bool Decode(BitBufferStreamP _pSrc, dword& _Dest) override;
 public:
-	OrHuffmanTree_SemiSplay(unsigned int _uiNumCharacters) : OrHuffmanTree_Splay(_uiNumCharacters)	{}
+	HuffmanTree_SemiSplay(unsigned int _uiNumCharacters) : HuffmanTree_Splay(_uiNumCharacters)	{}
 };
-typedef OrHuffmanTree_SemiSplay* OrHuffmanTree_SemiSplayP;
+typedef HuffmanTree_SemiSplay* HuffmanTree_SemiSplayP;
 
 
 // ******************************************************************************** //
 // Combiened dictionary+entropy coding (AVC - adaptive vector codec)
-class OrTrie;
-class OrAVCoder : public OrHuffmanTree_Splay
+class Trie;
+class AVCoder : public HuffmanTree_Splay
 {
 private:
-	//OrTrie* m_pDict;		// The Dictionary of vectors
+	//Trie* m_pDict;		// The Dictionary of vectors
 
 public:
-	OrAVCoder();
-	~OrAVCoder();
+	AVCoder();
+	~AVCoder();
 
 	// Encodes the given buffer into a new one, returns false if encoding is larger then the buffer
-	bool EncodeFile(byte* _pSrc, int _iSize, OrBitBufferStreamP _pDest) override;
+	bool EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest) override;
 
 	// Decode into a buffer
 	// Parameter:
 	//	_pSrc - A Bit-Buffer containing the file data.
 	//	_pDest - Already allocated buffer with at least _iMaxSize bytes.
 	//	_iMaxSize - Size of uncompressed file.
-	int DecodeFile(OrBitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize) override;
+	int DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize) override;
 };
-typedef OrAVCoder* OrAVCoderP;
+typedef AVCoder* AVCoderP;
 
+}; // namespace OrE
+}; // namespace Algorithm
 // *************************************EOF**************************************** //

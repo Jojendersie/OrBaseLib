@@ -4,6 +4,9 @@
 #include "..\include\OrSplayTree.h"
 #include "..\include\OrHuffman.h"
 
+using namespace OrE::ADT;
+using namespace OrE::Algorithm;
+using namespace OrE::Math;
 //#include <iostream>
 
 // Used to guarantee leaf storage without double using of a character
@@ -13,22 +16,22 @@
 // Build an AVL Tree recursive so that the characters are leaf orientated data.
 // inclusive the character _uiFrom
 // exclusive _uiRange
-OrBinaryTreeNodeP OrHuffmanTree_Splay::Init(unsigned int _uiFrom, unsigned int _uiRange)
+BinaryTreeNodeP OrE::Algorithm::HuffmanTree_Splay::Init(unsigned int _uiFrom, unsigned int _uiRange)
 {
 	// End of recursion
 	if(_uiRange==1)
 	{
 	//	std::cout << _uiFrom*NODE_VALUE_FACTOR << "  ";
-		return new OrBinaryTreeNode(nullptr, nullptr, _uiFrom*NODE_VALUE_FACTOR);
+		return new BinaryTreeNode(nullptr, nullptr, _uiFrom*NODE_VALUE_FACTOR);
 	}
 	
 	// Build two subtrees with Num/2 nodes each
-	OrBinaryTreeNodeP pLeft  = Init(_uiFrom,			_uiRange/2);
-	OrBinaryTreeNodeP pRight = Init(_uiFrom+_uiRange/2, _uiRange-_uiRange/2);
+	BinaryTreeNodeP pLeft  = Init(_uiFrom,			_uiRange/2);
+	BinaryTreeNodeP pRight = Init(_uiFrom+_uiRange/2, _uiRange-_uiRange/2);
 
 	// Merge
 //	std::cout << (pLeft->qwKey + pRight->qwKey)/2 << "  ";
-	OrBinaryTreeNodeP pNew = new OrBinaryTreeNode(nullptr, nullptr, (Min(pRight)->qwKey+Max(pLeft)->qwKey)/2/*_uiFrom*NODE_VALUE_FACTOR + _uiRange-1*/);
+	BinaryTreeNodeP pNew = new BinaryTreeNode(nullptr, nullptr, (Min(pRight)->qwKey+Max(pLeft)->qwKey)/2/*_uiFrom*NODE_VALUE_FACTOR + _uiRange-1*/);
 	pLeft->pParent = pNew;	pNew->pLeft = pLeft;
 	pRight->pParent = pNew;	pNew->pRight = pRight;
 	return pNew;
@@ -36,7 +39,7 @@ OrBinaryTreeNodeP OrHuffmanTree_Splay::Init(unsigned int _uiFrom, unsigned int _
 
 // ******************************************************************************** //
 //void OrHSPDeleteObjectCallback(void* _pObject)	{}	// Do nothing the character is saved in the key
-OrHuffmanTree_Splay::OrHuffmanTree_Splay(unsigned int _uiNumCharacters):OrSplayTree()
+OrE::Algorithm::HuffmanTree_Splay::HuffmanTree_Splay(unsigned int _uiNumCharacters):SplayTree()
 {
 	//m_pDeleteCallback = OrHSPDeleteObjectCallback;
 
@@ -45,13 +48,13 @@ OrHuffmanTree_Splay::OrHuffmanTree_Splay(unsigned int _uiNumCharacters):OrSplayT
 }
 
 // ******************************************************************************** //
-bool OrHuffmanTree_Splay::Encode(dword _c, OrBitBufferStreamP _pDest)
+bool OrE::Algorithm::HuffmanTree_Splay::Encode(dword _c, BitBufferStreamP _pDest)
 {
 	// Stop if we could use more bits than remaining buffer.
 	if(_pDest->GetUsedSize()+70 > _pDest->GetSize()) return false;
 
 	// Search the char in the tree and write down the path.
-	OrBinaryTreeNodeP pCurrent = m_pRoot;
+	BinaryTreeNodeP pCurrent = m_pRoot;
 	qword qwKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=qwKey)
 	{
@@ -73,11 +76,11 @@ bool OrHuffmanTree_Splay::Encode(dword _c, OrBitBufferStreamP _pDest)
 }
 
 // ******************************************************************************** //
-bool OrHuffmanTree_Splay::Decode(OrBitBufferStreamP _pSrc, dword& _Dest)
+bool OrE::Algorithm::HuffmanTree_Splay::Decode(BitBufferStreamP _pSrc, dword& _Dest)
 {
 	// Run through the tree. The bits are showing the way.
 	int iBit = -1;//_pSrc->GetBit();
-	OrBinaryTreeNodeP pCurrent = m_pRoot;
+	BinaryTreeNodeP pCurrent = m_pRoot;
 	while(pCurrent->pLeft || pCurrent->pRight)
 	{
 		iBit = _pSrc->GetBit();
@@ -99,13 +102,13 @@ bool OrHuffmanTree_Splay::Decode(OrBitBufferStreamP _pSrc, dword& _Dest)
 
 
 // ******************************************************************************** //
-bool OrHuffmanTree_SemiSplay::Encode(dword _c, OrBitBufferStreamP _pDest)
+bool OrE::Algorithm::HuffmanTree_SemiSplay::Encode(dword _c, BitBufferStreamP _pDest)
 {
 	// Stop if we could use more bits than remaining buffer.
 	if(_pDest->GetUsedSize()+70 > _pDest->GetSize()) return false;
 
 	// Search the char in the tree and write down the path.
-	OrBinaryTreeNodeP pCurrent = m_pRoot;
+	BinaryTreeNodeP pCurrent = m_pRoot;
 	unsigned __int64 uiKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=uiKey)
 	{
@@ -126,11 +129,11 @@ bool OrHuffmanTree_SemiSplay::Encode(dword _c, OrBitBufferStreamP _pDest)
 }
 
 // ******************************************************************************** //
-bool OrHuffmanTree_SemiSplay::Decode(OrBitBufferStreamP _pSrc, dword& _Dest)
+bool OrE::Algorithm::HuffmanTree_SemiSplay::Decode(BitBufferStreamP _pSrc, dword& _Dest)
 {
 	// Run through the tree. The bits are showing the way.
 	int iBit = -1;//_pSrc->GetBit();
-	OrBinaryTreeNodeP pCurrent = m_pRoot;
+	BinaryTreeNodeP pCurrent = m_pRoot;
 	while(pCurrent->pLeft || pCurrent->pRight)
 	{
 		iBit = _pSrc->GetBit();
