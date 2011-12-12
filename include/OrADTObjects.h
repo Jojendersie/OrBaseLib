@@ -35,7 +35,7 @@ public:
 	ADT():m_pDeleteCallback(nullptr)	{}
 	virtual ADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
 	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
-	virtual void Delete(ADTElementP _pElement) = 0;				// Sometimes faster operation delete (no search)
+	virtual void Delete(ADTElementP _pElement) = 0;					// Sometimes faster operation delete (no search)
 	virtual ADTElementP Search(qword _qwKey) = 0;					// Standard search with a key
 
 	virtual ADTElementP GetFirst() = 0;
