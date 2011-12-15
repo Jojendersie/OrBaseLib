@@ -1,13 +1,18 @@
-/*************************************************************************
-
-	OrFastMath.cpp
-	==============
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Schnelle Mathematische Funktionen
-
-*************************************************************************/
+// ******************************************************************************** //
+// OrFastMath.cpp																	//
+// ==============																	//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrFastMath.h"
@@ -16,7 +21,7 @@ const float asm_one = 1.0f;
 
 //using namespace OrE::Math;
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
 float OrE::Math::Arccos( float r )
 {
@@ -35,7 +40,7 @@ float OrE::Math::Arccos( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Berechnet den Arcussinus: arctan( r / -sqr( 1.0f - r * r ) )
 float OrE::Math::Arcsin( float r )
 {
@@ -51,7 +56,7 @@ float OrE::Math::Arcsin( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Berechnet den Arcustangens: arctan( r )
 float OrE::Math::Arctan( float r )
 {
@@ -62,7 +67,7 @@ float OrE::Math::Arctan( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Berechnet den Sinus (Bogenmaß)
 float OrE::Math::Sin( float r )
 {
@@ -72,7 +77,7 @@ float OrE::Math::Sin( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Berechnet den Kosinus (Bogenmaß)
 float OrE::Math::Cos( float r )
 {
@@ -82,7 +87,7 @@ float OrE::Math::Cos( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Berechnet den Tangens (Bogenmaß)
 float OrE::Math::Tan( float r )
 {
@@ -96,7 +101,7 @@ float OrE::Math::Tan( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // quadriert eine Zahl
 float OrE::Math::Sqr( float r )
 {
@@ -107,7 +112,7 @@ float OrE::Math::Sqr( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes
 float OrE::Math::Sqrt( float r )
 {
@@ -117,7 +122,7 @@ float OrE::Math::Sqrt( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
 // etwas sicherer, aber auch ungenauer und langsamer
 float OrE::Math::InvSqrtEx( float r )
@@ -140,7 +145,7 @@ float OrE::Math::InvSqrtEx( float r )
 	} // returns r0
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // natürlicher Logarithmus
 float OrE::Math::Ln( float r )
 {
@@ -177,7 +182,7 @@ float OrE::Math::Ln( float r )
 	}
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Funktion für den gerundeten 2er Logarithmus (ganzzahl)
 int OrE::Math::Log2(int iValue)
 {
@@ -186,7 +191,7 @@ int OrE::Math::Log2(int iValue)
 //	return iValue;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Exponentialfunktion
 float __fastcall OrE::Math::Pow(float fBase, float fExponent)
 {
@@ -214,4 +219,4 @@ float __fastcall OrE::Math::Pow(float fBase, float fExponent)
 }
 
 
-// ******************************************************************** //
+// *************************************EOF**************************************** //

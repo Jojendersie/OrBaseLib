@@ -1,4 +1,19 @@
 // ******************************************************************************** //
+// OrHuffman.h																		//
+// ===========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+//																					//
+// ******************************************************************************** //
 // Huffman-Codec with different trees (Entropie coding)								//
 //																					//
 // Two adaptive approaches with self organisating search trees. Do not need an		//
@@ -9,28 +24,6 @@
 
 namespace OrE {
 namespace Algorithm {
-// ******************************************************************************** //
-// Coding relavant data structs. Defining an alphabet with an arbitary number of	//
-// characters																		//
-/*class OrChar : public OrHashObject
-{
-public:
-	// This is more or less just a structure -> no private
-	unsigned int uiChar;
-	unsigned __int64 GetHash()	{return uiChar;}
-	OrChar(unsigned int _uiC):uiChar(_uiC)	{}
-};*/
-
-/*class OrAlphabet
-{
-private:
-	int m_iNumChars;
-	//OrChar* m_pChars;
-public:
-	OrAlphabet(int _iSize)	{m_iNumChars = _iSize;}
-	int GetNumChars() const	{return m_iNumChars;}
-	//OrChar GetChar(int i)	{return m_pChars[i];}
-};*/
 
 // ******************************************************************************** //
 // A littel Streamer buffer to make bitoperations easyer
@@ -46,14 +39,14 @@ public:
 	BitBufferStream(void* _pBuffer, int _iSize);
 	~BitBufferStream();
 
-	inline void SetBit(int _iBit)		// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
+	inline void SetBit(int _iBit)			// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
 	{
 		m_pBuffer[m_iBufferPos] |= _iBit<<(7-m_iBitPos++);
 		m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
 		m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
 	}
 
-	inline int GetBit()					// Returns the parity of the next bit and moves the cursors.
+	inline int GetBit()						// Returns the parity of the next bit and moves the cursors.
 	{
 		if(m_iBufferPos>=m_iSize) return -1;
 		int iRet = (m_pBuffer[m_iBufferPos] >> (7-m_iBitPos++)) & 1;
@@ -84,7 +77,7 @@ public:
 	virtual bool EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest);
 
 	// Decode into a buffer
-	// Parameter:
+	// Input:
 	//	_pSrc - A Bit-Buffer containing the file data.
 	//	_pDest - Already allocated buffer with at least _iMaxSize bytes.
 	//	_iMaxSize - Size of uncompressed file.

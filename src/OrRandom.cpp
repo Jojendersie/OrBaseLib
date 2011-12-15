@@ -1,4 +1,18 @@
 // ******************************************************************************** //
+// OrRandom.cpp																		//
+// ============																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 // Implmentation of different pseudo-random generators.								//
 //																					//
 // ******************************************************************************** //
@@ -124,3 +138,5 @@ float OrE::Algorithm::NormRand()
 	// Slow but stable, there are faster ways
 	return Sqrt(Maxf(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
 }
+
+// *************************************EOF**************************************** //

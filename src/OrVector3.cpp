@@ -1,15 +1,18 @@
-/*************************************************************************
-
-	Vector3.cpp
-	=============
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Rechnen mit 3D-Vektoren
-	
-*************************************************************************/
-
-// Die Operatoren und Funktionen sind direkt per Inline-Funktion implementiert.
+// ******************************************************************************** //
+// OrVector3.cpp																	//
+// =============																	//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
 #include "..\Include\OrTypeDef.h"
 #include "..\Include\OrFastMath.h"
@@ -21,14 +24,14 @@
 using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Aus Abhängigkeitsgründen separieren
 Vector3 OrE::Math::Vec3Random()
 {
 	return Vec3NormalizeEx(Vector3(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 3D-Positionsvektor transformieren
 Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
 									   const Matrix& m,
@@ -52,7 +55,7 @@ Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
 	return vResult;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 3D-Positionsvektor transformieren
 Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
 									   const Matrix& m)
@@ -69,7 +72,7 @@ Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
 	return vResult / w;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 3D-Richtungsvektor transformieren
 Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 										  const Matrix& m)
@@ -84,7 +87,7 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 	return vResult;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 3D-Richtungsvektor transformieren
 /*Vector3 OrE::Math::Vec3TransformNormal(const Vector3& v,
 									   const Matrix& m)
@@ -103,7 +106,7 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 		   * fLength;
 }*/
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 3D-Richtungsvektor transformieren (transponierte invertierte Matrix wird übergeben)
 /*Vector3 OrE::Math::Vec3TransformNormal_TranspInv(const Vector3& v,
 												 const Matrix& m)
@@ -119,4 +122,4 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 		   * fLength;
 }*/
 
-// ******************************************************************** //
+// *************************************EOF**************************************** //

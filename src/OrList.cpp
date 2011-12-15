@@ -1,3 +1,19 @@
+// ******************************************************************************** //
+// OrList.cpp																		//
+// ==========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
+
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrList.h"
@@ -43,6 +59,35 @@ ListNodeP OrE::ADT::List::Insert(void* _pObject, qword _qwKey)
 }
 
 // ******************************************************************************** //
+// Insert and allow each key only to occure one time (insert sorted as well)
+ListNodeP OrE::ADT::List::SetInsert(void* _pObject, qword _qwKey)
+{
+	// Search
+	ListNodeP pCurrent = m_pFirst;
+	while(pCurrent && pCurrent->qwKey < _qwKey) pCurrent = pCurrent->pRight;
+
+	// List empty or the new element has to be the last one
+	if(!pCurrent) return Insert(_pObject, _qwKey);
+
+	// If the current element has the same key do nothing (set property)
+	if(pCurrent->qwKey != _qwKey)
+	{
+		// Insert left of the current elmenent (which has a larger key value)
+		// Create Node
+		ListNodeP pNew = new ListNode(_pObject, _qwKey);
+		if(pCurrent->pLeft) pCurrent->pLeft->pRight = pNew;
+		else m_pFirst = pNew;
+		pNew->pLeft = pCurrent->pLeft;
+		pNew->pRight = pCurrent;
+		pCurrent->pLeft = pNew;
+		return pNew;
+	}
+
+	pCurrent->AddRef();
+	return pCurrent;
+}
+
+// ******************************************************************************** //
 // Slow delete with search
 void OrE::ADT::List::Delete(qword _qwKey)
 {
@@ -59,16 +104,19 @@ void OrE::ADT::List::Delete(qword _qwKey)
 // Fast delete
 void OrE::ADT::List::Delete(ADTElementP _pElement)
 {
-	// Left neighbor or if this is the first element the m_pFirst element has to be corrected
-	if(ListNodeP(_pElement)->pLeft) ListNodeP(_pElement)->pLeft->pRight = ListNodeP(_pElement)->pRight;
-	else m_pFirst = ListNodeP(_pElement)->pRight;
-	// The same on the right side
-	if(ListNodeP(_pElement)->pRight) ListNodeP(_pElement)->pRight->pLeft = ListNodeP(_pElement)->pLeft;
-	else m_pLast = ListNodeP(_pElement)->pLeft;
+	if(_pElement->Release()<=0)
+	{
+		// Left neighbor or if this is the first element the m_pFirst element has to be corrected
+		if(ListNodeP(_pElement)->pLeft) ListNodeP(_pElement)->pLeft->pRight = ListNodeP(_pElement)->pRight;
+		else m_pFirst = ListNodeP(_pElement)->pRight;
+		// The same on the right side
+		if(ListNodeP(_pElement)->pRight) ListNodeP(_pElement)->pRight->pLeft = ListNodeP(_pElement)->pLeft;
+		else m_pLast = ListNodeP(_pElement)->pLeft;
 
-	// Release resources ...
-	if(m_pDeleteCallback) m_pDeleteCallback(_pElement->pObject);
-	delete _pElement;
+		// Release resources ...
+		if(m_pDeleteCallback) m_pDeleteCallback(_pElement->pObject);
+		delete _pElement;
+	}
 }
 
 // ******************************************************************************** //
@@ -81,4 +129,4 @@ ListNodeP OrE::ADT::List::Search(qword _qwKey)
 	return nullptr;
 }
 
-// ******************************************************************************** //
+// *************************************EOF**************************************** //

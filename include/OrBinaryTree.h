@@ -1,5 +1,20 @@
 // ******************************************************************************** //
-// Baseclass for trees. Implements a subset of the ADT interface.					//
+// OrBinaryTree.h																	//
+// ==============																	//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+//																					//
+// ******************************************************************************** //
+// Base class for trees. Implements a subset of the ADT interface.					//
 //																					//
 //	Insert()					abstract											//
 //	Search()					O(h)	h - height of tree							//
@@ -13,7 +28,9 @@
 
 #pragma once
 
+
 namespace OrE {
+	// Predeclarations need to assure safe access
 	namespace Algorithm {
 		class HuffmanTree_Splay;
 		class HuffmanTree_SemiSplay;
@@ -67,8 +84,8 @@ public:
 	virtual BinaryTreeNodeP GetNext(ADTElementP _pCurrent) override;		// Slow inorder traverse
 	virtual BinaryTreeNodeP GetPrevious(ADTElementP _pCurrent) override;	// Slow inorder traverse
 
-	static bool IsLeftChild(BinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pLeft==_pNode:false;}
-	static bool IsRightChild(BinaryTreeNodePC _pNode)		{return _pNode->pParent?_pNode->pParent->pRight==_pNode:false;}
+	static bool IsLeftChild(BinaryTreeNodePC _pNode)	{return _pNode->pParent?_pNode->pParent->pLeft==_pNode:false;}
+	static bool IsRightChild(BinaryTreeNodePC _pNode)	{return _pNode->pParent?_pNode->pParent->pRight==_pNode:false;}
 	static BinaryTreeNodeP Min(BinaryTreeNodeP _pNode)	{while(_pNode->pLeft) _pNode = _pNode->pLeft; return _pNode;}
 	static BinaryTreeNodeP Max(BinaryTreeNodeP _pNode)	{while(_pNode->pRight) _pNode = _pNode->pRight; return _pNode;}
 };

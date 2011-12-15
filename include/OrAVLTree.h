@@ -1,4 +1,19 @@
 // ******************************************************************************** //
+// OrAVLTree.h																		//
+// ===========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+//																					//
+// ******************************************************************************** //
 // AVL: balanced binary search tree.												//
 //																					//
 // Type of a binary tree with worstcase costs of O(log n) for each Operation.		//
@@ -42,8 +57,8 @@ protected:
 public:
 	AVLTree():BinaryTree()	{}
 	BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
-	void Delete(qword _qwKey) override;									// Standard operation delete
-	void Delete(ADTElementP _pNode) override;							// Faster delete operation without search
+	void Delete(qword _qwKey) override;								// Standard operation delete
+	void Delete(ADTElementP _pNode) override;						// Faster delete operation without search
 
 	static int GetHeight(BinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
 };
@@ -74,8 +89,8 @@ public:
 	virtual BinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
 	virtual void Delete(ADTElementP _pNode) override;								// Faster delete operation without search
 
-	virtual BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;		// Fast inorder traverse
-	virtual BinaryTreeLinkedNodeP GetPrevious(ADTElementP _pCurrent) override;	// Fast inorder traverse
+	virtual BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;			// Fast inorder traverse
+	virtual BinaryTreeLinkedNodeP GetPrevious(ADTElementP _pCurrent) override;		// Fast inorder traverse
 };
 
 }; // namespace ADT

@@ -1,23 +1,26 @@
-/*************************************************************************
+// ******************************************************************************** //
+// OrVector4.h																		//
+// ===========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
-	Vector4.h
-	===========
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Rechnen mit 4D-Vektoren und Quaternionen
-
-	Autor: Johannes Jendersie
-	Verwendete Quellen: keine
-
-*************************************************************************/
 
 #pragma once
 
 namespace OrE {
 namespace Math {
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Die 4D-Vektor-Klasse
 class Vector4
 {
@@ -68,8 +71,8 @@ public:
 	Vector4(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1]), z(pfComponent[2]), w(pfComponent[3]){}
 
 	// Casting-Operatoren
-	operator float* ()					{return (float*)(c);}
-	operator Vector3 ()				{return v3;}
+	operator float* ()						{return (float*)(c);}
+	operator Vector3 ()						{return v3;}
 
 	// Zuweisungsoperatoren
 	Vector4& operator = (const Vector4& v)	{x = v.x; y = v.y; z = v.z; w = v.w; return *this;}
@@ -82,6 +85,7 @@ public:
 	Vector4& operator /= (float f)			{f = 1/f; x *= f; y *= f; z *= f; w *= f; return *this;}
 };
 
+// ******************************************************************************** //
 // Arithmetische Operatoren
 inline Vector4 operator + (const Vector4& a, const Vector4& b)	{return Vector4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);}
 inline Vector4 operator - (const Vector4& a, const Vector4& b)	{return Vector4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);}
@@ -92,6 +96,7 @@ inline Vector4 operator * (const float f, const Vector4& v)		{return Vector4(v.x
 inline Vector4 operator / (const Vector4& a, const Vector4& b)	{return Vector4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);}
 inline Vector4 operator / (const Vector4& v, float f)			{f = 1/f; return Vector4(v.x * f, v.y * f, v.z * f, v.w * f);}
 
+// ******************************************************************************** //
 // Vergleichsoperatoren
 inline bool operator == (const Vector4& a, const Vector4& b) {if(a.x != b.x) return false; if(a.y != b.y) return false; if(a.z != b.z) return false; return a.w == b.w;}
 inline bool operator != (const Vector4& a, const Vector4& b) {if(a.x != b.x) return true; if(a.y != b.y) return true; if(a.z != b.z) return true; return a.w != b.w;}
@@ -100,7 +105,7 @@ inline bool operator != (const Vector4& a, const Vector3& b) {if(a.x != b.x) ret
 inline bool operator == (const Vector3& b, const Vector4& a) {if(a.x != b.x) return false; if(a.y != b.y) return false; if(a.z != b.z) return false; return a.w == 1.0f;}
 inline bool operator != (const Vector3& b, const Vector4& a) {if(a.x != b.x) return true; if(a.y != b.y) return true; if(a.z != b.z) return true; return a.w != 1.0f;}
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Funktionen deklarieren
 inline float	Vec4Length(const Vector4& v)												{return Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
 inline float	Vec4LengthSq(const Vector4& v)												{return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;}
@@ -117,7 +122,7 @@ Vector4			Vec4Random();
 Vector4			Vec4Cross(const Vector4& v1, const Vector4& v2, const Vector4& v3);
 
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Die Quaternion-Klasse (4D Hyperkugel)
 /*class ORKTECK_API OrQuaternion
 {
@@ -166,7 +171,7 @@ inline OrQuaternion operator * (const OrQuaternion& a, const OrQuaternion& b)	{r
 inline bool operator == (const OrQuaternion& a, const OrQuaternion& b) {if(a.m_v3.x != b.m_v3.x) return false; if(a.m_v3.y != b.m_v3.y) return false; if(a.m_v3.z != b.m_v3.z) return false; return a.m_fS == b.m_fS;}
 inline bool operator != (const OrQuaternion& a, const OrQuaternion& b) {if(a.m_v3.x != b.m_v3.x) return true; if(a.m_v3.y != b.m_v3.y) return true; if(a.m_v3.z != b.m_v3.z) return true; return a.m_fS != b.m_fS;}
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Funktionen deklarieren
 inline OrQuaternion&	OrQuaternionNormalizeEx(OrQuaternion& q)												{float mag = Sqrt(q.m_fS * q.m_fS + OrVector3Dot(q.m_v3, q.m_v3)); if (mag > 0.0000001) { q.m_fS /= mag; q.m_v3 /= mag;} else {q.m_fS = 1; q.m_v3 = Vector3(0.0f, 0.0f, 0.0f);} return q;}
 inline OrQuaternion&	OrQuaternionNormalize(OrQuaternion& q)													{float mag = Sqrt(q.m_fS * q.m_fS + OrVector3Dot(q.m_v3, q.m_v3)); q.m_fS /= mag; q.m_v3 /= mag; return q;}
@@ -209,4 +214,4 @@ inline OrQuaternion		OrQuaternionInterpolate(const OrQuaternion& q1, const OrQua
 */
 }; // namespace Math
 }; // namespace OrE
-// ******************************************************************** //
+// *************************************EOF**************************************** //

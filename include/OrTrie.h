@@ -1,25 +1,25 @@
-/***********************************************************************
-
-	Trie.h
-	========
-	Diese Datei ist Teil der Orkteck-Script-Engine.
-
-	Zweck:
-	Ein Trie dient der effizienten Erfassung von Wörtern aus einem
-	Wörterbuch.
-	An Jedes Wort sind in diesem Spezialfall Funktionspointer gebunden.
-
-	Autor: Johannes Jendersie
-	Verwendete Quellen: keine
-
-***********************************************************************/
+// ******************************************************************************** //
+// OrTrie.h																			//
+// ========																			//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
 #pragma once
 
 namespace OrE {
 namespace ADT {
 
-// ******************************************************************** //
+// ******************************************************************************** //
 class TrieString
 {
 private:
@@ -33,7 +33,7 @@ public:
 	TrieString(char *_pcString, dword _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
 	~TrieString();
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// Auxiliary function to create a copy of a subsrting.
 	// Parameter:
 	//	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
@@ -41,12 +41,12 @@ public:
 	//			or 0xffffffff to copy the whole postfix begining in _dwFrom
 	TrieString* substr(const dword _dwFrom, dword _dwTo) const;
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// Auxiliary function to estimate length of the prefix match
 	dword match(const TrieString* _pStr) const;
 };
 
-// ******************************************************************** //
+// ******************************************************************************** //
 struct TrieNode
 {
 	TrieNode*				pNext;
@@ -57,7 +57,7 @@ struct TrieNode
 };
 typedef TrieNode* TrieNodeP;
 
-// ******************************************************************** //
+// ******************************************************************************** //
 class Trie
 {
 private:
@@ -69,7 +69,7 @@ public:
 	Trie(): m_pDeleteCallback(0),m_pFirstNode(0)	{}
 
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// DE																	//
 	// Zweck: Fügt dem Trie neue Daten hinzu oder überschreibt alte.		//
 	//	Es wird nur der übergebene Zeiger kopiert. Die Daten dürfen also	//
@@ -103,12 +103,12 @@ public:
 	//	overwritten. If _bOverrideData==true this will not be reported (the	//
 	//	return value is always 0 or 2).										//
 	//	2 - unknown failure													//
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	int Add(TrieString _Name, void* _pData, bool _bOverrideData);
 
 
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// DE																	//
 	// Zweck: Finden eine passenden Funktion zu einem Namen.				//
 	// Parameter:															//
@@ -131,11 +131,11 @@ public:
 	//	If there is absolutly no match, it would be the original pointer.	//
 	// Return: The found node or 0 if there is no such function.			//
 	// Note: Case sensitive!												//
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	TrieNodeP Match(TrieString& _Name);
 
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// DE																	//
 	// Zweck: Löscht alle Knoten, die nur durch einfügen dieses Knotens		//
 	//	entstanden sind.													//
@@ -148,11 +148,11 @@ public:
 	// Parameter:															//
 	//	[in] _pcName - A Pointer to the name we are searching for.			//
 	// Note: Case sensitive!												//
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	void Remove(TrieString& _Name, void* _pData);
 
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// DE																	//
 	// Zweck: Wird beim Löschen eines Datansatzes angewendet.				//
 	// Parameter:															//
@@ -164,13 +164,13 @@ public:
 	// Parameter:															//
 	//	[in] _pDeleteCallback - Pointer to a function, which releases a		//
 	//	dataset.															//
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	void SetDeleteCallback(ADTDeleteObjectCallbackP _pDeleteCallback)
 	{
 		m_pDeleteCallback = _pDeleteCallback;
 	}
 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	// DE																	//
 	// Zweck: Gibt allen vom Trie verwendeten Speicher frei. Der Endzustand	//
 	//	entspricht dem Startzustand (leerer Trie).							//
@@ -186,7 +186,7 @@ public:
 	// Parameter:															//
 	//	[in] _pNode - The current node to delete. Is set by recursion.		//
 	//	Don't declare this parameter. Correct use: ReleaseTrie();			// 
-	// ******************************************************************** //
+	// ******************************************************************************** //
 	void ReleaseTrie(TrieNodeP _pNode = 0);
 
 	~Trie()	{ReleaseTrie();}
@@ -195,4 +195,4 @@ public:
 
 }; // namespace ADT
 }; // namespace OrE
-// ******************************************************************** //
+// *************************************EOF**************************************** //

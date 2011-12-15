@@ -1,13 +1,18 @@
-/*************************************************************************
-
-	Vector2.cpp
-	=============
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Rechnen mit 2D-Vektoren
-
-*************************************************************************/
+// ******************************************************************************** //
+// OrVector2.cpp																	//
+// =============																	//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
 #include "..\Include\OrTypeDef.h"
 #include "..\Include\OrFastMath.h"
@@ -19,13 +24,13 @@
 using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
-// ******************************************************************** //
+// ******************************************************************************** //
 inline Vector2 OrE::Math::Vec2Random()
 {
 	return Vec2NormalizeEx(Vector2(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Rotieren eines Punktes  in 2D-Raum
 Vector2 OrE::Math::Vec2Rotate(const Vector2& _v,
 							  const float _fAlpha)
@@ -35,7 +40,7 @@ Vector2 OrE::Math::Vec2Rotate(const Vector2& _v,
 	return Vector2(_v.x*fCos-_v.y*fSin, _v.x*fSin+_v.y*fCos);
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 2D-Vektor mit Matrix multiplizieren
 Vector2 OrE::Math::Vec2Transform(const Vector2& v, const Matrix2x3& m)
 {
@@ -44,4 +49,4 @@ Vector2 OrE::Math::Vec2Transform(const Vector2& v, const Matrix2x3& m)
 					 m.m21*v.x + m.m22*v.y + m.m23);
 }
 
-// ******************************************************************** //
+// *************************************EOF**************************************** //

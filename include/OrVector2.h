@@ -1,23 +1,26 @@
-/*************************************************************************
+// ******************************************************************************** //
+// OrVector2.h																		//
+// ===========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
-	Vector2.h
-	===========
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Rechnen mit 2D-Vektoren
-
-	Autor: Johannes Jendersie
-	Verwendete Quellen: TriBase-Engine
-
-*************************************************************************/
 
 #pragma once
 
 namespace OrE {
 namespace Math {
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Die 2D-Vektor-Klasse
 class Vector2
 {
@@ -71,11 +74,12 @@ inline Vector2 operator * (const float f, const Vector2& v)		{return Vector2(v.x
 inline Vector2 operator / (const Vector2& a, const Vector2& b)	{return Vector2(a.x / b.x, a.y / b.y);}
 inline Vector2 operator / (const Vector2& v, float f)			{f = 1/f; return Vector2(v.x * f, v.y * f);}	// Multiplikation schneller
 
+// ******************************************************************************** //
 // Vergleichsoperatoren
 inline bool operator == (const Vector2& a, const Vector2& b) {if(a.x != b.x) return false; return a.y == b.y;}
 inline bool operator != (const Vector2& a, const Vector2& b) {if(a.x != b.x) return true; return a.y != b.y;}
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Funktionen deklarieren
 inline float	Vec2Length(const Vector2& v)												{return Sqrt(v.x * v.x + v.y * v.y);}
 inline float	Vec2LengthSq(const Vector2& v)												{return v.x * v.x + v.y * v.y;}
@@ -95,4 +99,4 @@ Vector2			Vec2Transform(const Vector2& v, const Matrix2x3& m);										// 2D-Ve
 
 }; // namespace Math
 }; // namespace OrE
-// ******************************************************************** //
+// *************************************EOF**************************************** //

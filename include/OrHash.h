@@ -1,7 +1,22 @@
 // ******************************************************************************** //
+// OrHash.h																			//
+// ========																			//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+//																					//
+// ******************************************************************************** //
 // Implementing some hash functions and a hash map.									//
 //																					//
-// HashMap ( HM_PREFER_PERFORMANCE ):											//
+// HashMap ( HM_PREFER_PERFORMANCE ):												//
 //	Insert()					O(1) amort.											//
 //	Search()					O(1) amort.											//
 //	Delete(Key)					O(1) amort.											//
@@ -10,15 +25,15 @@
 //	GetLast()					O(1) amort.											//
 //	GetNext()					O(1) amort.											//
 //	GetPrevious()				O(1) amort.											//
-//	In other modes than HM_PREFER_PERFORMANCE only the speed of Insert() differ	//
+//	In other modes than HM_PREFER_PERFORMANCE only the speed of Insert() differ		//
 //	in asymptoticly view. Insert()	O(sqrt(n)) amort.								//
 //	All other methods get slightly bigger constant factors.							//
 //																					//
 // HashMap - String-Mode															//
-// Im Stringmodus können Objekte über Schlüssel oder Strings hinzugefügt werden.	//
-// Die Schlüssel nutzen dann aber nur 32 Bit! Die anderen 32 Bit speichern eine		//
-// Stringcopy zum vergleichen auf korrekten match.									//
-// Nur die letzten 32 Bit (least significant) können als Schlüssel angegeben werden!//
+// In the string mode the objects can added with strings as keys. These strings are	//
+// copied internal and the reference is saved in the higher 32 Bit part of the key.	//
+// It is still possible to add objects with other keys to the same map, but they	//
+// can only use the lower 32 Bit part.												//
 // ******************************************************************************** //
 
 #pragma once
@@ -27,14 +42,14 @@ namespace OrE {
 namespace Algorithm {
 
 // ******************************************************************************** //
-// Die Standart Hashmethoden
-dword CreateHash32(const void* pData, const int iSize);	// erstellt einen 32 Bit-Hashwert aus einem Datensatz
-qword CreateHash64(const void* pData, const int iSize);	// erstellt einen 64 Bit-Hashwert aus einem Datensatz
-dword CreateHash32(const void* pData);					// erstellt einen 32 Bit-Hashwert aus einem nullterminierten Datensatz
-qword CreateHash64(const void* pData);					// erstellt einen 64 Bit-Hashwert aus einem nullterminierten Datensatz
+// Standard hash for any data. Should result in nice uniform distributions mostly.
+dword CreateHash32(const void* pData, const int iSize);	// create a 32 bit hash value of a data set
+qword CreateHash64(const void* pData, const int iSize);	// create a 64 bit hash value of a data set
+dword CreateHash32(const void* pData);					// create a 32 bit hash value of a 0-terminated data set (e.g. strings)
+qword CreateHash64(const void* pData);					// create a 64 bit hash value of a 0-terminated data set (e.g. strings)
 
 // ******************************************************************************** //
-// CRC - Fehlerüberprüfender Hash
+// CRC - Error proving hash (cyclic redundancy check)
 // Die Funktionen ermitteln den Rest bei der Polynomdivision. Dieser
 // muss zur Erzeugung den Daten angehängt werden. Beim Überprüfen
 // muss nochmalige Anwendung der Funktion den Rest 0 liefern, ansonsten
@@ -68,7 +83,7 @@ enum HashMapMode
 };
 
 // ******************************************************************************** //
-// Hashmap - Datenstruktur zum Schnellen finden von Elementen.
+// The buckets are a very simple binary trees without any optimation.
 struct Bucket: public ADTElement
 {
 	Bucket(void* _pObj, const qword& _qwKey, Bucket* _pParent) :
@@ -86,12 +101,13 @@ private:
 typedef Bucket* BucketP;
 
 // ******************************************************************************** //
+// The hash map is a structur to store and find data in nearly constant time (stochasticly).
 class HashMap: public ADT
 {
-	BucketP			m_pBuckets;				// Ein Array mit Eimern (Bin-Trees)
-	dword			m_dwSize;				// Größe des Arrays
-	dword			m_dwNumElements;		// Anzahl Elemente in der Hashmap (kann größer als Arraygröße sein)
-	HashMapMode		m_Mode;					// Resizemodus und optinal String Modus
+	BucketP			m_pBuckets;					// Ein Array mit Eimern (Bin-Trees)
+	dword			m_dwSize;					// Größe des Arrays
+	dword			m_dwNumElements;			// Anzahl Elemente in der Hashmap (kann größer als Arraygröße sein)
+	HashMapMode		m_Mode;						// Resizemodus und optinal String Modus
 
 	void RemoveData(BucketP _pBucket);
 	void RecursiveReAdd(BucketP _pBucket);
@@ -101,19 +117,19 @@ public:
 	HashMap(dword _dwSize, HashMapMode _Mode);
 	~HashMap();
 
-	void Resize(const dword _dwSize);								// Tabelle neu erzeugen und alle Elemente neu hinzufügen
+	void Resize(const dword _dwSize);							// Tabelle neu erzeugen und alle Elemente neu hinzufügen
 
 	ADTElementP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert; If already exists the object is NOT overwritten, but referenccounter is increased
-	void Delete(qword _qwKey) override;								// Standard operation delete
-	void Delete(ADTElementP _pElement) override;					// Faster operation delete (no search)
+	void Delete(qword _qwKey) override;							// Standard operation delete
+	void Delete(ADTElementP _pElement) override;				// Faster operation delete (no search)
 	ADTElementP Search(qword _qwKey) override;					// Standard search with a key
 
 	// String-Mode functions
 	ADTElementP Insert(void* _pObject, const char* _pcKey);		// insert using strings; If already exists the object is NOT overwritten, but referenccounter is increased
-	void Delete(const char* _pcKey);								// Standard operation delete for strings
+	void Delete(const char* _pcKey);							// Standard operation delete for strings
 	ADTElementP Search(const char* _pcKey);						// search using strings
 
-	ADTElementP GetFirst() override;								// Erstes Objekt aus dem ersten nichtleeren Eimer
+	ADTElementP GetFirst() override;							// Erstes Objekt aus dem ersten nichtleeren Eimer
 	ADTElementP GetLast() override;
 	ADTElementP GetNext(ADTElementP _pCurrent) override;
 	ADTElementP GetPrevious(ADTElementP _pCurrent) override;

@@ -1,19 +1,18 @@
-/*************************************************************************
-
-	Vector3.cpp
-	=============
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Rechnen mit 4D-Vektoren
-	
-	Statistik:
-	In Arbeit: Nein
-	Bugs: Keine
-	Speicherlecks: Keine
-	Unvertig: ---
-
-*************************************************************************/
+// ******************************************************************************** //
+// OrVector4.cpp																	//
+// =============																	//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
 #include "..\Include\OrTypeDef.h"
 #include "..\Include\OrFastMath.h"
@@ -28,13 +27,13 @@ using namespace OrE::Math;
 
 // Die Operatoren und Funktionen sind direkt per Inline-Funktion implementiert.
 
-// ******************************************************************** //
+// ******************************************************************************** //
 Vector4 OrE::Math::Vec4Random()
 {
 	return Vec4NormalizeEx(Vector4(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 4D-Vektor mit Matrix multiplizieren
 Vector4 OrE::Math::Vec4Transform(const Vector4& v,
 								 const Matrix& m)
@@ -45,7 +44,7 @@ Vector4 OrE::Math::Vec4Transform(const Vector4& v,
 					 v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + v.w * m.m44);
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Kreuzprodukt 3 4D - vektoren
 Vector4 OrE::Math::Vec4Cross(const Vector4& v1, const Vector4& v2, const Vector4& v3)
 {
@@ -66,4 +65,4 @@ Vector4 OrE::Math::Vec4Cross(const Vector4& v1, const Vector4& v2, const Vector4
 					 v1.z * (v2.x * v3.y - v3.x * v2.y)) );
 }
 
-// ******************************************************************** //
+// *************************************EOF**************************************** //

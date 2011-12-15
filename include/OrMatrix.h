@@ -1,16 +1,20 @@
-/*************************************************************************
-
-	Matrix.h
-	==========
-	Diese Datei ist Teil der Orkteck-Engine.
-
-	Zweck:
-	Matrizenrechnung
-
-	Autor: Johannes Jendersie
-	Verwendete Quellen: TriBase-Engine
-
-*************************************************************************/
+// ******************************************************************************** //
+// OrMatrix.h																		//
+// ==========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
+// Source: DirectX 9.0, some wikis													//
+// ******************************************************************************** //
 
 #pragma once
 
@@ -24,7 +28,7 @@ Matrix MatrixInvert(const Matrix& m);
 Matrix2x3 Matrix2x3Invert(const Matrix2x3& m);
 inline Matrix operator * (const Matrix& a, const Matrix& b);
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Idee: zur Renderbeschleunigung
 // Matriezen werden beim Erzeugen mit IDs ausgestattet. Das hat zur Folge,
 // dass wahrscheinlich identische Matrizen als solche ermittelt werden
@@ -33,7 +37,7 @@ inline Matrix operator * (const Matrix& a, const Matrix& b);
 // mathematische Gleichheit.
 //static dword Or_MatrixIDCounter = 1;
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Die 4D - Matrixklasse (Für 3D Transformationen)
 class Matrix
 {
@@ -231,6 +235,7 @@ inline Matrix operator / (const Matrix& m,
 					m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
 }
 
+// ******************************************************************************** //
 // Vergleichsoperatoren
 #define Matrix_EPSILON	0.001f
 inline bool operator == (const Matrix& a,
@@ -254,7 +259,6 @@ inline bool operator == (const Matrix& a,
 	return (Absf(a.m44 - b.m44) <= Matrix_EPSILON);
 }
 
-// Vergleichsoperatoren
 inline bool operator != (const Matrix& a,
 						 const Matrix& b)
 {
@@ -276,37 +280,37 @@ inline bool operator != (const Matrix& a,
 	return (Absf(a.m44 - b.m44) > Matrix_EPSILON);
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Funktionen deklarieren
-inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);}						// Identitätsmatrix liefern
-		Matrix	MatrixTranslation(const Vector3& v);																													// Translationsmatrix (Verschiebungsmatrix) berechnen
-		Matrix	MatrixTranslation(const float x, const float y, const float z);																							// Translationsmatrix (Verschiebungsmatrix) berechnen
-		Matrix	MatrixRotationX(const float f);																															// Rotationsmatrix um die X-Achse berechnen
-		Matrix	MatrixRotationY(const float f);																															// Rotationsmatrix um die Y-Achse berechnen
-		Matrix	MatrixRotationZ(const float f);																															// Rotationsmatrix um die Z-Achse berechnen
-		Matrix	MatrixRotation(const float x, const float y, const float z);																								// Rotiert um alle drei Achsen
-		Matrix	MatrixRotation(const Vector3& v);																														// Rotiert um alle drei Achsen
-		Matrix	MatrixRotation_Translatation(const Vector3& vR, const Vector3& vP);																					// Direkte Berechnung von MatrixRotation*MatrixTranslation
-		Matrix	MatrixRotationAxis(const Vector3& v, const float f);																									// Rotationsmatrix um eine beliebige Achse berechnen
-		Matrix	MatrixScaling(const Vector3& v);																														// Skalierungsmatrix berechnen
-		Matrix	MatrixScaling(const float f);																																// Skalierungsmatrix berechnen
-		Matrix	MatrixAxis(const Vector3& vXAxis, const Vector3& vYAxis, const Vector3& vZAxis);																	// Liefert eine Achsenmatrix
-		float		MatrixDet3(const Matrix& m);																															// Determinante berechnen (Obere linke 3x3 Matrix)
-		float		MatrixDet(const Matrix& m);																																// Determinante berechnen (Laplaceches Entwicklungsschema)
-		Matrix	MatrixInvert(const Matrix& m);																															// Invertierte (umgekehrte) Matrix berechnen
-		Matrix	MatrixTranspose(const Matrix& m);																														// Transponierte Matrix berechnen
-		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);													// Projektionsmatrix berechnen
-		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);											// Projektionsmatrix berechnen
+inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);}				// Identitätsmatrix liefern
+		Matrix	MatrixTranslation(const Vector3& v);																											// Translationsmatrix (Verschiebungsmatrix) berechnen
+		Matrix	MatrixTranslation(const float x, const float y, const float z);																					// Translationsmatrix (Verschiebungsmatrix) berechnen
+		Matrix	MatrixRotationX(const float f);																													// Rotationsmatrix um die X-Achse berechnen
+		Matrix	MatrixRotationY(const float f);																													// Rotationsmatrix um die Y-Achse berechnen
+		Matrix	MatrixRotationZ(const float f);																													// Rotationsmatrix um die Z-Achse berechnen
+		Matrix	MatrixRotation(const float x, const float y, const float z);																					// Rotiert um alle drei Achsen
+		Matrix	MatrixRotation(const Vector3& v);																												// Rotiert um alle drei Achsen
+		Matrix	MatrixRotation_Translatation(const Vector3& vR, const Vector3& vP);																				// Direkte Berechnung von MatrixRotation*MatrixTranslation
+		Matrix	MatrixRotationAxis(const Vector3& v, const float f);																							// Rotationsmatrix um eine beliebige Achse berechnen
+		Matrix	MatrixScaling(const Vector3& v);																												// Skalierungsmatrix berechnen
+		Matrix	MatrixScaling(const float f);																													// Skalierungsmatrix berechnen
+		Matrix	MatrixAxis(const Vector3& vXAxis, const Vector3& vYAxis, const Vector3& vZAxis);																// Liefert eine Achsenmatrix
+		float	MatrixDet3(const Matrix& m);																													// Determinante berechnen (Obere linke 3x3 Matrix)
+		float	MatrixDet(const Matrix& m);																														// Determinante berechnen (Laplaceches Entwicklungsschema)
+		Matrix	MatrixInvert(const Matrix& m);																													// Invertierte (umgekehrte) Matrix berechnen
+		Matrix	MatrixTranspose(const Matrix& m);																												// Transponierte Matrix berechnen
+		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);											// Projektionsmatrix berechnen
+		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);								// Projektionsmatrix berechnen
 		Matrix	MatrixCamera(const Vector3& vPos, const Vector3& vLookAt, const Vector3& vUp = Vector3(0.0f, 1.0f, 0.0f));										// Kameramatrix erzeugen
-		Matrix	MatrixToTex2DMatrix(const Matrix& m);																													// In Texturmatrix umwandeln
-//		Matrix	MatrixMirror(const OrPlane& p);																															// Eine Spiegelmatrix an gegebener Ebene berechnen
-//		Matrix	MatrixMirror_Normalize(const OrPlane& p);																													// Eine Spiegelmatrix an gegebener Ebene (wird normalisiert) berechnen
-		bool		MatrixSolveEquation(Matrix _A, Vector4* _pV_X);																										// Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
+		Matrix	MatrixToTex2DMatrix(const Matrix& m);																											// In Texturmatrix umwandeln
+//		Matrix	MatrixMirror(const OrPlane& p);																													// Eine Spiegelmatrix an gegebener Ebene berechnen
+//		Matrix	MatrixMirror_Normalize(const OrPlane& p);																										// Eine Spiegelmatrix an gegebener Ebene (wird normalisiert) berechnen
+		bool	MatrixSolveEquation(Matrix _A, Vector4* _pV_X);																									// Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
 		Matrix	MatrixOrthonormal(const Vector3& vNormal);
-		Matrix	MatrixTransvection(const Vector3& v);																													// Scherungsmatrix berechnen TODO
+		Matrix	MatrixTransvection(const Vector3& v);																											// Scherungsmatrix berechnen TODO
 
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // 2x3 Matrixklasse für 2D Transformationen
 // Die Transfornation erfolgt durch Matrix*(u,v,1)' (2x3 * 3x1 = 2x1)
 class Matrix2x3
@@ -414,6 +418,7 @@ public:
 typedef Matrix2x3* Matrix2x3P;
 
 
+// ******************************************************************************** //
 // Arithmetische Operatoren
 inline Matrix2x3 operator + (const Matrix2x3& a, const Matrix2x3& b)	{return Matrix2x3(a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23);}
 inline Matrix2x3 operator - (const Matrix2x3& a, const Matrix2x3& b)	{return Matrix2x3(a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23);}
@@ -466,6 +471,7 @@ inline Matrix2x3 operator / (const Matrix2x3& m,
 			           m.m21 * f, m.m22 * f, m.m23 * f);
 }
 
+// ******************************************************************************** //
 // Vergleichsoperatoren
 #define Matrix_EPSILON	0.001f
 inline bool operator == (const Matrix2x3& a,
@@ -480,7 +486,6 @@ inline bool operator == (const Matrix2x3& a,
 	return (Absf(a.m23 - b.m23) <= Matrix_EPSILON);
 }
 
-// Vergleichsoperatoren
 inline bool operator != (const Matrix2x3& a,
 						 const Matrix2x3& b)
 {
@@ -493,7 +498,7 @@ inline bool operator != (const Matrix2x3& a,
 	return (Absf(a.m23 - b.m23) > Matrix_EPSILON);
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Die Funktionen simmulieren alle eine 3x3 matrix
 inline	Matrix2x3	Matrix2x3Identity() {return Matrix2x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);}																				// Identitätsmatrix liefern
 		Matrix2x3	Matrix2x3Translation(const Vector2& v);																													// Translationsmatrix (Verschiebungsmatrix) berechnen
@@ -511,4 +516,4 @@ inline	Matrix2x3	Matrix2x3Identity() {return Matrix2x3(1.0f, 0.0f, 0.0f, 0.0f, 1
 
 }; // namespace Math
 }; // namespace OrE
-// ******************************************************************** //
+// *************************************EOF**************************************** //

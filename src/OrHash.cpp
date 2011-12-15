@@ -1,3 +1,19 @@
+// ******************************************************************************** //
+// OrHash.cpp																		//
+// ==========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
+
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrFastMath.h"
 #include "..\include\OrADTObjects.h"
@@ -87,7 +103,7 @@ dword OrE::Algorithm::CreateCRCHash(dword dwPolynom, void* pData, dword dwSize)
 // Hashmap																			//
 // ******************************************************************************** //
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Die für alle Namen verwendete Hash-Funktion
 static dword OrStringHash(const char* _pcString)
 {
@@ -135,7 +151,7 @@ OrE::ADT::HashMap::HashMap(dword _dwSize, HashMapMode _Mode)
 	m_Mode = _Mode;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Daten löschen
 void OrE::ADT::HashMap::RemoveData(BucketP _pBucket)
 {
@@ -147,7 +163,7 @@ void OrE::ADT::HashMap::RemoveData(BucketP _pBucket)
 	}
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Freigeben alles Ressourcen
 void OrE::ADT::HashMap::RecursiveRelease(BucketP _pBucket)
 {

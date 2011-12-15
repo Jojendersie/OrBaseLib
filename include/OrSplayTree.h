@@ -1,4 +1,19 @@
 // ******************************************************************************** //
+// OrSplayTree.h																	//
+// =============																	//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+//																					//
+// ******************************************************************************** //
 // Splay Tree: self organizing search tree.											//
 //																					//
 // Type of a binary tree with average costs of O(log n) for each Operation.			//
@@ -27,14 +42,14 @@ namespace ADT {
 class SplayTree : public BinaryTree
 {
 protected:
-	void Splay(BinaryTreeNodeP _pNode);					// Splay: reorganization through rotations (move the node to the root)
-	void SemiSplay(BinaryTreeNodeP _pNode);				// Semi-Splay: reorganization through rotations (half the path length to the root)
+	void Splay(BinaryTreeNodeP _pNode);										// Splay: reorganization through rotations (move the node to the root)
+	void SemiSplay(BinaryTreeNodeP _pNode);									// Semi-Splay: reorganization through rotations (half the path length to the root)
 	virtual BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key and splay (searches for nearest element)
 public:
 	SplayTree():BinaryTree()	{}
 	virtual BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation with splay
-	virtual void Delete(qword _qwKey) override;									// Standard operation delete
-	virtual void Delete(ADTElementP _pNode) override;							// Delete operation without search (not much faster)
+	virtual void Delete(qword _qwKey) override;								// Standard operation delete
+	virtual void Delete(ADTElementP _pNode) override;						// Delete operation without search (not much faster)
 };
 
 }; // namespace ADT

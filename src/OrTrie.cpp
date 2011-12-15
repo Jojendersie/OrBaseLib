@@ -1,18 +1,18 @@
-/*************************************************************************
-
-	Trie.cpp
-	==========
-	Diese Datei ist Teil der Orkteck-Script-Engine.
-
-	Zweck:
-	Ein Trie dient der effizienten Erfassung von Wörtern aus einem
-	Wörterbuch.
-	An Jedes Wort sind in diesem Spezialfall Funktionspointer gebunden.
-
-	Autor: Johannes Jendersie
-	Verwendete Quellen: AuD II Vorlesung;Rösner;Sommersemester 2010
-
-*************************************************************************/
+// ******************************************************************************** //
+// OrTrie.cpp																		//
+// ==========																		//
+// This file is part of the OrBaseLib.												//
+//																					//
+// Author: Johannes Jendersie														//
+//																					//
+// Here is a quiete easy licensing as open source:									//
+// http://creativecommons.org/licenses/by/3.0/										//
+// If you use parts of this project, please let me know what the purpose of your	//
+// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
+// Futhermore you have to state this project as a source of your project.			//
+//																					//
+// For details on this project see: Readme.txt										//
+// ******************************************************************************** //
 
 // include for sprintf_s
 #include <stdio.h>
@@ -30,7 +30,7 @@
 using namespace OrE::ADT;
 using namespace OrE::Math;
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Robust auxiliary function to check if *p1 != *p2
 /*bool strneq(const char* p1, const char* p2)
 {
@@ -40,10 +40,10 @@ using namespace OrE::Math;
 	return strcmp(p1, p2)!=0;
 }*/
 
-// ******************************************************************** //
+// ******************************************************************************** //
 OrE::ADT::TrieString::~TrieString()	{if(m_bDel) free(m_pcString);}
 
-// ******************************************************************** //
+// ******************************************************************************** //
 // Auxiliary function to create a copy of a subsrting.
 // Parameter:
 //	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
@@ -63,7 +63,7 @@ TrieString* OrE::ADT::TrieString::substr(const dword _dwFrom, dword _dwTo) const
 	return new TrieString(_dwTo+1-_dwFrom, pcRet);
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 dword OrE::ADT::TrieString::match(const TrieString* _pStr) const
 {
 	dword dwMax = Minu(_pStr->m_dwLen, m_dwLen);
@@ -72,7 +72,7 @@ dword OrE::ADT::TrieString::match(const TrieString* _pStr) const
 	return i;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 int OrE::ADT::Trie::Add(TrieString _Name, void* _pData, bool _bOverrideData)
 {
 	// Name merken, falls Fehler
@@ -203,7 +203,7 @@ int OrE::ADT::Trie::Add(TrieString _Name, void* _pData, bool _bOverrideData)
 	return 2;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 TrieNodeP OrE::ADT::Trie::Match(TrieString& _Name)
 {
 	// Da größtmögliche Teilfunktion gesucht einen Merker einführen.
@@ -258,7 +258,7 @@ TrieNodeP OrE::ADT::Trie::Match(TrieString& _Name)
 	return pLastPossibleData;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 {
 	// Daten freigeben egal was passiert. Die Speicheradresse benötigen wir
@@ -360,7 +360,7 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 	for(int i=0;i<iNumStacked*2;++i) __asm pop _pData;
 }
 
-// ******************************************************************** //
+// ******************************************************************************** //
 void OrE::ADT::Trie::ReleaseTrie(TrieNodeP _pNode)
 {
 	// Rekursionsstart im obersten Knoten
@@ -383,4 +383,4 @@ void OrE::ADT::Trie::ReleaseTrie(TrieNodeP _pNode)
 	delete _pNode;
 }
 
-// ******************************************************************** //
+// *************************************EOF**************************************** //
