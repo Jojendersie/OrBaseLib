@@ -48,7 +48,7 @@ class Buffer
 
 public:
 	Buffer(int _iSize);
-	~Buffer();
+	virtual ~Buffer();
 
 	bool Push(void* _pObject);				// Insertion at m_iHeadCursor with a key value of 0
 	void* Pop();							// Stack operation: removes the instance at m_iHeadCursor from the buffer and returns the Object reference

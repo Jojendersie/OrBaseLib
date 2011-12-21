@@ -75,7 +75,7 @@ protected:
 	BinaryTreeNodeP RotateLeft(BinaryTreeNodeP _pNode);			// Replaces the current node by its right child. Does nothing if there is no child.
 public:
 	BinaryTree():m_pRoot(nullptr) {}
-	~BinaryTree();
+	virtual ~BinaryTree();
 
 	// Only implement the navigation the rest is overwritten by special trees
 	virtual BinaryTreeNodeP Search(qword _qwKey) override;					// Standard search with a key

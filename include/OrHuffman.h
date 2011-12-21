@@ -37,7 +37,7 @@ private:
 public:
 	BitBufferStream(int _iSize);
 	BitBufferStream(void* _pBuffer, int _iSize);
-	~BitBufferStream();
+	virtual ~BitBufferStream();
 
 	inline void SetBit(int _iBit)			// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
 	{

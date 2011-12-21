@@ -115,7 +115,7 @@ class HashMap: public ADT
 	void TestSize();							// Checks if a resize is required in the current mode
 public:
 	HashMap(dword _dwSize, HashMapMode _Mode);
-	~HashMap();
+	virtual ~HashMap();
 
 	void Resize(const dword _dwSize);							// Tabelle neu erzeugen und alle Elemente neu hinzufügen
 

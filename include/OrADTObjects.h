@@ -44,6 +44,8 @@ public:
 	//			at the specified data structur.
 	ADTElement(void* _pObj, const qword& _qwKey):pObject(_pObj), iRef(1), qwKey(_qwKey) {}
 
+	virtual ~ADTElement()		{}
+
 	// Reference handling to determine correct point of destruction time
 	void AddRef()	{++iRef;}
 	int Release()	{return --iRef;}
@@ -60,6 +62,7 @@ protected:
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
 public:
 	ADT():m_pDeleteCallback(nullptr)	{}							// Creates a consistent ADT object
+	virtual ~ADT()						{}
 	virtual ADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
 	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
 	virtual void Delete(ADTElementP _pElement) = 0;					// Sometimes faster operation delete (no search)

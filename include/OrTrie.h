@@ -31,7 +31,7 @@ public:
 	char* m_pcString;
 
 	TrieString(char *_pcString, dword _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
-	~TrieString();
+	virtual ~TrieString();
 
 	// ******************************************************************************** //
 	// Auxiliary function to create a copy of a subsrting.

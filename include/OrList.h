@@ -61,7 +61,7 @@ namespace ADT {
 
 	public:
 		List():m_pFirst(nullptr), m_pLast(nullptr) {}
-		~List();
+		virtual ~List();
 
 		virtual ListNodeP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert
 		ListNodeP SetInsert(void* _pObject, qword _qwKey);					// Insert and allow each key only to occure one time (insert sorted as well)

@@ -23,11 +23,14 @@ using namespace OrE::ADT;
 // ******************************************************************************** //
 void OrE::ADT::List::DeleteAll(ListNodeP _pNode)
 {
-	if(_pNode->pRight) DeleteAll(_pNode->pRight);
+	if(_pNode)
+	{
+		DeleteAll(_pNode->pRight);
 
-	// Release resources ...
-	if(m_pDeleteCallback) m_pDeleteCallback(_pNode->pObject);
-	delete _pNode;
+		// Release resources ...
+		if(m_pDeleteCallback) m_pDeleteCallback(_pNode->pObject);
+		delete _pNode;
+	}
 }
 
 // ******************************************************************************** //
