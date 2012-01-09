@@ -42,9 +42,9 @@ __forceinline dword Minu(const dword a, const dword b)		{return a < b ? a : b;}
 __forceinline float Clampf(const float a, const float min, const float max)	{return a < min ? min : (a > max ? max : a);}
 __forceinline dword Clampu(const dword a, const dword min, const dword max)	{return a < min ? min : (a > max ? max : a);}
 __forceinline float Absf(const float a)						{return a < 0 ? -a: a;}
-__forceinline int Abs(const int a)							{return a&0x7fffffff;}
-__forceinline int Sgn(const int a)							{return (a&0x80000000) | 1;}		// Not mathematicly: [-oo,0] -> -1; (0,oo] -> 1;
-__forceinline float Sgnf(const float a)						{return (a>0)?(1.0f):(-1.0f);}		// Not mathematicly: [-oo,0] -> -1; (0,oo] -> 1;
+__forceinline int Abs(const int a)							{return a < 0 ? -a: a;}
+__forceinline int Sgn(const int a)							{return (a<0)?-1:1;}			// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
+__forceinline float Sgnf(const float a)						{return (a<0)?-1.0f:1.0f;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
 
 // ******************************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )

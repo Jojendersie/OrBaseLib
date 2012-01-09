@@ -78,6 +78,26 @@ void OrMTReCreate()
 }
 
 // ******************************************************************************** //
+// Creates an unsinged random Number
+dword OrE::Algorithm::RandU()
+{
+	dword y;
+
+	if(g_dwMTIndex == OR_MT_N)
+		OrMTReCreate();
+
+
+	y = g_adwMT[g_dwMTIndex++];
+	y ^=y >> OR_MT_U;
+	y ^=y << OR_MT_S & OR_MT_B;
+	y ^=y << OR_MT_T & OR_MT_C;
+	y ^=y >> OR_MT_L;
+
+	// Bereichseinschränkung
+	return y;
+}
+
+// ******************************************************************************** //
 // Creates a integral random number between _iMin and _iMax (inclusive)
 int	OrE::Algorithm::Rand(int _iMin, int _iMax)
 {
@@ -137,6 +157,124 @@ float OrE::Algorithm::NormRand()
 {
 	// Slow but stable, there are faster ways
 	return Sqrt(Maxf(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
+}
+
+
+// ******************************************************************************** //
+OrE::Algorithm::PerlinNoise::PerlinNoise(dword _dwSeed)
+{
+	// Use mersenne twister to seed a table for later random samplings
+	SRand(_dwSeed);
+	for(int i=0; i<1024; ++i)
+		m_dwWhiteNoiseTable[i] = RandU();
+}
+
+// ******************************************************************************** //
+dword OrE::Algorithm::PerlinNoise::Sample1D(int _i)
+{
+	return m_dwWhiteNoiseTable[_i&0x3ff] + m_dwWhiteNoiseTable[(_i>>5)&0x3ff]
+		 ^ m_dwWhiteNoiseTable[(_i*7+11)&0x3ff];
+}
+
+// ******************************************************************** //
+// Funktion zur Interpolation (zwischen zwei Punkten des Rauschens)
+// Varianten: Cosinus und C2-stetige Polynomfunktion
+// Die Varianten unterscheiden sich kaum bis gar nicht
+//
+// Zweck:
+// Die Funktion erhält als Eingabe drei float Werte _dA und _dB sowie _dR.
+// Für _dR aus dem Intervall [0,1] gibt Interpolate eine Cosinus-Interpolation
+// mit _dA und _dB als Maximmum- bzw. Minimumwert.
+// Für _dR = 0 ergibt Interpolate = _dA. Für _dR = 1 ergibt Interpolate = _dB.
+double Interpolate(double  _dA, double  _dB, double _dR)
+{
+	// Polynomfunktion für Details sehe "Burger-GradientNoiseGerman-2008".
+	double _dF = _dR*_dR*_dR*(_dR*(_dR*6.0f-15.0f)+10.0f);
+	return  (_dA * (1-_dF) + _dB * _dF);
+}
+
+// ******************************************************************************** //
+float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX)
+{
+	double dRes = 0.0;
+	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
+	{
+		float fAmplitude = OrE::Math::Pow(_fPersistence, (float)i);
+		float fFrequenz = (float)(1<<i);
+		// We need 2 samples per dimension -> 2 samples total
+		float fFracX = _fX * fFrequenz;
+		int iX = (int)fFracX;
+		fFracX -= iX;
+		double s0 = fAmplitude*(Sample1D(iX)/2147483648.0);
+		double s1 = fAmplitude*(Sample1D(iX+1)/2147483648.0);
+
+		dRes += Interpolate(s0, s1, fFracX);
+	}
+
+	// Transform to [0,1]
+	return float(dRes)*OrE::Math::Ln(_fPersistence)/(OrE::Math::Pow(_fPersistence, (float)_iHeightOctave)-OrE::Math::Pow(_fPersistence, (float)_iLowOctave))-1.0f;
+}
+
+// ******************************************************************************** //
+float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY)
+{
+	double dRes = 0.0;
+	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
+	{
+		float fAmplitude = OrE::Math::Pow(_fPersistence, (float)i);
+		float fFrequenz = (float)(1<<i);
+		// We need 2 samples per dimension -> 2 samples total
+		float fFracX = _fX * fFrequenz;
+		float fFracY = _fY * fFrequenz;
+		int iX = (int)fFracX;
+		int iY = (int)fFracY;
+		fFracX -= iX;
+		fFracY -= iY;
+		double s00 = fAmplitude*((Sample1D(iX)^Sample1D(iY))/2147483648.0);
+		double s10 = fAmplitude*((Sample1D(iX+1)^Sample1D(iY))/2147483648.0);
+		double s01 = fAmplitude*((Sample1D(iX)^Sample1D(iY+1))/2147483648.0);
+		double s11 = fAmplitude*((Sample1D(iX+1)^Sample1D(iY+1))/2147483648.0);
+
+		dRes += Interpolate(Interpolate(s00, s10, fFracX), Interpolate(s01, s11, fFracX), fFracY);
+	}
+
+	// Transform to [0,1]
+	return float(dRes)*OrE::Math::Ln(_fPersistence)/(OrE::Math::Pow(_fPersistence, (float)_iHeightOctave)-OrE::Math::Pow(_fPersistence, (float)_iLowOctave))-1.0f;
+}
+
+// ******************************************************************************** //
+float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ)
+{
+	double dRes = 0.0;
+	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
+	{
+		float fAmplitude = OrE::Math::Pow(_fPersistence, (float)i);
+		float fFrequenz = (float)(1<<i);
+		// We need 2 samples per dimension -> 2 samples total
+		float fFracX = _fX * fFrequenz;
+		float fFracY = _fY * fFrequenz;
+		float fFracZ = _fZ * fFrequenz;
+		int iX = (int)fFracX;
+		int iY = (int)fFracY;
+		int iZ = (int)fFracZ;
+		fFracX -= iX;
+		fFracY -= iY;
+		fFracZ -= iZ;
+		double s000 = fAmplitude*((Sample1D(iX)^Sample1D(iY)^Sample1D(iZ))/2147483648.0);
+		double s100 = fAmplitude*((Sample1D(iX+1)^Sample1D(iY)^Sample1D(iZ))/2147483648.0);
+		double s010 = fAmplitude*((Sample1D(iX)^Sample1D(iY+1)^Sample1D(iZ))/2147483648.0);
+		double s110 = fAmplitude*((Sample1D(iX+1)^Sample1D(iY+1)^Sample1D(iZ))/2147483648.0);
+		double s001 = fAmplitude*((Sample1D(iX)^Sample1D(iY)^Sample1D(iZ+1))/2147483648.0);
+		double s101 = fAmplitude*((Sample1D(iX+1)^Sample1D(iY)^Sample1D(iZ+1))/2147483648.0);
+		double s011 = fAmplitude*((Sample1D(iX)^Sample1D(iY+1)^Sample1D(iZ+1))/2147483648.0);
+		double s111 = fAmplitude*((Sample1D(iX+1)^Sample1D(iY+1)^Sample1D(iZ+1))/2147483648.0);
+
+		dRes += Interpolate(Interpolate(Interpolate(s000, s100, fFracX), Interpolate(s010, s110, fFracX), fFracY),
+							Interpolate(Interpolate(s001, s101, fFracX), Interpolate(s011, s111, fFracX), fFracY), fFracZ);
+	}
+
+	// Transform to [0,1]
+	return float(dRes)*OrE::Math::Ln(_fPersistence)/(OrE::Math::Pow(_fPersistence, (float)_iHeightOctave)-OrE::Math::Pow(_fPersistence, (float)_iLowOctave))-1.0f;
 }
 
 // *************************************EOF**************************************** //
