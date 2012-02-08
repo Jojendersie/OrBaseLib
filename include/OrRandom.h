@@ -37,8 +37,8 @@ float	NormRand();										// Creates a random number of a normal distribution [
 class PerlinNoise
 {
 private:
-	dword m_dwWhiteNoiseTable[1024];
-	dword Sample1D(int _i);
+	dword m_dwSeed;
+	double Sample1D(__int64 _i);
 public:
 	PerlinNoise(dword _dwSeed);
 
