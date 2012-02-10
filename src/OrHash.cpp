@@ -240,7 +240,7 @@ void OrE::ADT::HashMap::TestSize()
 		// Mittleres Wachstum (sqrt/linear); Mittlere Kollisionszahl; Häufiges Resize
 		case HM_RESIZE_MODERATE:
 			if(m_dwNumElements >= (dword)(m_dwSize*1.5f))
-				Resize(m_dwSize+Maxu(6*(dword)Sqrt((float)m_dwSize), 128));
+				Resize(m_dwSize+Max(6*(dword)Sqrt((float)m_dwSize), (dword)128));
 			break;
 		// Schnelles Wachstum (exponentiell); Geringe Kollisionszahl; Seltenes Resize
 		case HM_PREFER_PERFORMANCE:
@@ -422,7 +422,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 		}
 		// Schleife wird nur verlassen, wenn wir in einem neuen Knoten sind
 		// Es muss nun noch eine Stringkopie erstellt werden.
-		int iLen = strlen(_pcKey)+1;
+		int iLen = (int)strlen(_pcKey)+1;
 		void* pStr = malloc(iLen);
 		memcpy(pStr, _pcKey, iLen);
 		pBucket->qwKey = ((((qword)pStr)<<16)<<16) | dwH;
@@ -432,7 +432,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 	{
 		m_pBuckets[dwHash].pObject = _pObject;
 		// Stringkopie
-		int iLen = strlen(_pcKey)+1;
+		int iLen = (int)strlen(_pcKey)+1;
 		void* pStr = malloc(iLen);
 		memcpy(pStr, _pcKey, iLen);
 		m_pBuckets[dwHash].qwKey = ((((qword)pStr)<<16)<<16) | dwH;
@@ -533,7 +533,7 @@ ADTElementP OrE::ADT::HashMap::GetNext(ADTElementP _pCurrent)
 	}
 
 ListSearch:
-	dword dwIndex = pBuck - m_pBuckets;
+	dword dwIndex = (dword)(pBuck - m_pBuckets);
 	++dwIndex;
 	if(dwIndex == m_dwSize) return nullptr;	// Am Ende gibt es kein nächstes Element
 	while(!m_pBuckets[dwIndex].pObject)

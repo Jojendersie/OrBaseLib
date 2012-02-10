@@ -41,3 +41,4 @@
 // Algorithms
 #include "OrHuffman.h"
 #include "OrRandom.h"
+#include "OrUtils.h"

@@ -15,9 +15,29 @@
 // ******************************************************************************** //
 //	Fast mathematical base functions												//
 //	Sources: http://www.website.masmforum.com/tutorials/fptute/fpuchap11.htm#f2xm1	//
+//	http://aggregate.org/MAGIC/														//
+//	http://graphics.stanford.edu/~seander/bithacks.html								//
+//																					//
+//	Benchmarks (1 mrd calls):														//
+//		Floatingpoint addition:			 0.593										//
+//		Floatingpoint multiplication:	 0.578 ?									//
+//		Floatingpoint division:			 0.921										//
+//		Floatingpoint InvSqrt:			94.0										//
+//		Floatingpoint InvSqrt2:			76.0										//
+//		Floatingpoint sqrt:			   136.4										//
+//		Floatingpoint Ln:			    94.0										//
+//		Floatingpoint log:			   203.0										//
+//		Floatingpoint Min/Max:		    65.0										//
+//		Integer Min/Max:				62.0										//
+//		Cast int->float:				 0.65										//
+//		Cast dword->float:				 0.65										//
+//		Cast float->int:				 0.59										//
+//		Cast float->dword:				 0.59										//
 // ******************************************************************************** //
 
 #pragma once
+
+#include <cmath>
 
 namespace OrE {
 namespace Math {
@@ -31,56 +51,62 @@ const double dPi_2 = dPi*0.5;
 
 // ******************************************************************************** //
 // Min und Max - Funktionen, damit nicht irgendwelche Dinge importiert werden.
-__forceinline float Maxf(const float a, const float b)		{return a > b ? a : b;}
-__forceinline double Maxd(const double a, const double b)	{return a > b ? a : b;}
-__forceinline int Max(const int a, const int b)				{return a > b ? a : b;}
-__forceinline dword Maxu(const dword a, const dword b)		{return a > b ? a : b;}
-__forceinline float Minf(const float a, const float b)		{return a < b ? a : b;}
-__forceinline double Mind(const double a, const double b)	{return a < b ? a : b;}
-__forceinline int Min(const int a, const int b)				{return a < b ? a : b;}
-__forceinline dword Minu(const dword a, const dword b)		{return a < b ? a : b;}
-__forceinline float Clampf(const float a, const float min, const float max)	{return a < min ? min : (a > max ? max : a);}
-__forceinline dword Clampu(const dword a, const dword min, const dword max)	{return a < min ? min : (a > max ? max : a);}
-__forceinline float Absf(const float a)						{return a < 0 ? -a: a;}
-__forceinline int Abs(const int a)							{return a < 0 ? -a: a;}
+template <class T> const T Min(const T a, const T b)		{return a < b ? a : b;}
+template <class T> const T Max(const T a, const T b)		{return a > b ? a : b;}
+template <class T> const T Clamp(const T a, const T min, const T max)	{return a < min ? min : (a > max ? max : a);}
+template <class T> const T Abs(const T a)					{return a < 0 ? -a : a;}
 __forceinline int Sgn(const int a)							{return (a<0)?-1:1;}			// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
-__forceinline float Sgnf(const float a)						{return (a<0)?-1.0f:1.0f;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
+__forceinline float Sgn(const float a)						{return (a<0)?-1.0f:1.0f;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
+__forceinline double Sgn(const double a)					{return (a<0)?-1.0:1.0;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
+
+// Bit hacking alternatives:
+//__forceinline int Abs(const int a)						{int m=a>>31; return (a+m)^m;}	a little bit slower than the other variant
 
 // ******************************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
-float Arccos( float r );
+__forceinline float Arccos( float r )	{return acos(r);}
 
 // ******************************************************************************** //
 // Berechnet den Arcussinus: arctan( r / -sqr( 1.0f - r * r ) )
-float Arcsin( float r );
+__forceinline float Arcsin( float r )	{return asin(r);}
 
 // ******************************************************************************** //
 // Berechnet den Arcustangens: arctan( r )
-float Arctan( float r );
+__forceinline float Arctan( float r )	{return atan(r);}
 
 // ******************************************************************************** //
 // Berechnet den Sinus (Bogenmaß)
-float Sin( float r );
+__forceinline float Sin( float r )		{return sin(r);}
 
 // ******************************************************************************** //
 // Berechnet den Kosinus (Bogenmaß)
-float Cos( float r );
+__forceinline float Cos( float r )		{return cos(r);}
 
 // ******************************************************************************** //
 // Berechnet den Tangens (Bogenmaß)
-float Tan( float r );
+__forceinline float Tan( float r )		{return tan(r);}
 
 // ******************************************************************************** //
 // quadriert eine Zahl
-float Sqr( float r );
+__forceinline float Sqr( float r )		{return r*r;}
 
 // ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes
-float Sqrt( float r );
+__forceinline float Sqrt( float r )		{return sqrt(r);}
 
 // ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
-inline __declspec(naked) float __fastcall InvSqrt(float fValue)
+// Accuracy: worst case error 1%, avg 0.1%
+float InvSqrt(float fValue);
+// Accuracy: worst case error 4%, avg 2.1%
+float _InvSqrt(float fValue);
+
+// ******************************************************************************** //
+// Nächst größere 2 er Potenz
+
+// ******************************************************************************** //
+// Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
+/*inline __declspec(naked) float __fastcall InvSqrt(float fValue)
 {
 	__asm
 	{
@@ -117,25 +143,33 @@ inline __declspec(naked) float __fastcall InvSqrt(float fValue)
 		ret 4
 	}
 }
-
+*/
 // ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
 // etwas sicherer, aber auch ungenauer und langsamer
-float InvSqrtEx( float r );
+//float InvSqrtEx( float r );
 
 // ******************************************************************************** //
 // Logarithmus naturalis
+// Accuracy: avg. error 0.5%. Do not use between 0 and 1! maxerror from 400%
 float Ln( float r );
 // Logarithmus dualis
-inline float Ld( float r )	{return Ln(r)*1.442695041f;}
+int _Ld( float r );
+float Ld( float r );
+int Ld( int r );
 
 // ******************************************************************************** //
 // Calculate the rounded (down) logarithm to the base 2
-int Log2(int iValue);
+//int Log2(int iValue);
 
 // ******************************************************************************** //
 // exponential function base^exponent
-float __fastcall Pow(float fBase, float fExponent);
+__forceinline float Pow(float fBase, float fExponent)	{return pow(fBase, fExponent);}
+
+// ******************************************************************************** //
+// Gray Code convertions
+unsigned int __fastcall GrayCodeToNum(unsigned int _uiGrayCode);
+unsigned int __fastcall NumToGrayCode(unsigned int _uiNum);
 
 }; // namespace Math
 }; // namespace OrE

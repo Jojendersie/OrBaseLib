@@ -241,43 +241,43 @@ inline Matrix operator / (const Matrix& m,
 inline bool operator == (const Matrix& a,
 						 const Matrix& b)
 {
-	if(Absf(a.m11 - b.m11) > Matrix_EPSILON) return false;
-	if(Absf(a.m12 - b.m12) > Matrix_EPSILON) return false;
-	if(Absf(a.m13 - b.m13) > Matrix_EPSILON) return false;
-	if(Absf(a.m14 - b.m14) > Matrix_EPSILON) return false;
-	if(Absf(a.m21 - b.m21) > Matrix_EPSILON) return false;
-	if(Absf(a.m22 - b.m22) > Matrix_EPSILON) return false;
-	if(Absf(a.m23 - b.m23) > Matrix_EPSILON) return false;
-	if(Absf(a.m24 - b.m24) > Matrix_EPSILON) return false;
-	if(Absf(a.m31 - b.m31) > Matrix_EPSILON) return false;
-	if(Absf(a.m32 - b.m32) > Matrix_EPSILON) return false;
-	if(Absf(a.m33 - b.m33) > Matrix_EPSILON) return false;
-	if(Absf(a.m34 - b.m34) > Matrix_EPSILON) return false;
-	if(Absf(a.m41 - b.m41) > Matrix_EPSILON) return false;
-	if(Absf(a.m42 - b.m42) > Matrix_EPSILON) return false;
-	if(Absf(a.m43 - b.m43) > Matrix_EPSILON) return false;
-	return (Absf(a.m44 - b.m44) <= Matrix_EPSILON);
+	if(Abs(a.m11 - b.m11) > Matrix_EPSILON) return false;
+	if(Abs(a.m12 - b.m12) > Matrix_EPSILON) return false;
+	if(Abs(a.m13 - b.m13) > Matrix_EPSILON) return false;
+	if(Abs(a.m14 - b.m14) > Matrix_EPSILON) return false;
+	if(Abs(a.m21 - b.m21) > Matrix_EPSILON) return false;
+	if(Abs(a.m22 - b.m22) > Matrix_EPSILON) return false;
+	if(Abs(a.m23 - b.m23) > Matrix_EPSILON) return false;
+	if(Abs(a.m24 - b.m24) > Matrix_EPSILON) return false;
+	if(Abs(a.m31 - b.m31) > Matrix_EPSILON) return false;
+	if(Abs(a.m32 - b.m32) > Matrix_EPSILON) return false;
+	if(Abs(a.m33 - b.m33) > Matrix_EPSILON) return false;
+	if(Abs(a.m34 - b.m34) > Matrix_EPSILON) return false;
+	if(Abs(a.m41 - b.m41) > Matrix_EPSILON) return false;
+	if(Abs(a.m42 - b.m42) > Matrix_EPSILON) return false;
+	if(Abs(a.m43 - b.m43) > Matrix_EPSILON) return false;
+	return (Abs(a.m44 - b.m44) <= Matrix_EPSILON);
 }
 
 inline bool operator != (const Matrix& a,
 						 const Matrix& b)
 {
-	if(Absf(a.m11 - b.m11) > Matrix_EPSILON) return true;
-	if(Absf(a.m12 - b.m12) > Matrix_EPSILON) return true;
-	if(Absf(a.m13 - b.m13) > Matrix_EPSILON) return true;
-	if(Absf(a.m14 - b.m14) > Matrix_EPSILON) return true;
-	if(Absf(a.m21 - b.m21) > Matrix_EPSILON) return true;
-	if(Absf(a.m22 - b.m22) > Matrix_EPSILON) return true;
-	if(Absf(a.m23 - b.m23) > Matrix_EPSILON) return true;
-	if(Absf(a.m24 - b.m24) > Matrix_EPSILON) return true;
-	if(Absf(a.m31 - b.m31) > Matrix_EPSILON) return true;
-	if(Absf(a.m32 - b.m32) > Matrix_EPSILON) return true;
-	if(Absf(a.m33 - b.m33) > Matrix_EPSILON) return true;
-	if(Absf(a.m34 - b.m34) > Matrix_EPSILON) return true;
-	if(Absf(a.m41 - b.m41) > Matrix_EPSILON) return true;
-	if(Absf(a.m42 - b.m42) > Matrix_EPSILON) return true;
-	if(Absf(a.m43 - b.m43) > Matrix_EPSILON) return true;
-	return (Absf(a.m44 - b.m44) > Matrix_EPSILON);
+	if(Abs(a.m11 - b.m11) > Matrix_EPSILON) return true;
+	if(Abs(a.m12 - b.m12) > Matrix_EPSILON) return true;
+	if(Abs(a.m13 - b.m13) > Matrix_EPSILON) return true;
+	if(Abs(a.m14 - b.m14) > Matrix_EPSILON) return true;
+	if(Abs(a.m21 - b.m21) > Matrix_EPSILON) return true;
+	if(Abs(a.m22 - b.m22) > Matrix_EPSILON) return true;
+	if(Abs(a.m23 - b.m23) > Matrix_EPSILON) return true;
+	if(Abs(a.m24 - b.m24) > Matrix_EPSILON) return true;
+	if(Abs(a.m31 - b.m31) > Matrix_EPSILON) return true;
+	if(Abs(a.m32 - b.m32) > Matrix_EPSILON) return true;
+	if(Abs(a.m33 - b.m33) > Matrix_EPSILON) return true;
+	if(Abs(a.m34 - b.m34) > Matrix_EPSILON) return true;
+	if(Abs(a.m41 - b.m41) > Matrix_EPSILON) return true;
+	if(Abs(a.m42 - b.m42) > Matrix_EPSILON) return true;
+	if(Abs(a.m43 - b.m43) > Matrix_EPSILON) return true;
+	return (Abs(a.m44 - b.m44) > Matrix_EPSILON);
 }
 
 // ******************************************************************************** //
@@ -477,25 +477,25 @@ inline Matrix2x3 operator / (const Matrix2x3& m,
 inline bool operator == (const Matrix2x3& a,
 						 const Matrix2x3& b)
 {
-	if(Absf(a.m11 - b.m11) > Matrix_EPSILON) return false;
-	if(Absf(a.m12 - b.m12) > Matrix_EPSILON) return false;
-	if(Absf(a.m13 - b.m13) > Matrix_EPSILON) return false;
-	if(Absf(a.m21 - b.m21) > Matrix_EPSILON) return false;
-	if(Absf(a.m22 - b.m22) > Matrix_EPSILON) return false;
-	if(Absf(a.m23 - b.m23) > Matrix_EPSILON) return false;
-	return (Absf(a.m23 - b.m23) <= Matrix_EPSILON);
+	if(Abs(a.m11 - b.m11) > Matrix_EPSILON) return false;
+	if(Abs(a.m12 - b.m12) > Matrix_EPSILON) return false;
+	if(Abs(a.m13 - b.m13) > Matrix_EPSILON) return false;
+	if(Abs(a.m21 - b.m21) > Matrix_EPSILON) return false;
+	if(Abs(a.m22 - b.m22) > Matrix_EPSILON) return false;
+	if(Abs(a.m23 - b.m23) > Matrix_EPSILON) return false;
+	return (Abs(a.m23 - b.m23) <= Matrix_EPSILON);
 }
 
 inline bool operator != (const Matrix2x3& a,
 						 const Matrix2x3& b)
 {
-	if(Absf(a.m11 - b.m11) > Matrix_EPSILON) return true;
-	if(Absf(a.m12 - b.m12) > Matrix_EPSILON) return true;
-	if(Absf(a.m13 - b.m13) > Matrix_EPSILON) return true;
-	if(Absf(a.m21 - b.m21) > Matrix_EPSILON) return true;
-	if(Absf(a.m22 - b.m22) > Matrix_EPSILON) return true;
-	if(Absf(a.m23 - b.m23) > Matrix_EPSILON) return true;
-	return (Absf(a.m23 - b.m23) > Matrix_EPSILON);
+	if(Abs(a.m11 - b.m11) > Matrix_EPSILON) return true;
+	if(Abs(a.m12 - b.m12) > Matrix_EPSILON) return true;
+	if(Abs(a.m13 - b.m13) > Matrix_EPSILON) return true;
+	if(Abs(a.m21 - b.m21) > Matrix_EPSILON) return true;
+	if(Abs(a.m22 - b.m22) > Matrix_EPSILON) return true;
+	if(Abs(a.m23 - b.m23) > Matrix_EPSILON) return true;
+	return (Abs(a.m23 - b.m23) > Matrix_EPSILON);
 }
 
 // ******************************************************************************** //

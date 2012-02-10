@@ -26,6 +26,7 @@
 #include "..\Include\OrADTObjects.h"
 #include "..\Include\OrTrie.h"
 #include "..\Include\OrFastMath.h"
+#include "..\Include\OrBuffer.h"
 
 using namespace OrE::ADT;
 using namespace OrE::Math;
@@ -66,7 +67,7 @@ TrieString* OrE::ADT::TrieString::substr(const dword _dwFrom, dword _dwTo) const
 // ******************************************************************************** //
 dword OrE::ADT::TrieString::match(const TrieString* _pStr) const
 {
-	dword dwMax = Minu(_pStr->m_dwLen, m_dwLen);
+	dword dwMax = Min(_pStr->m_dwLen, m_dwLen);
 	dword i;
 	for(i=0; (i<dwMax) && (_pStr->m_pcString[i]==m_pcString[i]); ++i);
 	return i;
@@ -270,8 +271,9 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 	// Zeiger auf Knoten auf den Stack packen.
 	// Immer wenn eine Abhängigkeit eines Knotens zu anderen Namen/Daten
 	// detektiert wird den Stack leeren.
-	int iNumStacked = 0;
+	//int iNumStacked = 0;
 	// Am Ende alle auf dem Stack befindlichen Knoten löschen.
+	OrE::ADT::Buffer Stack(60);	// Hopely enough
 
 	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
 	TrieNodeP pCurrent = m_pFirstNode;
@@ -298,17 +300,22 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 				{
 					// Aktuellen Knoten auch noch auf den Stack packen (zur einheitlichen Verarbeitung)
 					pCurrent->pData = nullptr;
-					__asm push pPrevious;
-					__asm push pCurrent;
-					++iNumStacked;		// Ein potentiell zu löschender Knoten mehr
+					Stack.Push(pPrevious);
+					Stack.Push(pCurrent);
+//					__asm push pPrevious;
+//					__asm push pCurrent;
+//					++iNumStacked;		// Ein potentiell zu löschender Knoten mehr
 					// Wenn nichts mehr von diesem Knoten abhängt diesen und alle auf dem Stack löschen
 					if(!pCurrent->pChild)
 					{
-						for(int i=0;i<iNumStacked;++i)
+						while(!Stack.IsEmpty())
+						//for(int i=0;i<iNumStacked;++i)
 						{
 							// Hole Knoten und Elternelement vom Stack
-							__asm pop pCurrent;
-							__asm pop pPrevious;
+							pCurrent = (TrieNodeP)Stack.Pop();
+							pPrevious = (TrieNodeP)Stack.Pop();
+//							__asm pop pCurrent;
+//							__asm pop pPrevious;
 							// Repair tree structure
 							if(!pPrevious) m_pFirstNode = pCurrent->pNext;
 							else if(pPrevious->pChild == pCurrent)
@@ -320,7 +327,7 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 							delete pCurrent->pSubString;
 							delete pCurrent;
 						}
-						iNumStacked = 0;
+						//iNumStacked = 0;
 					}
 					break;
 				} else {
@@ -335,15 +342,12 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 			if(pCurrent->pData == _pData || !pCurrent->pData)
 			{
 				pCurrent->pData = nullptr;
-				__asm push pPrevious;
-				__asm push pCurrent;
-				++iNumStacked;		// Ein potentiell zu löschender Knoten mehr
+				Stack.Push(pPrevious);
+				Stack.Push(pCurrent);
 			} else
 			{
 				// Daten in den Skat drücken
-				void* pDummy;
-				for(int i=0;i<iNumStacked*2;++i) __asm pop pDummy;
-				iNumStacked = 0;	// Neubeginn
+				Stack.Clear();
 			}
 			pPrevious = pCurrent;
 			_Name.m_pcString = &_Name.m_pcString[dwEqual];
@@ -356,8 +360,8 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 			pCurrent = pCurrent->pNext;
 		}
 	}
-	// kein Fund -> Stack aufräumen (_pData nur als sinnlos puffer misbrauchen
-	for(int i=0;i<iNumStacked*2;++i) __asm pop _pData;
+	// kein Fund -> Stack aufräumen
+	Stack.Clear();
 }
 
 // ******************************************************************************** //

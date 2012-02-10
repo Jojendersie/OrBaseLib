@@ -23,7 +23,7 @@ const float asm_one = 1.0f;
 
 // ******************************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
-float OrE::Math::Arccos( float r )
+/*float OrE::Math::Arccos( float r )
 {
 	//float asm_half_pi = half_pi;
 	__asm {
@@ -102,17 +102,6 @@ float OrE::Math::Tan( float r )
 }
 
 // ******************************************************************************** //
-// quadriert eine Zahl
-float OrE::Math::Sqr( float r )
-{
-	__asm {
-		fld r // r0 = r
-		fld r // r1=r0, r0=r
-		fmul // r0 = r0 * r1
-	} // returns r0
-}
-
-// ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes
 float OrE::Math::Sqrt( float r )
 {
@@ -120,12 +109,34 @@ float OrE::Math::Sqrt( float r )
 		fld r // r0 = r
 		fsqrt // r0 = sqrtf( r0 )
 	} // returns r0
-}
+}*/
 
 // ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
-// etwas sicherer, aber auch ungenauer und langsamer
-float OrE::Math::InvSqrtEx( float r )
+float OrE::Math::InvSqrt(float fValue)
+{
+	float fValueHalf = fValue*0.5f;
+	int i = *(int*)&fValue;
+	i = 0x5f3759df - (i>>1);
+	fValue = *(float*)&i;
+	// Error reducing
+	//fValue -= 0.00025f;
+	// Newtonstep
+	fValue *= (1.5f-fValueHalf*fValue*fValue);
+	return fValue;//+0.000013f;
+}
+
+// Schnellere Variante ohne Fehlerkorrektur
+float OrE::Math::_InvSqrt(float fValue)
+{
+	float fValueHalf = fValue*0.5f;
+	int i = *(int*)&fValue;
+	i = 0x5f3759df - (i>>1);
+	return (*(float*)&i) - 0.000056161f;
+}
+
+
+/*float OrE::Math::InvSqrtEx( float r )
 {
 	const float asm_dot5 = 0.5f;
 	const float asm_1dot5 = 1.5f;
@@ -143,13 +154,46 @@ float OrE::Math::InvSqrtEx( float r )
 		fsubr asm_1dot5 // r0 = 1.5f - r0
 		fmul r // r0 = r0 * r
 	} // returns r0
-}
+}*/
 
 // ******************************************************************************** //
+// Logarithmus dualis
+int OrE::Math::_Ld( float r )
+{
+	// Rounded log2 from exponent
+	int i = *(int*)&r;
+	return (i>>23)-127;
+}
+float OrE::Math::Ld( float r )
+{
+	// Rounded log2 from exponent
+	int i = *(int*)&r;
+	i = (i>>23)-127;
+	// Find fractinal from linear interpolation
+	// (1<<i) is the power of 2 <= r
+	// the next heigher power would be (1<<(i+1)) == (1<<i)*2
+	// what we want to know, where between is r: (1<<i) <= r < (1<<i)+(1<<i)
+	int p = (1<<i);
+	return i + (r-p)/(float)(p);
+}
+int OrE::Math::Ld( int r )
+{
+	// Rounded log2 from exponent
+	float f = (float)r;
+	r = *(int*)&f;
+	return (r>>23)-127;
+}
+
 // natürlicher Logarithmus
 float OrE::Math::Ln( float r )
 {
-	const float asm_1_div_log2_e = 0.693147180559f;
+	// Doing the same as for Ld
+	int i = *(int*)&r;
+	i = (i>>23)-127;
+	int p = (1<<i);
+	return (i + (r-p)/(float)(p))*0.693147180559f;	// Transform to basis e
+
+	/*const float asm_1_div_log2_e = 0.693147180559f;
 	const float asm_neg1_div_3 = -0.33333333333333333333333333333f;
 	const float asm_neg2_div_3 = -0.66666666666666666666666666667f;
 	const float asm_2 = 2.0f;
@@ -179,21 +223,21 @@ float OrE::Math::Ln( float r )
 		fild log_2
 		fadd
 		fmul asm_1_div_log2_e
-	}
+	}*/
 }
 
 // ******************************************************************************** //
 // Funktion für den gerundeten 2er Logarithmus (ganzzahl)
-int OrE::Math::Log2(int iValue)
+/*int OrE::Math::Log2(int iValue)
 {
 	__asm bsf eax, iValue
 //	__asm mov dword ptr[iValue], eax
 //	return iValue;
-}
+}*/
 
 // ******************************************************************************** //
 // Exponentialfunktion
-float __fastcall OrE::Math::Pow(float fBase, float fExponent)
+/*float __fastcall OrE::Math::Pow(float fBase, float fExponent)
 {
 	const float asm_1 = 1.0f;
 	__asm
@@ -216,6 +260,23 @@ float __fastcall OrE::Math::Pow(float fBase, float fExponent)
 		;fsub asm_neg1		// r0 += 1;
 		;fscale				// Mantisse und Exponent zusammenführen
 	}						// returns r0
+}*/
+
+// ******************************************************************************** //
+// Gray Code convertions
+unsigned int __fastcall OrE::Math::GrayCodeToNum(unsigned int _uiGrayCode)
+{
+        _uiGrayCode ^= (_uiGrayCode >> 16);
+        _uiGrayCode ^= (_uiGrayCode >> 8);
+        _uiGrayCode ^= (_uiGrayCode >> 4);
+        _uiGrayCode ^= (_uiGrayCode >> 2);
+        _uiGrayCode ^= (_uiGrayCode >> 1);
+        return _uiGrayCode;
+}
+
+unsigned int __fastcall OrE::Math::NumToGrayCode(unsigned int _uiNum)
+{
+        return (_uiNum>>1)^_uiNum;
 }
 
 

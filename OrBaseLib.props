@@ -10,7 +10,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup>
     <Link>
-      <AdditionalDependencies>OrBaseLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>OrBaseLib32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup />

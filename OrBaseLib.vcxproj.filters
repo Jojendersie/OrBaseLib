@@ -87,6 +87,9 @@
     <ClInclude Include="include\OrList.h">
       <Filter>Headerdateien\ADT</Filter>
     </ClInclude>
+    <ClInclude Include="include\OrUtils.h">
+      <Filter>Headerdateien\Algorithms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -139,6 +142,9 @@
     </ClCompile>
     <ClCompile Include="src\OrList.cpp">
       <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrUtils.cpp">
+      <Filter>Quelldateien\Algorithms</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

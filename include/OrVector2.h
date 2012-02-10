@@ -90,8 +90,8 @@ inline float	Vec2Cross(const Vector2& v1, const Vector2& v2)								{return v1.x
 inline Vector2	Vec2Perpendicular(const Vector2& v)											{return Vector2(-v.y, v.x);}		// Senkrechter Vektor
 inline float	Vec2Angle(const Vector2& v1, const Vector2& v2)								{return Cos((v1.x * v2.x + v1.y * v2.y) * InvSqrt((v1.x * v1.x + v1.y * v1.y) * (v2.x * v2.x + v2.y * v2.y)));}
 inline Vector2	Vec2LrpNormal(const Vector2& v1, const Vector2& v2, const float p)			{return Vec2NormalizeEx(v1 + p * (v2 - v1));}
-inline Vector2	Vec2Min(const Vector2& v1, const Vector2& v2)								{return Vector2(Minf(v1.x, v2.x), Minf(v1.y, v2.y));}
-inline Vector2	Vec2Max(const Vector2& v1, const Vector2& v2)								{return Vector2(Maxf(v1.x, v2.x), Maxf(v1.y, v2.y));}
+inline Vector2	Vec2Min(const Vector2& v1, const Vector2& v2)								{return Vector2(Min(v1.x, v2.x), Min(v1.y, v2.y));}
+inline Vector2	Vec2Max(const Vector2& v1, const Vector2& v2)								{return Vector2(Max(v1.x, v2.x), Max(v1.y, v2.y));}
 inline Vector2	Vec2Lrp(const Vector2& v1, const Vector2& v2, const float f)				{return Vector2(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y));}
 Vector2			Vec2Random();
 Vector2			Vec2Rotate(const Vector2& _v, const float _fAlpha);											// Rotieren eines Punktes im 2D-Raum

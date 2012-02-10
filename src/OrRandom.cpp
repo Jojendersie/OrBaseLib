@@ -148,7 +148,7 @@ float OrE::Algorithm::ExpRand(float _fLambda)
 float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 {
 	// Slow but stable, there are faster ways
-	return _fMean + _fVariance*Sqrt(Maxf(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
+	return _fMean + _fVariance*Sqrt(Max(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
 }
 
 // ******************************************************************************** //
@@ -156,7 +156,7 @@ float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 float OrE::Algorithm::NormRand()
 {
 	// Slow but stable, there are faster ways
-	return Sqrt(Maxf(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
+	return Sqrt(Max(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
 }
 
 

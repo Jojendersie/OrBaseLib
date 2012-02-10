@@ -94,8 +94,8 @@ inline float	Vec3CrossZ(const float v1x, const float v1y, const float v2x, const
 inline float	Vec3Dot(const Vector3& v1, const Vector3& v2)									{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;}
 inline float	Vec3Angle(const Vector3& v1, const Vector3& v2)									{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z)));}
 inline Vector3	Vec3LrpNormal(const Vector3& v1, const Vector3& v2, const float p)				{return Vec3NormalizeEx(v1 + p * (v2 - v1));}
-inline Vector3	Vec3Min(const Vector3& v1, const Vector3& v2)									{return Vector3(Minf(v1.x, v2.x), Minf(v1.y, v2.y), Minf(v1.z, v2.z));}
-inline Vector3	Vec3Max(const Vector3& v1, const Vector3& v2)									{return Vector3(Maxf(v1.x, v2.x), Maxf(v1.y, v2.y), Maxf(v1.z, v2.z));}
+inline Vector3	Vec3Min(const Vector3& v1, const Vector3& v2)									{return Vector3(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z));}
+inline Vector3	Vec3Max(const Vector3& v1, const Vector3& v2)									{return Vector3(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z));}
 inline Vector3	Vec3Lrp(const Vector3& v1, const Vector3& v2, const float f)					{return Vector3(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z));}
 Vector3			Vec3Random();
 

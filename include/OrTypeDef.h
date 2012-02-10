@@ -38,7 +38,7 @@ class Matrix2x3;
 
 // ******************************************************************************** //
 // Atomare Funktion zum Sichern kritischer Bereiche
-inline bool OrLock(volatile dword* _pLockVar)
+/*inline bool OrLock(volatile dword* _pLockVar)
 {
 	__asm mov eax, _pLockVar
 try_enter:
@@ -53,6 +53,6 @@ try_enter:
 __forceinline void OrUnlock(volatile dword* _pLockVar)
 {
 	*_pLockVar = 0;
-}
+}*/
 
 // *************************************EOF**************************************** //

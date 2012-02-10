@@ -18,6 +18,7 @@
 #include "..\include\OrBuffer.h"
 
 #include <stdlib.h>
+// #include <mutex.h> TODO insert if vc11 released
 
 // TODO test with threads
 // ******************************************************************************** //
@@ -42,14 +43,14 @@ OrE::ADT::Buffer::~Buffer()
 bool OrE::ADT::Buffer::Push(void* _pObject)
 {
 	bool bRet = false;
-	OrLock(&m_dwSemaphore);
+	//OrLock(&m_dwSemaphore);
 	if(!IsFull())
 	{
 		m_Buffer[m_iHeadCursor] = _pObject;
 		m_iHeadCursor = (m_iHeadCursor+1)%m_iMax;
 		bRet = true;
 	}
-	OrUnlock(&m_dwSemaphore);
+	//OrUnlock(&m_dwSemaphore);
 	return bRet;
 }
 
@@ -58,14 +59,22 @@ bool OrE::ADT::Buffer::Push(void* _pObject)
 void* OrE::ADT::Buffer::Pop()
 {
 	void* pObj = nullptr;
-	OrLock(&m_dwSemaphore);
+	//OrLock(&m_dwSemaphore);
 	if(!IsEmpty())
 	{
 		m_iHeadCursor = (m_iHeadCursor+m_iMax-1)%m_iMax;
 		pObj = m_Buffer[m_iHeadCursor];
 	}
-	OrUnlock(&m_dwSemaphore);
+	//OrUnlock(&m_dwSemaphore);
 	return pObj;
+}
+
+// ******************************************************************************** //
+// Removes all data
+void OrE::ADT::Buffer::Clear()
+{
+	m_iHeadCursor = 0;
+	m_iTailCursor = 0;
 }
 
 // ******************************************************************************** //
@@ -73,13 +82,13 @@ void* OrE::ADT::Buffer::Pop()
 void* OrE::ADT::Buffer::Dequeue()
 {
 	void* pObj = nullptr;
-	OrLock(&m_dwSemaphore);
+//	OrLock(&m_dwSemaphore);
 	if(!IsEmpty())
 	{
 		pObj = m_Buffer[m_iTailCursor];
 		m_iTailCursor = (m_iTailCursor+1)%m_iMax;
 	}
-	OrUnlock(&m_dwSemaphore);
+	//OrUnlock(&m_dwSemaphore);
 	return pObj;
 }
 
@@ -87,12 +96,12 @@ void* OrE::ADT::Buffer::Dequeue()
 // Speicher vergrößern
 void OrE::ADT::Buffer::Extend(int iAdditionalSize)
 {
-	OrLock(&m_dwSemaphore);
+	//OrLock(&m_dwSemaphore);
 
 	m_iMax += iAdditionalSize;
 	m_Buffer = (void**)realloc(m_Buffer, sizeof(void*)*m_iMax);
 
-	OrUnlock(&m_dwSemaphore);
+	//OrUnlock(&m_dwSemaphore);
 }
 
 // ******************************************************************************** //
