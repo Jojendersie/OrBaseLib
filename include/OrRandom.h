@@ -48,9 +48,24 @@ public:
 	//	_iHeightOctave - Octave with the heighest frequence (inclusive). All frequences between are sampled too.
 	//	_fPersistence - Relative height of a frequenze relative to the last one. Recommended: 0.5f.
 	//	_fX - 1 float coordinate.
+	//	_vOutGrad - Gradient vector at the sampled point (analytical determined)
+	float Rand1D(float _fX);
+	float Rand1D(float _fX, float& _vOutGrad);
 	float Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX);
+	float Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float& _vOutGrad);
+
+	float Rand2D(float _fX, float _fY);
+	float Rand2D(float _fX, float _fY, OrE::Math::Vector2& _vOutNormal);
 	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY);
+	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vector2& _vOutGrad);
+
+	float Rand3D(float _fX, float _fY, float _fZ);
+	float Rand3D(float _fX, float _fY, float _fZ, OrE::Math::Vector3& _vOutGrad);
 	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ);
+	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vector3& _vOutGrad);
+
+	void SetSeed(dword _dwSeed)		{m_dwSeed = _dwSeed;}
+	dword GetSeed()					{return m_dwSeed;}
 };
 
 }; // namespace OrE

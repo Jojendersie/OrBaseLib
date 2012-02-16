@@ -18,21 +18,25 @@
 //	http://aggregate.org/MAGIC/														//
 //	http://graphics.stanford.edu/~seander/bithacks.html								//
 //																					//
-//	Benchmarks (1 mrd calls):														//
-//		Floatingpoint addition:			 0.593										//
-//		Floatingpoint multiplication:	 0.578 ?									//
-//		Floatingpoint division:			 0.921										//
-//		Floatingpoint InvSqrt:			94.0										//
-//		Floatingpoint InvSqrt2:			76.0										//
-//		Floatingpoint sqrt:			   136.4										//
-//		Floatingpoint Ln:			    94.0										//
-//		Floatingpoint log:			   203.0										//
-//		Floatingpoint Min/Max:		    65.0										//
+//	Benchmarks (in s/1 mrd calls):													//
+//		Float addition:					 2.513										//
+//		Double addition:				 2.747										//
+//		Float multiplication:			 2.95										//
+//		Double multiplication:			 3.43										//
+//		Float division:					11.5										//
+//		Double division:				12.3										//
+//		Float InvSqrt:					94.0										//
+//		Float InvSqrt2:					76.0										//
+//		Float sqrt:					   136.4										//
+//		Float Ln:					    94.0										//
+//		Float log:					   203.0										//
+//		Float Min/Max:				    65.0										//
 //		Integer Min/Max:				62.0										//
-//		Cast int->float:				 0.65										//
-//		Cast dword->float:				 0.65										//
-//		Cast float->int:				 0.59										//
-//		Cast float->dword:				 0.59										//
+//		Cast int->float:				 3.1										//
+//		Cast float->int:				 7.0										//
+//		Cast float->dword:				 25.0										//
+//		std::floor:					   174.7										//
+//		Floor:							71.8										//
 // ******************************************************************************** //
 
 #pragma once
@@ -55,12 +59,29 @@ template <class T> const T Min(const T a, const T b)		{return a < b ? a : b;}
 template <class T> const T Max(const T a, const T b)		{return a > b ? a : b;}
 template <class T> const T Clamp(const T a, const T min, const T max)	{return a < min ? min : (a > max ? max : a);}
 template <class T> const T Abs(const T a)					{return a < 0 ? -a : a;}
+template <class T> const T Lerp(const T a, const T b, const T f)		{return a + (b-a)*f;}
 __forceinline int Sgn(const int a)							{return (a<0)?-1:1;}			// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
 __forceinline float Sgn(const float a)						{return (a<0)?-1.0f:1.0f;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
 __forceinline double Sgn(const double a)					{return (a<0)?-1.0:1.0;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
+__forceinline int Floor(const float a)						{int r=(int)a; return r - (int)((a<0)&&(a-r!=0.0f));}		// Round down
+__forceinline int Ceil(const float a)						{int r=(int)a; return r + (int)((a>0)&&(a-r!=0.0f));}		// Round up
 
 // Bit hacking alternatives:
 //__forceinline int Abs(const int a)						{int m=a>>31; return (a+m)^m;}	a little bit slower than the other variant
+
+//	http://stereopsis.com/FPU.html#convert											//
+/*inline int Int(double _dVal)
+{
+	//_dVal = (_dVal + 68719476736.0*1.5);
+//	return (*(int*)&_dVal) >> 16; 
+	_dVal = (_dVal + 1688849860263936.0);
+	return (*(int*)&_dVal)>>2; 
+}
+
+inline int Int(float _fVal)
+{
+	return Int((double)_fVal);
+}*/
 
 // ******************************************************************************** //
 // Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
