@@ -189,8 +189,14 @@ __forceinline float Pow(float fBase, float fExponent)	{return pow(fBase, fExpone
 
 // ******************************************************************************** //
 // Gray Code convertions
-unsigned int __fastcall GrayCodeToNum(unsigned int _uiGrayCode);
-unsigned int __fastcall NumToGrayCode(unsigned int _uiNum);
+unsigned int GrayCodeToNum(unsigned int _uiGrayCode);
+unsigned int NumToGrayCode(unsigned int _uiNum);
+
+// ******************************************************************************** //
+// Parallel bit counting to estimate the number of 1 bits in a number
+qword CountBits64(qword n);
+dword CountBits32(dword n);
+word CountBits16(word n);
 
 }; // namespace Math
 }; // namespace OrE
