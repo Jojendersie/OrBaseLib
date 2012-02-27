@@ -369,9 +369,21 @@ Matrix OrE::Math::MatrixCamera(const Vector3& vPos,
 	// Rotationsmatrix erzeugen und die Translationsmatrix mit ihr multiplizieren
 	return MatrixTranslation(-vPos) *
 	       Matrix(vXAxis.x, vYAxis.x, vZAxis.x, 0.0f,
-		            vXAxis.y, vYAxis.y, vZAxis.y, 0.0f,
-				    vXAxis.z, vYAxis.z, vZAxis.z, 0.0f,
-					0.0f,     0.0f,     0.0f,     1.0f);
+		          vXAxis.y, vYAxis.y, vZAxis.y, 0.0f,
+				  vXAxis.z, vYAxis.z, vZAxis.z, 0.0f,
+				  0.0f,     0.0f,     0.0f,     1.0f);
+}
+
+// ******************************************************************************** //
+// Kameramatrix erzeugen
+Matrix OrE::Math::MatrixCamera(const Vector3& vPos, const Vector3& vDir, const Vector3& vUp, const Vector3& vBidir)
+{
+	// Easy way - all axis already given
+	return MatrixTranslation(-vPos) *
+	       Matrix(vBidir.x, vUp.x, vDir.x, 0.0f,
+		          vBidir.y, vUp.y, vDir.y, 0.0f,
+				  vBidir.z, vUp.z, vDir.z, 0.0f,
+				  0.0f,     0.0f,  0.0f,   1.0f);
 }
 
 // ******************************************************************************** //

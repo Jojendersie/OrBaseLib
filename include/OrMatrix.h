@@ -302,6 +302,7 @@ inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f
 		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);											// Projektionsmatrix berechnen
 		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);								// Projektionsmatrix berechnen
 		Matrix	MatrixCamera(const Vector3& vPos, const Vector3& vLookAt, const Vector3& vUp = Vector3(0.0f, 1.0f, 0.0f));										// Kameramatrix erzeugen
+		Matrix	MatrixCamera(const Vector3& vPos, const Vector3& vDir, const Vector3& vUp, const Vector3& vBidir);												// Kameramatrix erzeugen
 		Matrix	MatrixToTex2DMatrix(const Matrix& m);																											// In Texturmatrix umwandeln
 //		Matrix	MatrixMirror(const OrPlane& p);																													// Eine Spiegelmatrix an gegebener Ebene berechnen
 //		Matrix	MatrixMirror_Normalize(const OrPlane& p);																										// Eine Spiegelmatrix an gegebener Ebene (wird normalisiert) berechnen
