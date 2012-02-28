@@ -264,7 +264,7 @@ float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, f
 
 		float vNormal;
 		fRes += fAmplitude*Rand1D(_fX * fFrequence, vNormal);
-		_vOutGrad += vNormal;
+		_vOutGrad += fAmplitude*vNormal;
 
 //		double d = dAmplitude*Rand1D(_fX * fFrequence, &dx);	Interesting alternative
 //		dRes += d/(dx*dx+1.0f);
@@ -348,7 +348,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, f
 
 		OrE::Math::Vector2 vNormal;
 		fRes += fAmplitude*Rand2D(_fX*fFrequence, _fY*fFrequence, vNormal);
-		_vOutGrad += vNormal;
+		_vOutGrad += fAmplitude*vNormal;
 	}
 
 	// Transform to [-1,1]
@@ -452,7 +452,7 @@ float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, f
 
 		OrE::Math::Vector3 vNormal;
 		fRes += fAmplitude*Rand3D(_fX*fFrequence, _fY*fFrequence, _fZ*fFrequence, vNormal);
-		_vOutGrad += vNormal;
+		_vOutGrad += fAmplitude*vNormal;
 	}
 	
 	// Transform to [-1,1]
