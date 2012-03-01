@@ -37,6 +37,7 @@
 #include "OrHeap.h"
 #include "OrHash.h"
 #include "OrList.h"
+#include "OrSetBuilder.h"
 
 // Algorithms
 #include "OrHuffman.h"

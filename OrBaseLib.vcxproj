@@ -64,12 +64,12 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetExt>.lib</TargetExt>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <TargetName>$(ProjectName)32</TargetName>
+    <TargetName>$(ProjectName)32D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.lib</TargetExt>
     <OutDir>$(SolutionDir)lib\</OutDir>
-    <TargetName>$(ProjectName)64</TargetName>
+    <TargetName>$(ProjectName)64D</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <TargetExt>.lib</TargetExt>
@@ -94,6 +94,10 @@
       <Command>
       </Command>
     </PostBuildEvent>
+    <Lib>
+      <AdditionalOptions>/LTCG %(AdditionalOptions)</AdditionalOptions>
+      <IgnoreSpecificDefaultLibraries>MSVCRT</IgnoreSpecificDefaultLibraries>
+    </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -169,6 +173,7 @@
     <ClInclude Include="include\OrList.h" />
     <ClInclude Include="include\OrMatrix.h" />
     <ClInclude Include="include\OrRandom.h" />
+    <ClInclude Include="include\OrSetBuilder.h" />
     <ClInclude Include="include\OrSplayTree.h" />
     <ClInclude Include="include\OrTrie.h" />
     <ClInclude Include="include\OrTypeDef.h" />
@@ -190,6 +195,7 @@
     <ClCompile Include="src\OrList.cpp" />
     <ClCompile Include="src\OrMatrix.cpp" />
     <ClCompile Include="src\OrRandom.cpp" />
+    <ClCompile Include="src\OrSetBuilder.cpp" />
     <ClCompile Include="src\OrSplayTree.cpp" />
     <ClCompile Include="src\OrTrie.cpp" />
     <ClCompile Include="src\OrUtils.cpp" />

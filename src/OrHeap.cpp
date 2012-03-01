@@ -40,21 +40,23 @@ OrE::ADT::Heap::~Heap()
 }
 
 // ******************************************************************************** //
-// Meld / Merge of a part of a heap into this heap
-void OrE::ADT::Heap::Meld(HeapNodeP _pPartition)
+// Merge of a part of a heap into the root list
+void OrE::ADT::Heap::CutChildren(HeapNodeP _pPartition)
 {
 	// Removing old connections
 	if(_pPartition->pParent) {_pPartition->pParent->pChild = nullptr; --_pPartition->pParent->iDegree;}
 
+	// Set all parent pointers to 0
+	// pPartR is used later - do not change into pPartR = _pPartition;
+	HeapNodeP pPartR = _pPartition->pRight;
+	do {
+		pPartR->pParent = nullptr;
+		pPartR = pPartR->pRight;
+	} while(pPartR != _pPartition->pRight);
+
 	// Adding to the root list
 	if(m_pRoot)
 	{
-		// Set all parent pointers to 0
-		HeapNodeP pPartR = _pPartition->pRight;
-		do {
-			pPartR->pParent = nullptr;
-			pPartR = pPartR->pRight;
-		} while(pPartR != _pPartition->pRight);
 		// A <-> Root | <-> B <-> C <-> A
 		// D <-> Part | <-> E <-> F <-> D
 		// Cut open the two ring lists and connect them
@@ -65,7 +67,7 @@ void OrE::ADT::Heap::Meld(HeapNodeP _pPartition)
 	} else m_pRoot = _pPartition;
 
 	// Min update can only occure if the partition is of an other heap
-	if(_pPartition->qwKey < m_pRoot->qwKey) m_pRoot = _pPartition;
+	//if(_pPartition->qwKey < m_pRoot->qwKey) m_pRoot = _pPartition;
 }
 
 // ******************************************************************************** //
@@ -75,22 +77,26 @@ void OrE::ADT::Heap::Consolidate()
 	// Array to save trees with respect to there degree. This staticaly form only
 	// allows a certain number of elments in the heap. (TODO: could be dynamic)
 	// Maximum degree is O(log n) (Theorem - can be prooven).
-	// -> O(exp(maxdegree)) nodes -> maxdegree=32 is heigh enough for everything
-	// (constant factor is > 2)
-	HeapNodeP aDegrees[32] = {nullptr};
+	// -> O(exp(maxdegree)) nodes -> maxdegree=64 is heigh enough for everything
+	// (constant factor is < 2)
+	HeapNodeP aDegrees[64] = {nullptr};
 	// Traverse root list
 	HeapNodeP pCurrent = m_pRoot;
 	do {
 		assert(!pCurrent->pParent);
 		// Is there an other node with the same degree?
-		if(aDegrees[pCurrent->iDegree])
+		if(aDegrees[pCurrent->iDegree] && (aDegrees[pCurrent->iDegree] != pCurrent))
 		{
+		//	assert(aDegrees[pCurrent->iDegree] != pCurrent);
 			do {
 				// Remove the bigger one from the root list and insert this
 				// as a new child from the smaller one.
 				HeapNodeP pRef = aDegrees[pCurrent->iDegree];
 				if(pRef->qwKey < pCurrent->qwKey)
 				{
+					// Assert that the root element is always in the root list
+					if(m_pRoot == pCurrent) m_pRoot = pCurrent->pRight;
+
 					pCurrent->pParent = pRef;
 					pCurrent->pLeft->pRight = pCurrent->pRight;
 					pCurrent->pRight->pLeft = pCurrent->pLeft;
@@ -108,6 +114,9 @@ void OrE::ADT::Heap::Consolidate()
 
 					pCurrent = pRef;	// Skip back in traversation (degree of the smaller one will be updated after this if-else statement)
 				} else {
+					// Assert that the root element is always in the root list
+					if(m_pRoot == pRef) m_pRoot = pRef->pRight;
+
 					pRef->pParent = pCurrent;
 					pRef->pLeft->pRight = pRef->pRight;
 					pRef->pRight->pLeft = pRef->pLeft;
@@ -140,7 +149,7 @@ void OrE::ADT::Heap::Consolidate()
 // Standard operation insert
 HeapNodeP OrE::ADT::Heap::Insert(void* _pObject, qword _qwKey)
 {
-	HeapNodeP pNew = new HeapNode(nullptr, m_pRoot, _pObject, _qwKey);
+	HeapNodeP pNew = new HeapNode(m_pRoot, _pObject, _qwKey);
 	// Min update
 	if((!m_pRoot) || (pNew->qwKey<m_pRoot->qwKey))
 		m_pRoot = pNew;
@@ -161,8 +170,13 @@ void* OrE::ADT::Heap::DeleteMin()
 		m_pRoot->pLeft->pRight = m_pRoot->pRight;
 		m_pRoot->pRight->pLeft = m_pRoot->pLeft;
 		m_pRoot = m_pRoot->pLeft;
-		// Meld the children and the now consistent remaining root list
-		if(m_pRoot->pChild) Meld(m_pRoot->pChild);
+	} else m_pRoot = nullptr;
+
+	// Meld the children and the now consistent remaining root list
+	if(pNode->pChild) CutChildren(pNode->pChild);
+
+	if(m_pRoot)
+	{
 		// Restructur the heap
 		Consolidate();
 
@@ -170,11 +184,12 @@ void* OrE::ADT::Heap::DeleteMin()
 		HeapNodeP pStart = m_pRoot;
 		HeapNodeP pCurrent = m_pRoot;
 		do {
+			assert(!pCurrent->pParent);
 			if(pCurrent->qwKey < m_pRoot->qwKey)
 				m_pRoot = pCurrent;
 			pCurrent = pCurrent->pRight;
 		} while(pCurrent != pStart);
-	} else m_pRoot = m_pRoot->pChild;	// Meld and consolidate is now just copy
+	}
 
 	// Delete and return the element
 	delete pNode;

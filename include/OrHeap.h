@@ -53,11 +53,11 @@ namespace ADT {
 		// One arbitary child. (The other children can be reached through the linked list)
 		HeapNode* pChild;
 		//int iParam;					// Statistic information to mark nodes (marking = a child of this marked node was cut before)
-		int iDegree;				// Number of children
+		int iDegree;					// Number of children
 
 		// Constructor inserting in the structur
-		HeapNode(HeapNode* _pParent, HeapNode* _pSibling, void* _pObj, const qword& _qwKey):
-			ADTElement(_pObj, _qwKey), pChild(nullptr), pParent(_pParent), iDegree(0)
+		HeapNode(HeapNode* _pSibling, void* _pObj, const qword& _qwKey):
+			ADTElement(_pObj, _qwKey), pChild(nullptr), pParent(nullptr), iDegree(0)
 		{
 			if(_pSibling)
 			{
@@ -67,7 +67,6 @@ namespace ADT {
 				_pSibling->pRight->pLeft = this;
 				_pSibling->pRight = this;
 			} else pLeft = pRight = this;
-			if(_pParent) ++_pParent->iDegree;
 		}
 	};
 	typedef HeapNode* HeapNodeP;
@@ -79,7 +78,7 @@ namespace ADT {
 	protected:
 		HeapNodeP m_pRoot;
 
-		void Meld(HeapNodeP _pPartition);										// Meld / Merge of a part of a heap into this heap
+		void CutChildren(HeapNodeP _pPartition);								// Merge of a part of a heap into the root list
 		void Consolidate();														// Ensure that now two roots have the same degree
 		void Cut(HeapNodeP _pElement);											// Cuts one element and insert it to the root list. (Similar to meld, but do not affekt the siblings of the element)
 	public:
