@@ -1,5 +1,5 @@
 // ******************************************************************************** //
-// OrVector3.cpp																	//
+// OrVec3.cpp																	//
 // =============																	//
 // This file is part of the OrBaseLib.												//
 //																					//
@@ -26,19 +26,19 @@ using namespace OrE::Math;
 
 // ******************************************************************************** //
 // Aus Abhängigkeitsgründen separieren
-Vector3 OrE::Math::Vec3Random()
+Vec3 OrE::Math::Vec3Random()
 {
-	return Vec3NormalizeEx(Vector3(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
+	return Vec3NormalizeEx(Vec3(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
 }
 
 // ******************************************************************************** //
 // 3D-Positionsvektor transformieren
-Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
+Vec3 OrE::Math::Vec3TransformCoords(const Vec3& v,
 									   const Matrix& m,
 									   float* const pfOutW) // = NULL
 {
 	// Vektor mit Matrix multiplizieren
-	Vector3 vResult(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41,
+	Vec3 vResult(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41,
 		              v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42,
 					  v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43);
 
@@ -57,11 +57,11 @@ Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
 
 // ******************************************************************************** //
 // 3D-Positionsvektor transformieren
-Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
+Vec3 OrE::Math::Vec3TransformCoords(const Vec3& v,
 									   const Matrix& m)
 {
 	// Vektor mit Matrix multiplizieren
-	Vector3 vResult(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41,
+	Vec3 vResult(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41,
 		              v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42,
 					  v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43);
 
@@ -74,11 +74,11 @@ Vector3 OrE::Math::Vec3TransformCoords(const Vector3& v,
 
 // ******************************************************************************** //
 // 3D-Richtungsvektor transformieren
-Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
+Vec3 OrE::Math::Vec3TransformDirection(const Vec3& v,
 										  const Matrix& m)
 {
 	// Vektor mit Matrix multiplizieren
-	Vector3 vResult(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41,
+	Vec3 vResult(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41,
 		              v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42,
 					  v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43);
 
@@ -89,7 +89,7 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 
 // ******************************************************************************** //
 // 3D-Richtungsvektor transformieren
-/*Vector3 OrE::Math::Vec3TransformNormal(const Vector3& v,
+/*Vec3 OrE::Math::Vec3TransformNormal(const Vec3& v,
 									   const Matrix& m)
 {
 	// Vektorlänge berechnen
@@ -100,7 +100,7 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 	const Matrix mTransform(MatrixTranspose(MatrixInvert(m)));
 
 	// Vektor mit Matrix transformieren und ursprüngliche Länge wiederherstellen
-	return Vec3Normalize(Vector3(v.x * mTransform.m11 + v.y * mTransform.m21 + v.z * mTransform.m31,
+	return Vec3Normalize(Vec3(v.x * mTransform.m11 + v.y * mTransform.m21 + v.z * mTransform.m31,
 		                             v.x * mTransform.m12 + v.y * mTransform.m22 + v.z * mTransform.m32,
 									 v.x * mTransform.m13 + v.y * mTransform.m23 + v.z * mTransform.m33))
 		   * fLength;
@@ -108,7 +108,7 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 
 // ******************************************************************************** //
 // 3D-Richtungsvektor transformieren (transponierte invertierte Matrix wird übergeben)
-/*Vector3 OrE::Math::Vec3TransformNormal_TranspInv(const Vector3& v,
+/*Vec3 OrE::Math::Vec3TransformNormal_TranspInv(const Vec3& v,
 												 const Matrix& m)
 {
 	// Vektorlänge berechnen
@@ -116,7 +116,7 @@ Vector3 OrE::Math::Vec3TransformDirection(const Vector3& v,
 	if(fLength == 0.0f) return v;
 
 	// Vektor mit Matrix transformieren und ursprüngliche Länge wiederherstellen
-	return Vec3Normalize(Vector3(v.x * m.m11 + v.y * m.m21 + v.z * m.m31,
+	return Vec3Normalize(Vec3(v.x * m.m11 + v.y * m.m21 + v.z * m.m31,
 									 v.x * m.m12 + v.y * m.m22 + v.z * m.m32,
 									 v.x * m.m13 + v.y * m.m23 + v.z * m.m33))
 		   * fLength;

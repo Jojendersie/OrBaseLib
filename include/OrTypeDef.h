@@ -28,9 +28,9 @@ typedef unsigned __int8 byte;
 
 namespace OrE {
 namespace Math {
-class Vector2;
-class Vector3;
-class Vector4;
+class Vec2;
+class Vec3;
+class Vec4;
 class Matrix;
 class Matrix2x3;
 }; // namespace Math

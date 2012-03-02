@@ -55,14 +55,14 @@ public:
 	float Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float& _vOutGrad);
 
 	float Rand2D(float _fX, float _fY);
-	float Rand2D(float _fX, float _fY, OrE::Math::Vector2& _vOutNormal);
+	float Rand2D(float _fX, float _fY, OrE::Math::Vec2& _vOutNormal);
 	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY);
-	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vector2& _vOutGrad);
+	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vec2& _vOutGrad);
 
 	float Rand3D(float _fX, float _fY, float _fZ);
-	float Rand3D(float _fX, float _fY, float _fZ, OrE::Math::Vector3& _vOutGrad);
+	float Rand3D(float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad);
 	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ);
-	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vector3& _vOutGrad);
+	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad);
 
 	void SetSeed(dword _dwSeed)		{m_dwSeed = _dwSeed;}
 	dword GetSeed()					{return m_dwSeed;}

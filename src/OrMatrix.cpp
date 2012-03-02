@@ -34,7 +34,7 @@ Matrix& Matrix::operator = (const Matrix& m) {memcpy(n, m.n, sizeof(float)*16); 
 
 // ******************************************************************************** //
 // Translationsmatrix berechnen
-Matrix OrE::Math::MatrixTranslation(const Vector3& v)
+Matrix OrE::Math::MatrixTranslation(const Vec3& v)
 {
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
 		            0.0f, 1.0f, 0.0f, 0.0f,
@@ -131,7 +131,7 @@ Matrix OrE::Math::MatrixRotation(const float x,
 
 // ******************************************************************************** //
 // Rotiert um alle drei Achsen (Winkel in Vektor)
-Matrix OrE::Math::MatrixRotation(const Vector3& v)
+Matrix OrE::Math::MatrixRotation(const Vec3& v)
 {
 	return MatrixRotation(v.x, v.y, v.z);
 //	return MatrixRotationZ(v.z) *
@@ -141,7 +141,7 @@ Matrix OrE::Math::MatrixRotation(const Vector3& v)
 
 // ******************************************************************************** //
 // Rotationsmatrix für Rotation um eine beliebige Achse berechnen
-Matrix OrE::Math::MatrixRotationAxis(const Vector3& v,
+Matrix OrE::Math::MatrixRotationAxis(const Vec3& v,
 							  const float f)
 {
 	// Sinus und Kosinus berechnen
@@ -150,7 +150,7 @@ Matrix OrE::Math::MatrixRotationAxis(const Vector3& v,
 	const float fOneMinusCos = 1.0f - fCos;
 
 	// Achsenvektor normalisieren
-	const Vector3 vAxis(Vec3Normalize(v));
+	const Vec3 vAxis(Vec3Normalize(v));
 
 	// Matrix erstellen
 	return Matrix((vAxis.x * vAxis.x) * fOneMinusCos + fCos,
@@ -173,8 +173,8 @@ Matrix OrE::Math::MatrixRotationAxis(const Vector3& v,
 
 // ******************************************************************************** //
 // Direkte Berechnung von MatrixRotation*MatrixTranslation
-Matrix OrE::Math::MatrixRotation_Translatation(const Vector3& vR,
-										const Vector3& vP)
+Matrix OrE::Math::MatrixRotation_Translatation(const Vec3& vR,
+										const Vec3& vP)
 {
 	float fSinX = Sin(vR.x), fSinY = Sin(vR.y), fSinZ = Sin(vR.z);
 	float fCosX = Cos(vR.x), fCosY = Cos(vR.y), fCosZ = Cos(vR.z);
@@ -189,7 +189,7 @@ Matrix OrE::Math::MatrixRotation_Translatation(const Vector3& vR,
 
 // ******************************************************************************** //
 // Skalierungsmatrix berechnen
-Matrix OrE::Math::MatrixScaling(const Vector3& v)
+Matrix OrE::Math::MatrixScaling(const Vec3& v)
 {
 	// Skalierungsmatrix berechnen
 	return Matrix(v.x,  0.0f, 0.0f, 0.0f,
@@ -211,9 +211,9 @@ Matrix OrE::Math::MatrixScaling(const float f)
 
 // ******************************************************************************** //
 // Liefert eine Achsenmatrix
-Matrix OrE::Math::MatrixAxis(const Vector3& vXAxis,
-					  const Vector3& vYAxis,
-					  const Vector3& vZAxis)
+Matrix OrE::Math::MatrixAxis(const Vec3& vXAxis,
+					  const Vec3& vYAxis,
+					  const Vec3& vZAxis)
 {
 	return Matrix(vXAxis.x, vXAxis.y, vXAxis.z, 0.0f,
 		            vYAxis.x, vYAxis.y, vYAxis.z, 0.0f,
@@ -273,7 +273,7 @@ inline void OrSwap32(void* p1, void* p2)
 Matrix OrE::Math::MatrixInvert(const Matrix& m)
 {
 	Matrix mSolution;
-	Vector4 v, vec[3];
+	Vec4 v, vec[3];
 	float fDet;
 
 	fDet = MatrixDet(m);
@@ -353,18 +353,18 @@ Matrix OrE::Math::MatrixParallelProjection(const float fWidth,
 
 // ******************************************************************************** //
 // Kameramatrix berechnen
-Matrix OrE::Math::MatrixCamera(const Vector3& vPos,
-						const Vector3& vLookAt,
-						const Vector3& vUp) // = Vector3(0.0f, 1.0f, 0.0f)
+Matrix OrE::Math::MatrixCamera(const Vec3& vPos,
+						const Vec3& vLookAt,
+						const Vec3& vUp) // = Vec3(0.0f, 1.0f, 0.0f)
 {
 	// Die z-Achse des Kamerakoordinatensystems berechnen
-	Vector3 vZAxis(Vec3Normalize(vLookAt - vPos));
+	Vec3 vZAxis(Vec3Normalize(vLookAt - vPos));
 
 	// Die x-Achse ist das Kreuzprodukt aus y- und z-Achse
-	Vector3 vXAxis(Vec3Normalize(Vec3Cross(vUp, vZAxis)));
+	Vec3 vXAxis(Vec3Normalize(Vec3Cross(vUp, vZAxis)));
 
 	// y-Achse berechnen
-	Vector3 vYAxis(Vec3Normalize(Vec3Cross(vZAxis, vXAxis)));
+	Vec3 vYAxis(Vec3Normalize(Vec3Cross(vZAxis, vXAxis)));
 
 	// Rotationsmatrix erzeugen und die Translationsmatrix mit ihr multiplizieren
 	return MatrixTranslation(-vPos) *
@@ -376,7 +376,7 @@ Matrix OrE::Math::MatrixCamera(const Vector3& vPos,
 
 // ******************************************************************************** //
 // Kameramatrix erzeugen
-Matrix OrE::Math::MatrixCamera(const Vector3& vPos, const Vector3& vDir, const Vector3& vUp, const Vector3& vBidir)
+Matrix OrE::Math::MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& vUp, const Vec3& vBidir)
 {
 	// Easy way - all axis already given
 	return MatrixTranslation(-vPos) *
@@ -421,7 +421,7 @@ Matrix MatrixMirror_Normalize(const OrPlane& p)																													// E
 // Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
 // gibt zurück, ob es eine Eindeutige Lösung gab.
 // Die Lösung wird im eingegebenen Lösungsvektor beschrieben
-bool OrE::Math::MatrixSolveEquation(Matrix _A, Vector4* _pV_X)
+bool OrE::Math::MatrixSolveEquation(Matrix _A, Vec4* _pV_X)
 {
 	for(dword i=0;i<4;++i)
 	{
@@ -479,12 +479,12 @@ bool OrE::Math::MatrixSolveEquation(Matrix _A, Vector4* _pV_X)
 }
 
 // ******************************************************************************** //
-Matrix OrE::Math::MatrixOrthonormal(const Vector3& vNormal)
+Matrix OrE::Math::MatrixOrthonormal(const Vec3& vNormal)
 {
 	// Über das Skalarprudukt den 2. Vektor bestimmen.
-	Vector3 v2 = (vNormal.x==1.0f)?Vector3(0.0f, 1.0f, 0.0f): Vec3Normalize((vNormal.y != 0.0f)? Vector3(1.0f, -vNormal.x/vNormal.y, 0.0f) : Vector3(1.0f, 0.0f, -vNormal.x/vNormal.z));
+	Vec3 v2 = (vNormal.x==1.0f)?Vec3(0.0f, 1.0f, 0.0f): Vec3Normalize((vNormal.y != 0.0f)? Vec3(1.0f, -vNormal.x/vNormal.y, 0.0f) : Vec3(1.0f, 0.0f, -vNormal.x/vNormal.z));
 	// 3. Vektor über Kreuzprodukt ermitteln
-	Vector3 v3 = Vec3Cross(vNormal, v2);
+	Vec3 v3 = Vec3Cross(vNormal, v2);
 	return Matrix(v2.x,		v2.y,		v2.z,		0.0f,
 					v3.x,		v3.y,		v3.z,		0.0f,
 					vNormal.x,	vNormal.y,	vNormal.z,	0.0f,
@@ -504,7 +504,7 @@ Matrix OrE::Math::MatrixOrthonormal(const Vector3& vNormal)
 
 // ******************************************************************************** //
 // Translationsmatrix (Verschiebungsmatrix) berechnen
-Matrix2x3	OrE::Math::Matrix2x3Translation(const Vector2& v)
+Matrix2x3	OrE::Math::Matrix2x3Translation(const Vec2& v)
 {
 	return Matrix2x3(1.0f, 0.0f, v.x,
 					   0.0f, 1.0f, v.y);
@@ -530,7 +530,7 @@ Matrix2x3	OrE::Math::Matrix2x3Rotation(const float f)
 
 // ******************************************************************************** //
 // Skalierungsmatrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Scaling(const Vector2& v)
+Matrix2x3	OrE::Math::Matrix2x3Scaling(const Vec2& v)
 {
 	return Matrix2x3(v.x , 0.0f, 0.0f,
 					   0.0f, v.y , 0.0f);
@@ -554,7 +554,7 @@ Matrix2x3	OrE::Math::Matrix2x3Scaling(const float f)
 
 // ******************************************************************************** //
 // Liefert eine Achsenmatrix
-Matrix2x3	OrE::Math::Matrix2x3Axis(const Vector2& vXAxis, const Vector2& vYAxis)
+Matrix2x3	OrE::Math::Matrix2x3Axis(const Vec2& vXAxis, const Vec2& vYAxis)
 {
 	return Matrix2x3(vXAxis.x, vXAxis.y, 0.0f,
 					   vYAxis.x, vYAxis.y, 0.0f);
@@ -572,7 +572,7 @@ Matrix2x3	OrE::Math::Matrix2x3Invert(const Matrix2x3& m)
 
 // ******************************************************************************** //
 // Scherungs Matrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Transvection(const Vector2& v)
+Matrix2x3	OrE::Math::Matrix2x3Transvection(const Vec2& v)
 {
 	return Matrix2x3(1.0f, v.x , 0.0f,
 					   v.y , 1.0f, 0.0f);

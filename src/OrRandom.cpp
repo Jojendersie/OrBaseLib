@@ -294,7 +294,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(float _fX, float _fY)
 	return OrE::Math::Lerp(OrE::Math::Lerp(s00, s10, u), OrE::Math::Lerp(s01, s11, u), v);
 }
 
-float OrE::Algorithm::PerlinNoise::Rand2D(float _fX, float _fY, OrE::Math::Vector2& _vOutGrad)
+float OrE::Algorithm::PerlinNoise::Rand2D(float _fX, float _fY, OrE::Math::Vec2& _vOutGrad)
 {
 	// We need 2 samples per dimension -> 4 samples total
 	float fFracX, fFracY;
@@ -316,7 +316,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(float _fX, float _fY, OrE::Math::Vecto
 	float k2 = s01 - s00;
 
 	_vOutGrad.x = (k1+(s11-s01-k1)*v)*du;
-	_vOutGrad.y = (k2+(s11-s10-k1)*u)*dv;
+	_vOutGrad.y = (k2+(s11-s10-k2)*u)*dv;
 
 	//	   OrE::Math::Lerp(OrE::Math::Lerp(s00, s10, u), OrE::Math::Lerp(s01, s11, u), v);
 	return OrE::Math::Lerp(				   s00 + k1 * u, OrE::Math::Lerp(s01, s11, u), v);
@@ -337,7 +337,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, f
 	return fRes*2.0f*(_fPersistence-1.0f)/(OrE::Math::Pow(_fPersistence, (float)(_iHeightOctave+1))-OrE::Math::Pow(_fPersistence, (float)_iLowOctave))-1.0f;
 }
 
-float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vector2& _vOutGrad)
+float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vec2& _vOutGrad)
 {
 	_vOutGrad.x = _vOutGrad.y = 0.0f;
 	float fRes = 0.0f;
@@ -346,7 +346,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, f
 		float fAmplitude = OrE::Math::Pow(_fPersistence, (float)i);
 		float fFrequence = (float)(1<<i);
 
-		OrE::Math::Vector2 vNormal;
+		OrE::Math::Vec2 vNormal;
 		fRes += fAmplitude*Rand2D(_fX*fFrequence, _fY*fFrequence, vNormal);
 		_vOutGrad += fAmplitude*vNormal;
 	}
@@ -382,7 +382,7 @@ float OrE::Algorithm::PerlinNoise::Rand3D(float _fX, float _fY, float _fZ)
 						   OrE::Math::Lerp(OrE::Math::Lerp(s001, s101, u), OrE::Math::Lerp(s011, s111, u), v), w);
 }
 
-float OrE::Algorithm::PerlinNoise::Rand3D(float _fX, float _fY, float _fZ, OrE::Math::Vector3& _vOutGrad)
+float OrE::Algorithm::PerlinNoise::Rand3D(float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad)
 {
 	// We need 2 samples per dimension -> 8 samples total
 	float fFracX, fFracY, fFracZ;
@@ -441,7 +441,7 @@ float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, f
 	return fRes*2.0f*(_fPersistence-1.0f)/(OrE::Math::Pow(_fPersistence, (float)(_iHeightOctave+1))-OrE::Math::Pow(_fPersistence, (float)_iLowOctave))-1.0f;
 }
 
-float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vector3& _vOutGrad)
+float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad)
 {
 	_vOutGrad.x = _vOutGrad.y = _vOutGrad.z = 0.0f;
 	float fRes = 0.0f;
@@ -450,7 +450,7 @@ float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, f
 		float fAmplitude = OrE::Math::Pow(_fPersistence, (float)i);
 		float fFrequence = (float)(1<<i);
 
-		OrE::Math::Vector3 vNormal;
+		OrE::Math::Vec3 vNormal;
 		fRes += fAmplitude*Rand3D(_fX*fFrequence, _fY*fFrequence, _fZ*fFrequence, vNormal);
 		_vOutGrad += fAmplitude*vNormal;
 	}

@@ -1,5 +1,5 @@
 // ******************************************************************************** //
-// OrVector4.cpp																	//
+// OrVec4.cpp																	//
 // =============																	//
 // This file is part of the OrBaseLib.												//
 //																					//
@@ -28,17 +28,17 @@ using namespace OrE::Math;
 // Die Operatoren und Funktionen sind direkt per Inline-Funktion implementiert.
 
 // ******************************************************************************** //
-Vector4 OrE::Math::Vec4Random()
+Vec4 OrE::Math::Vec4Random()
 {
-	return Vec4NormalizeEx(Vector4(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
+	return Vec4NormalizeEx(Vec4(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
 }
 
 // ******************************************************************************** //
 // 4D-Vektor mit Matrix multiplizieren
-Vector4 OrE::Math::Vec4Transform(const Vector4& v,
+Vec4 OrE::Math::Vec4Transform(const Vec4& v,
 								 const Matrix& m)
 {
-	return Vector4(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + v.w * m.m41,
+	return Vec4(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + v.w * m.m41,
 					 v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + v.w * m.m42,
 					 v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + v.w * m.m43,
 					 v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + v.w * m.m44);
@@ -46,9 +46,9 @@ Vector4 OrE::Math::Vec4Transform(const Vector4& v,
 
 // ******************************************************************************** //
 // Kreuzprodukt 3 4D - vektoren
-Vector4 OrE::Math::Vec4Cross(const Vector4& v1, const Vector4& v2, const Vector4& v3)
+Vec4 OrE::Math::Vec4Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3)
 {
-    return Vector4(v1.y * (v2.z * v3.w - v2.w * v3.z) -
+    return Vec4(v1.y * (v2.z * v3.w - v2.w * v3.z) -
 					 v1.z * (v2.y * v3.w - v2.w * v3.y) +
 					 v1.w * (v2.y * v3.z - v2.z * v3.y),
 
