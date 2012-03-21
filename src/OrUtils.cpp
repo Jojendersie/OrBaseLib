@@ -38,4 +38,11 @@ double OrE::Utils::TimeQuery(TimeQuerySlots _Slot)
 	return (g_QueryCounter[_Slot] - OldTime)*CLOCKS_PER_SEC_INV;
 }
 
+// ******************************************************************************** //
+// Returns the time elapsed since the program was started in seconds.
+float OrE::Utils::TimeSinceProgramStart()
+{
+	return float(clock()*CLOCKS_PER_SEC_INV);
+}
+
 // *************************************EOF**************************************** //

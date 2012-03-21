@@ -39,6 +39,10 @@ enum TimeQuerySlots {
 };
 double TimeQuery(TimeQuerySlots _Slot);
 
+// ******************************************************************************** //
+// Returns the time elapsed since the program was started in seconds.
+float TimeSinceProgramStart();
+
 };
 };
 

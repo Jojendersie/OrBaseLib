@@ -38,29 +38,35 @@ class PerlinNoise
 {
 private:
 	dword m_dwSeed;
+	float m_fPeriodicity;
 	double Sample1D(__int64 _i);
 public:
-	PerlinNoise(dword _dwSeed);
+	// Initialize the object deterministicly.
+	// Parameter:
+	//	_dwSeed - Random base value - causes same results in same applications
+	//	_fPeriodicity - after which distance the noise should be periodicly. Minimum is 1.
+	PerlinNoise(dword _dwSeed, float _fPeriodicity);
 
 	// One sample at the specified position R^d -> [-1,1]
 	// Parameter:
+	//	_fFrequence - used to determine periodicly edges and octave distances in sampling
 	//	_iLowOctave - Octave with the lowest frequence (inclusive)
 	//	_iHeightOctave - Octave with the heighest frequence (inclusive). All frequences between are sampled too.
 	//	_fPersistence - Relative height of a frequenze relative to the last one. Recommended: 0.5f.
 	//	_fX - 1 float coordinate.
 	//	_vOutGrad - Gradient vector at the sampled point (analytical determined)
-	float Rand1D(float _fX);
-	float Rand1D(float _fX, float& _vOutGrad);
+	float Rand1D(float _fX, float _fFrequence);
+	float Rand1D(float _fX, float _fFrequence, float& _vOutGrad);
 	float Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX);
 	float Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float& _vOutGrad);
 
-	float Rand2D(float _fX, float _fY);
-	float Rand2D(float _fX, float _fY, OrE::Math::Vec2& _vOutNormal);
+	float Rand2D(float _fX, float _fY, float _fFrequence);
+	float Rand2D(float _fX, float _fY, float _fFrequence, OrE::Math::Vec2& _vOutNormal);
 	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY);
 	float Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vec2& _vOutGrad);
 
-	float Rand3D(float _fX, float _fY, float _fZ);
-	float Rand3D(float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad);
+	float Rand3D(float _fX, float _fY, float _fZ, float _fFrequence);
+	float Rand3D(float _fX, float _fY, float _fZ, float _fFrequence, OrE::Math::Vec3& _vOutGrad);
 	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ);
 	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad);
 
