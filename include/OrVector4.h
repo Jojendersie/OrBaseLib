@@ -107,19 +107,19 @@ inline bool operator != (const Vec3& b, const Vec4& a) {if(a.x != b.x) return tr
 
 // ******************************************************************************** //
 // Funktionen deklarieren
-inline float	Vec4Length(const Vec4& v)												{return Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
-inline float	Vec4LengthSq(const Vec4& v)												{return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;}
-inline Vec4	Vec4Normalize(const Vec4& v)												{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
-inline Vec4	Vec4NormalizeEx(const Vec4& v)											{return v / InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
-inline float	Vec4Dot(const Vec4& v1, const Vec4& v2)								{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
-inline float	Vec4Angle(const Vec4& v1, const Vec4& v2)								{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
-inline Vec4	Vec4LrpNormal(const Vec4& v1, const Vec4& v2, const float p)			{return Vec4NormalizeEx(v1 + p * (v2 - v1));}
-inline Vec4	Vec4Min(const Vec4& v1, const Vec4& v2)								{return Vec4(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z), Min(v1.w, v2.w));}
-inline Vec4	Vec4Max(const Vec4& v1, const Vec4& v2)								{return Vec4(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z), Max(v1.w, v2.w));}
-inline Vec4	Vec4Lrp(const Vec4& v1, const Vec4& v2, const float f)				{return Vec4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
-Vec4			Vec4Transform(const Vec4& v, const Matrix& m);																																														// 4D-Vektor mit Matrix multiplizieren
-Vec4			Vec4Random();
-Vec4			Vec4Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3);
+inline float Vec4Length(const Vec4& v)											{return Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
+inline float Vec4LengthSq(const Vec4& v)										{return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;}
+inline Vec4	 Vec4Normalize(const Vec4& v)										{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
+inline Vec4	 Vec4NormalizeEx(const Vec4& v)										{float fL = Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
+inline float Vec4Dot(const Vec4& v1, const Vec4& v2)							{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
+inline float Vec4Angle(const Vec4& v1, const Vec4& v2)							{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
+inline Vec4	 Vec4LrpNormal(const Vec4& v1, const Vec4& v2, const float p)		{return Vec4NormalizeEx(v1 + p * (v2 - v1));}
+inline Vec4	 Vec4Min(const Vec4& v1, const Vec4& v2)							{return Vec4(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z), Min(v1.w, v2.w));}
+inline Vec4	 Vec4Max(const Vec4& v1, const Vec4& v2)							{return Vec4(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z), Max(v1.w, v2.w));}
+inline Vec4	 Vec4Lrp(const Vec4& v1, const Vec4& v2, const float f)				{return Vec4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
+Vec4		 Vec4Transform(const Vec4& v, const Matrix& m);																																														// 4D-Vektor mit Matrix multiplizieren
+Vec4		 Vec4Random();
+Vec4		 Vec4Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3);
 
 
 // ******************************************************************************** //

@@ -25,7 +25,7 @@ using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
 // ******************************************************************************** //
-inline Vec2 OrE::Math::Vec2Random()
+Vec2 OrE::Math::Vec2Random()
 {
 	return Vec2NormalizeEx(Vec2(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f));
 }

@@ -73,7 +73,7 @@ void OrE::Algorithm::SRand(dword _dwSeed)
 	// fill table
 	for(int i=0; i<OR_MT_N; i++)
 	{
-		g_adwMT[i] = i%2?_dwSeed+i:(1+_dwSeed)*i;
+		g_adwMT[i] = i%2?_dwSeed+i*527:(2135+_dwSeed*74111)*i;
 	}
 
 	OrMTReCreate();
@@ -143,7 +143,7 @@ float OrE::Algorithm::Rand()
 // Creates a random number of an exponential distribution [0,+Inf]
 float OrE::Algorithm::ExpRand(float _fLambda)
 {
-	return -Ln(Rand()+0.000000000000000000000000000000000000000000001f)/_fLambda;
+	return float(-log(Rand()+0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001)/double(_fLambda));
 }	
 
 // ******************************************************************************** //
@@ -151,7 +151,7 @@ float OrE::Algorithm::ExpRand(float _fLambda)
 float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 {
 	// Slow but stable, there are faster ways
-	return _fMean + _fVariance*Sqrt(Max(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
+	return _fMean + _fVariance*Sqrt(Max(0.0f,-2.0f*(float)log(Rand()+0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))) * Cos(f2Pi*Rand());
 }
 
 // ******************************************************************************** //
@@ -159,7 +159,7 @@ float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 float OrE::Algorithm::NormRand()
 {
 	// Slow but stable, there are faster ways
-	return Sqrt(Max(0.0f,-2.0f*Ln(Rand()+0.000000000000000000000000000000000000000000001f))) * Cos(f2Pi*Rand());
+	return Sqrt(Max(0.0f,-2.0f*(float)log(Rand()+0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))) * Cos(f2Pi*Rand());
 }
 
 

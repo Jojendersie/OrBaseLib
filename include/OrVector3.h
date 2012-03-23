@@ -82,22 +82,22 @@ inline bool operator != (const Vec3& a, const Vec3& b) {if(a.x != b.x) return tr
 
 // ******************************************************************************** //
 // Funktionen deklarieren
-inline float	Vec3Length(const Vec3& v)													{return Sqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
-inline float	Vec3LengthSq(const Vec3& v)													{return v.x * v.x + v.y * v.y + v.z * v.z;}
-inline float	Vec3LengthInv(const Vec3& v)													{return InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
-inline Vec3	Vec3Normalize(const Vec3& v)													{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
-inline Vec3	Vec3NormalizeEx(const Vec3& v)												{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
-inline Vec3	Vec3Cross(const Vec3& v1, const Vec3& v2)									{return Vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);}
-inline float	Vec3CrossX(const float v1y, const float v1z, const float v2y, const float v2z)	{return v1y * v2z - v1z * v2y;}			// Nur die X Coordinate berechnen
-inline float	Vec3CrossY(const float v1x, const float v1z, const float v2x, const float v2z)	{return v1z * v2x - v1x * v2z;}			// Nur die Y Coordinate berechnen
-inline float	Vec3CrossZ(const float v1x, const float v1y, const float v2x, const float v2y)	{return v1x * v2y - v1y * v2x;}			// Nur die Z Coordinate berechnen
-inline float	Vec3Dot(const Vec3& v1, const Vec3& v2)									{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;}
-inline float	Vec3Angle(const Vec3& v1, const Vec3& v2)									{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z)));}
-inline Vec3	Vec3LrpNormal(const Vec3& v1, const Vec3& v2, const float p)				{return Vec3NormalizeEx(v1 + p * (v2 - v1));}
-inline Vec3	Vec3Min(const Vec3& v1, const Vec3& v2)									{return Vec3(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z));}
-inline Vec3	Vec3Max(const Vec3& v1, const Vec3& v2)									{return Vec3(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z));}
-inline Vec3	Vec3Lrp(const Vec3& v1, const Vec3& v2, const float f)					{return Vec3(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z));}
-Vec3			Vec3Random();
+inline float Vec3Length(const Vec3& v)														{return Sqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
+inline float Vec3LengthSq(const Vec3& v)													{return v.x * v.x + v.y * v.y + v.z * v.z;}
+inline float Vec3LengthInv(const Vec3& v)													{return InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
+inline Vec3	 Vec3Normalize(const Vec3& v)													{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
+inline Vec3	 Vec3NormalizeEx(const Vec3& v)													{float fL = Sqrt(v.x * v.x + v.y * v.y + v.z * v.z); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
+inline Vec3	 Vec3Cross(const Vec3& v1, const Vec3& v2)										{return Vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);}
+inline float Vec3CrossX(const float v1y, const float v1z, const float v2y, const float v2z)	{return v1y * v2z - v1z * v2y;}			// Nur die X Coordinate berechnen
+inline float Vec3CrossY(const float v1x, const float v1z, const float v2x, const float v2z)	{return v1z * v2x - v1x * v2z;}			// Nur die Y Coordinate berechnen
+inline float Vec3CrossZ(const float v1x, const float v1y, const float v2x, const float v2y)	{return v1x * v2y - v1y * v2x;}			// Nur die Z Coordinate berechnen
+inline float Vec3Dot(const Vec3& v1, const Vec3& v2)										{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;}
+inline float Vec3Angle(const Vec3& v1, const Vec3& v2)										{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z)));}
+inline Vec3	 Vec3LrpNormal(const Vec3& v1, const Vec3& v2, const float p)					{return Vec3NormalizeEx(v1 + p * (v2 - v1));}
+inline Vec3	 Vec3Min(const Vec3& v1, const Vec3& v2)										{return Vec3(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z));}
+inline Vec3	 Vec3Max(const Vec3& v1, const Vec3& v2)										{return Vec3(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z));}
+inline Vec3	 Vec3Lrp(const Vec3& v1, const Vec3& v2, const float f)							{return Vec3(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z));}
+Vec3		 Vec3Random();
 
 Vec3	Vec3TransformCoords(const Vec3& v, const Matrix& m, float* const pfOutW);																																									// 3D-Vektor mit Matrix multiplizieren
 Vec3	Vec3TransformCoords(const Vec3& v, const Matrix& m);																																														// 3D-Vektor mit Matrix multiplizieren
