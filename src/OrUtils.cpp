@@ -18,8 +18,11 @@
 // ******************************************************************************** //
 
 #include <ctime>
+#include <cstring>
+#include <cstdlib>
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrUtils.h"
+#include "..\include\OrFastMath.h"
 
 using namespace OrE::Math;
 using namespace OrE::Utils;
@@ -43,6 +46,46 @@ double OrE::Utils::TimeQuery(TimeQuerySlots _Slot)
 float OrE::Utils::TimeSinceProgramStart()
 {
 	return float(clock()*CLOCKS_PER_SEC_INV);
+}
+
+// ******************************************************************************** //
+// Robust auxiliary function to check if *p1 != *p2
+bool OrE::Utils::Strneq(const char* p1, const char* p2)
+{
+	if(p1==p2) return false;
+	if(p1==0) return true;	// p2 muss ja !=p1 sein und ist !=0
+	if(p2==0) return true;
+	return strcmp(p1, p2)!=0;
+}
+
+// ******************************************************************************** //
+// Auxiliary function to create a copy of a subsrting.
+// Parameter:
+//	_dwFrom - 0-indexed index of first char to copy (inclusive)
+//	_dwTo - 0-indexed index of last char to copy (inclusive)
+//			or 0xffffffff to copy the whole postfix begining in _dwFrom
+char* OrE::Utils::Substr(const char* _pcString, const dword _dwFrom, dword _dwTo)
+{
+	// Spezialfall: String bis zum Ende
+	if(_dwTo == 0xffffffff) _dwTo = strlen(_pcString)-1;
+
+	// Definition: von 0 bis 0 bedeutet wir wollen ein Zeichen
+	char* pcRet = (char*)malloc((_dwTo+2-_dwFrom)*sizeof(char));
+	dword i=_dwFrom;
+	for(;i<=_dwTo;++i)
+		pcRet[i-_dwFrom] = _pcString[i];
+	pcRet[_dwTo-_dwFrom+1] = 0;
+
+	return pcRet;
+}
+
+// ******************************************************************************** //
+dword OrE::Utils::Match(const char* _pcStr1, const char* _pcStr2)
+{
+	//dword dwMax = OrE::Math::Min(strlen(_pcStr1), strlen(_pcStr2));
+	dword i;
+	for(i=0; (_pcStr1[i]*_pcStr2[i] != 0) && (_pcStr1[i]==_pcStr2[i]); ++i);
+	return i;
 }
 
 // *************************************EOF**************************************** //

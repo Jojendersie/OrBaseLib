@@ -43,6 +43,23 @@ double TimeQuery(TimeQuerySlots _Slot);
 // Returns the time elapsed since the program was started in seconds.
 float TimeSinceProgramStart();
 
+// ******************************************************************************** //
+// String helper functions
+// Robust auxiliary function to check if *p1 != *p2 (runs with 0 pointers...)
+// Returns true if both pointers are equal
+bool Strneq(const char* p1, const char* p2);
+
+// Auxiliary function to create a copy of a subsrting.
+// Parameter:
+//	_dwFrom - 0-indexed index of first char to copy (inclusive)
+//	_dwTo - 0-indexed index of last char to copy (inclusive)
+//			or 0xffffffff to copy the whole postfix begining in _dwFrom
+// Returns a 0-terminated string which have to be deleted with free().
+char* Substr(const char* _pcString, const dword _dwFrom, dword _dwTo);
+
+// Counts number of matching characters
+dword Match(const char* _pcStr1, const char* _pcStr2);
+
 };
 };
 
