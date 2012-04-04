@@ -143,7 +143,7 @@ float OrE::Algorithm::Rand()
 // Creates a random number of an exponential distribution [0,+Inf]
 float OrE::Algorithm::ExpRand(float _fLambda)
 {
-	return float(-log(Rand()+0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001)/double(_fLambda));
+	return float(-log(Rand()+1.0e-323)/double(_fLambda));
 }	
 
 // ******************************************************************************** //
@@ -151,7 +151,7 @@ float OrE::Algorithm::ExpRand(float _fLambda)
 float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 {
 	// Slow but stable, there are faster ways
-	return _fMean + _fVariance*Sqrt(Max(0.0f,-2.0f*(float)log(Rand()+0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))) * Cos(f2Pi*Rand());
+	return float(_fMean + _fVariance*sqrt(Max(0.0,-2.0*log(Rand()+1.0e-323))) * cos(d2Pi*Rand()));
 }
 
 // ******************************************************************************** //
@@ -159,7 +159,7 @@ float OrE::Algorithm::StdNormRand(float _fMean, float _fVariance)
 float OrE::Algorithm::NormRand()
 {
 	// Slow but stable, there are faster ways
-	return Sqrt(Max(0.0f,-2.0f*(float)log(Rand()+0.00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001))) * Cos(f2Pi*Rand());
+	return float(sqrt(Max(0.0,-2.0*log(Rand()+1.0e-323))) * cos(d2Pi*Rand()));
 }
 
 

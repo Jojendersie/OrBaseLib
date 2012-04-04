@@ -1,6 +1,6 @@
 // ******************************************************************************** //
-// OrBaseLib.h																		//
-// ===========																		//
+// OrFFT.h																			//
+// =======																			//
 // This file is part of the OrBaseLib.												//
 //																					//
 // Author: Johannes Jendersie														//
@@ -17,31 +17,18 @@
 
 #pragma once
 
-// Raw Types
-#include "OrTypeDef.h"
+namespace OrE {
+namespace Math {
 
-// Math
-#include "OrFastMath.h"
-#include "OrVector2.h"
-#include "OrVector3.h"
-#include "OrVector4.h"
-#include "OrMatrix.h"
-#include "OrComplexNumber.h"
+// ******************************************************************************** //
+// 1D Fourier transformations
+ComplexNumberP fft(const float* _pfInput, int _iNum);	// slower scince copy intern!!!
+ComplexNumberP fft(const OrE::Math::ComplexNumber* _pInput, int _iNum);
+ComplexNumberP ifft(const OrE::Math::ComplexNumber* _pInput, int _iNum);
 
-// ADT
-#include "OrADTObjects.h"
-#include "OrBinaryTree.h"
-#include "OrAVLTree.h"
-#include "OrSplayTree.h"
-#include "OrTrie.h"
-#include "OrBuffer.h"
-#include "OrHeap.h"
-#include "OrHash.h"
-#include "OrList.h"
-#include "OrSetBuilder.h"
+// 2D Fourier transformations
+ComplexNumberP fft2(const OrE::Math::ComplexNumber* _pInput, int _iNumX, int _iNumY);
 
-// Algorithms
-#include "OrHuffman.h"
-#include "OrRandom.h"
-#include "OrUtils.h"
-#include "OrFFT.h"
+}; // namespace Math
+}; // namespace OrE
+// *************************************EOF**************************************** //

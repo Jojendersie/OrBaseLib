@@ -1,6 +1,6 @@
 // ******************************************************************************** //
-// OrVec2.h																		//
-// ===========																		//
+// OrVec2.h																			//
+// ========																			//
 // This file is part of the OrBaseLib.												//
 //																					//
 // Author: Johannes Jendersie														//
@@ -46,7 +46,7 @@ public:
 	// Konstruktoren
 	Vec2()																	{}
 	Vec2(const Vec2& v) : x(v.x), y(v.y)									{}
-	Vec2(const float f) : x(f), y(f)											{}
+	Vec2(const float f) : x(f), y(f)										{}
 	Vec2(const float _x, const float _y) : x(_x), y(_y)						{}
 	Vec2(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1])	{}
 
@@ -55,7 +55,7 @@ public:
 
 	// Zuweisungsoperatoren
 	Vec2& operator = (const Vec2& v)	{x = v.x; y = v.y; return *this;}
-	Vec2& operator = (const float f)		{x = f; y = f; return *this;}
+	Vec2& operator = (const float f)	{x = f; y = f; return *this;}
 	Vec2& operator += (const Vec2& v)	{x += v.x; y += v.y; return *this;}
 	Vec2& operator -= (const Vec2& v)	{x -= v.x; y -= v.y; return *this;}
 	Vec2& operator *= (const Vec2& v)	{x *= v.x; y *= v.y; return *this;}
@@ -69,8 +69,8 @@ inline Vec2 operator + (const Vec2& a, const Vec2& b)	{return Vec2(a.x + b.x, a.
 inline Vec2 operator - (const Vec2& a, const Vec2& b)	{return Vec2(a.x - b.x, a.y - b.y);}
 inline Vec2 operator - (const Vec2& v)					{return Vec2(-v.x, -v.y);}
 inline Vec2 operator * (const Vec2& a, const Vec2& b)	{return Vec2(a.x * b.x, a.y * b.y);}
-inline Vec2 operator * (const Vec2& v, const float f)		{return Vec2(v.x * f, v.y * f);}
-inline Vec2 operator * (const float f, const Vec2& v)		{return Vec2(v.x * f, v.y * f);}
+inline Vec2 operator * (const Vec2& v, const float f)	{return Vec2(v.x * f, v.y * f);}
+inline Vec2 operator * (const float f, const Vec2& v)	{return Vec2(v.x * f, v.y * f);}
 inline Vec2 operator / (const Vec2& a, const Vec2& b)	{return Vec2(a.x / b.x, a.y / b.y);}
 inline Vec2 operator / (const Vec2& v, float f)			{f = 1/f; return Vec2(v.x * f, v.y * f);}	// Multiplikation schneller
 

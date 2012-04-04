@@ -52,6 +52,8 @@ const float f2Pi = fPi*2.0f;
 const double d2Pi = dPi*2.0;
 const float fPi_2 = fPi*0.5f;
 const double dPi_2 = dPi*0.5;
+const float fE = 2.71828182845904f;
+const double dE  = 2.71828182845904523536028747135266249;
 
 // ******************************************************************************** //
 // Min und Max - Funktionen, damit nicht irgendwelche Dinge importiert werden.

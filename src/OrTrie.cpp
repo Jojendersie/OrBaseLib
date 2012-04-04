@@ -187,7 +187,7 @@ TrieNodeP OrE::ADT::Trie::Match(const char** _ppcName)
 			}
 
 			// 1.Fall: Name zu Ende und Fund.
-			if((*_ppcName)[dwEqual]) 
+			if(!(*_ppcName)[dwEqual]) 
 			{
 				if(pCurrent->pData) return pCurrent;
 				else{

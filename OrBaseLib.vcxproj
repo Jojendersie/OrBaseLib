@@ -161,12 +161,14 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\OrComplexNumber.h" />
     <ClInclude Include="include\OrADTObjects.h" />
     <ClInclude Include="include\OrAVLTree.h" />
     <ClInclude Include="include\OrBaseLib.h" />
     <ClInclude Include="include\OrBinaryTree.h" />
     <ClInclude Include="include\OrBuffer.h" />
     <ClInclude Include="include\OrFastMath.h" />
+    <ClInclude Include="include\OrFFT.h" />
     <ClInclude Include="include\OrHash.h" />
     <ClInclude Include="include\OrHeap.h" />
     <ClInclude Include="include\OrHuffman.h" />
@@ -189,6 +191,7 @@
     <ClCompile Include="src\OrBuffer.cpp" />
     <ClCompile Include="src\OrEntropyCoder.cpp" />
     <ClCompile Include="src\OrFastMath.cpp" />
+    <ClCompile Include="src\OrFFT.cpp" />
     <ClCompile Include="src\OrHash.cpp" />
     <ClCompile Include="src\OrHeap.cpp" />
     <ClCompile Include="src\OrHuffman.cpp" />
