@@ -82,7 +82,7 @@ qword OrE::Algorithm::CreateHash64(const void* pData)
 dword OrE::Algorithm::CreateCRCHash(dword dwPolynom, void* pData, dword dwSize)
 {
 	dword dwCRC = 0;	// Das Schieberegister
-	for(dword i=0; i<dwSize*8; ++i)
+	for(dword i=0; i<dwSize; ++i)
 	{
 		// Jedes Bit einzeln durchgehen
 		for(dword j=7; j<8; --j)

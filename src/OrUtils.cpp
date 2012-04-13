@@ -30,15 +30,26 @@ using namespace OrE::Utils;
 // ******************************************************************************** //
 // TimeQuery() returns the number of passed seconds scince the last call.
 // There are 8 marks which can be used independently.
-clock_t g_QueryCounter[8] = {0};						// The 8 Timemarks
+qword g_QueryCounter[8] = {0};						// The 8 Timemarks
+
+#ifdef WINDOWS
+#include "windows.h"
+#endif
 const double CLOCKS_PER_SEC_INV = 1.0/CLOCKS_PER_SEC;	// Precalculated for performance
+
 double OrE::Utils::TimeQuery(TimeQuerySlots _Slot)
 {
+	qword qwF;
+	QueryPerformanceFrequency((LARGE_INTEGER*)&qwF);
 	// Remember old timestamp and sample new one
-	clock_t OldTime = g_QueryCounter[_Slot];
+	qword OldTime = g_QueryCounter[_Slot];
+#ifdef WINDOWS
+	QueryPerformanceCounter((LARGE_INTEGER*)&g_QueryCounter[_Slot]);
+#else
 	g_QueryCounter[_Slot] = clock();
+#endif
 	// Convergate difference to seconds
-	return (g_QueryCounter[_Slot] - OldTime)*CLOCKS_PER_SEC_INV;
+	return (g_QueryCounter[_Slot] - OldTime)/double(qwF);
 }
 
 // ******************************************************************************** //
