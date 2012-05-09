@@ -49,6 +49,10 @@ namespace ADT {
 		// Each index has additional informations to determine set infos.
 		ElementInfo* m_pInfos;
 		dword m_dwNumElements;
+
+		// Prevent copy constructor and operator = being generated.
+		SetBuilder(const SetBuilder&);
+		const SetBuilder& operator = (const SetBuilder&);
 	public:
 		// Create one set per item (all items are there own set representants).
 		SetBuilder(dword _dwMaxNumElements);

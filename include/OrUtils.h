@@ -60,6 +60,12 @@ char* Substr(const char* _pcString, const dword _dwFrom, dword _dwTo);
 // Counts number of matching characters
 dword Match(const char* _pcStr1, const char* _pcStr2);
 
+// Compare a string and ignore the case.
+// returns -1 if str1 lexicographic smaller than str2
+//			0 if str1 equal to str2
+//			1 if str1 lexicographic bigger than str2
+int Strcmpic(const char* _pcStr1, const char* _pcStr2);
+
 };
 };
 

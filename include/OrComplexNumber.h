@@ -64,8 +64,31 @@ namespace Math {
 	// ******************************************************************************** //
 	// Functions
 	inline float Length(const ComplexNumber& n)		{return Sqrt(n.r * n.r + n.i * n.i);}
+	inline float Arg(const ComplexNumber& n)		{return Arctan(n.i/n.r);}
 	inline float LengthSq(const ComplexNumber& n)	{return (n.r * n.r + n.i * n.i);}
-	// Pow()
+
+	// A complex number to the power of a complex number.
+	// Internal "converts" to the euler form and back.
+	ComplexNumber Pow(const ComplexNumber& a, const ComplexNumber& b)
+	{
+		double dArgA = Arg(a);
+		double dLenA = LengthSq(a);						// Using square and use an impliziet exponent of 0.5 (faster)
+		double dAngle = b.r*dArgA+0.5*b.i*log(dLenA);
+		return float(pow(dLenA, b.r*0.5) * exp(-b.i*dArgA)) * 
+			ComplexNumber(float(cos(dAngle)),
+						  float(sin(dAngle)));
+	}
+
+	// Faster power variant for real exponents
+	ComplexNumber Pow(const ComplexNumber& a, float b)
+	{
+		double dArgA = Arg(a);
+		double dLenA = LengthSq(a);						// Using square and use an impliziet exponent of 0.5 (faster)
+		double dAngle = b*dArgA;
+		return float(pow(dLenA, b*0.5)) * 
+			ComplexNumber(float(cos(dAngle)),
+						  float(sin(dAngle)));
+	}
 
 }; // namespace Math
 }; // namespace OrE

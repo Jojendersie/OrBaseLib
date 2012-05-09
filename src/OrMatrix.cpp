@@ -21,7 +21,7 @@
 #include "..\Include\OrVector3.h"
 #include "..\Include\OrVector4.h"
 #include "..\Include\OrMatrix.h"
-//#include "..\Includes\OrPlane.h"
+#include "..\Include\OrPlane.h"
 
 using namespace OrE::Math;
 
@@ -130,51 +130,41 @@ Matrix OrE::Math::MatrixRotation(const float x,
 }
 
 // ******************************************************************************** //
-// Rotiert um alle drei Achsen (Winkel in Vektor)
-Matrix OrE::Math::MatrixRotation(const Vec3& v)
-{
-	return MatrixRotation(v.x, v.y, v.z);
-//	return MatrixRotationZ(v.z) *
-//		   MatrixRotationX(v.x) *
-//		   MatrixRotationY(v.y);
-}
-
-// ******************************************************************************** //
 // Rotationsmatrix für Rotation um eine beliebige Achse berechnen
-Matrix OrE::Math::MatrixRotationAxis(const Vec3& v,
-							  const float f)
+Matrix OrE::Math::MatrixRotationAxis(const Vec3& vAxis,
+									 const float f)
 {
 	// Sinus und Kosinus berechnen
-	const float fSin = Sin(-f);
-	const float fCos = Cos(-f);
-	const float fOneMinusCos = 1.0f - fCos;
-
-	// Achsenvektor normalisieren
-	const Vec3 vAxis(Vec3Normalize(v));
+	const double fSin = sin(double(-f));
+	const double fCos = cos(double(-f));
+	const double fOneMinusCos = 1.0 - fCos;
+	const double AxSin = vAxis.z * fSin;
+	const double AySin = vAxis.y * fSin;
+	const double AzSin = vAxis.z * fSin;
 
 	// Matrix erstellen
-	return Matrix((vAxis.x * vAxis.x) * fOneMinusCos + fCos,
-		            (vAxis.x * vAxis.y) * fOneMinusCos - (vAxis.z * fSin),
-				    (vAxis.x * vAxis.z) * fOneMinusCos + (vAxis.y * fSin),
-					0.0f,
-					(vAxis.y * vAxis.x) * fOneMinusCos + (vAxis.z * fSin),
-					(vAxis.y * vAxis.y) * fOneMinusCos + fCos,
-					(vAxis.y * vAxis.z) * fOneMinusCos - (vAxis.x * fSin),
-					0.0f,
-					(vAxis.z * vAxis.x) * fOneMinusCos - (vAxis.y * fSin),
-					(vAxis.z * vAxis.y) * fOneMinusCos + (vAxis.x * fSin),
-					(vAxis.z * vAxis.z) * fOneMinusCos + fCos,
-					0.0f,
-					0.0f,
-					0.0f,
-					0.0f,
-					1.0f);
+	return Matrix(float((vAxis.x * vAxis.x) * fOneMinusCos + fCos),
+		          float((vAxis.x * vAxis.y) * fOneMinusCos - (AzSin)),
+				  float((vAxis.x * vAxis.z) * fOneMinusCos + (AySin)),
+				  0.0f,
+				  float((vAxis.y * vAxis.x) * fOneMinusCos + (AzSin)),
+				  float((vAxis.y * vAxis.y) * fOneMinusCos + fCos),
+				  float((vAxis.y * vAxis.z) * fOneMinusCos - (AxSin)),
+				  0.0f,
+				  float((vAxis.z * vAxis.x) * fOneMinusCos - (AySin)),
+				  float((vAxis.z * vAxis.y) * fOneMinusCos + (AxSin)),
+				  float((vAxis.z * vAxis.z) * fOneMinusCos + fCos),
+				  0.0f,
+				  0.0f,
+				  0.0f,
+				  0.0f,
+				  1.0f);
 }
 
 // ******************************************************************************** //
 // Direkte Berechnung von MatrixRotation*MatrixTranslation
 Matrix OrE::Math::MatrixRotation_Translatation(const Vec3& vR,
-										const Vec3& vP)
+											   const Vec3& vP)
 {
 	float fSinX = Sin(vR.x), fSinY = Sin(vR.y), fSinZ = Sin(vR.z);
 	float fCosX = Cos(vR.x), fCosY = Cos(vR.y), fCosZ = Cos(vR.z);
@@ -182,9 +172,9 @@ Matrix OrE::Math::MatrixRotation_Translatation(const Vec3& vR,
 	float fCosYZ = fCosY*fCosZ;
 	float fCosYSinZ = fCosY*fSinZ;
 	return Matrix(fCosYZ-fSinXY*fSinZ,		fCosX*fSinZ, fSinY*fCosZ+fSinX*fCosYSinZ,	0.0f,
-					-fCosYSinZ-fSinXY*fCosZ,	fCosX*fCosZ, fSinX*fCosYZ-fSinY*fSinZ,		0.0f,
-					-fCosX*fSinY,				-fSinX,		 fCosX*fCosY,					0.0f,
-					vP.x,						vP.y,		 vP.z,							1.0f);
+				  -fCosYSinZ-fSinXY*fCosZ,	fCosX*fCosZ, fSinX*fCosYZ-fSinY*fSinZ,		0.0f,
+				  -fCosX*fSinY,				-fSinX,		 fCosX*fCosY,					0.0f,
+				  vP.x,						vP.y,		 vP.z,							1.0f);
 }
 
 // ******************************************************************************** //
@@ -321,10 +311,10 @@ Matrix OrE::Math::MatrixProjection(const float fFOV,
 	const float s = 1.0f / Tan(fFOV * 0.5f);
 	const float fFrustumLengthInv = 1.0f / (fNearPlane - fFarPlane);
 
-	return Matrix(s / fAspect, 0.0f, 0.0f,										0.0f,
-		            0.0f,		 s,	   0.0f,										0.0f,
-					0.0f,		 0.0f, (fNearPlane + fFarPlane)*fFrustumLengthInv,	(2.0f*fNearPlane*fFarPlane)*fFrustumLengthInv,
-					0.0f,		 0.0f, -1.0f,										0.0f);
+	return Matrix(s / fAspect,	0.0f, 0.0f,											0.0f,
+				  0.0f,			s,	   0.0f,										0.0f,
+				  0.0f,			0.0f, (fNearPlane + fFarPlane)*fFrustumLengthInv,	(2.0f*fNearPlane*fFarPlane)*fFrustumLengthInv,
+				  0.0f,			0.0f, -1.0f,										0.0f);
 	// DirectX compatible version:
 /*	const float s = 1.0f / Tan(fFOV * 0.5f);
 	const float Q = fFarPlane / (fFarPlane - fNearPlane);
@@ -346,9 +336,9 @@ Matrix OrE::Math::MatrixParallelProjection(const float fWidth,
 	const float Q = fFarPlane / (fFarPlane - fNearPlane);
 
 	return Matrix(s / fWidth,	0.0f,		0.0f,				0.0f,
-		            0.0f,		s / fHeigh,	0.0f,				0.0f,
-					0.0f,		0.0f,		Q,					1.0f,
-					0.0f,		0.0f,		-Q * fNearPlane,	0.0f);
+		          0.0f,			s / fHeigh,	0.0f,				0.0f,
+				  0.0f,			0.0f,		Q,					1.0f,
+				  0.0f,			0.0f,		-Q * fNearPlane,	0.0f);
 }
 
 // ******************************************************************************** //
@@ -399,23 +389,15 @@ Matrix OrE::Math::MatrixToTex2DMatrix(const Matrix& m)
 
 // ******************************************************************************** //
 // Eine Spiegelmatrix an gegebener Ebene berechnen
-/*Matrix MatrixMirror(const OrPlane& p)
+// TODO: transponieren? TEST
+Matrix MatrixMirror(const Plane& p)
 {
-	return Matrix(-2.0f*p.a*p.a + 1.0f, -2.0f*p.b*p.a,	-2.0f*p.c*p.a,		  0.0f,
-					-2.0f*p.a*p.b,		  -2.0f*p.b + 1.0f, -2.0f*p.c*p.b,		  0.0f,
-					-2.0f*p.a*p.c,		  -2.0f*p.b*p.c,	-2.0f*p.c*p.c + 1.0f, 0.0f,
-					-2.0f*p.a*p.d,		  -2.0f*p.b*p.d,	-2.0f*p.c*p.d,		  1.0f);
+	return Matrix(-2.0f*p.a*p.a + 1.0f,	-2.0f*p.b*p.a,		-2.0f*p.c*p.a,		  0.0f,
+					-2.0f*p.a*p.b,		-2.0f*p.b + 1.0f,	-2.0f*p.c*p.b,		  0.0f,
+					-2.0f*p.a*p.c,		-2.0f*p.b*p.c,		-2.0f*p.c*p.c + 1.0f, 0.0f,
+					-2.0f*p.a*p.d,		-2.0f*p.b*p.d,		-2.0f*p.c*p.d,		  1.0f);
 }
 
-// Berechnung mit vorhergehender Normalisierung
-Matrix MatrixMirror_Normalize(const OrPlane& p)																													// Eine Spiegelmatrix an gegebener Ebene (wird normalisiert) berechnen
-{
-	OrPlane n = OrPlaneNormalize(p);
-	return Matrix(-2.0f*n.a*n.a + 1.0f, -2.0f*n.b*n.a,		-2.0f*n.c*n.a,		  0.0f,
-					-2.0f*n.a*n.b,		  -2.0f*n.b*n.b + 1.0f, -2.0f*n.c*n.b,		  0.0f,
-					-2.0f*n.a*n.c,		  -2.0f*n.b*p.c,		-2.0f*n.c*n.c + 1.0f, 0.0f,
-					-2.0f*n.a*n.d,		  -2.0f*n.b*n.d,		-2.0f*n.c*n.d,		  1.0f);
-}*/
 
 // ******************************************************************************** //
 // Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
@@ -504,91 +486,91 @@ Matrix OrE::Math::MatrixOrthonormal(const Vec3& vNormal)
 
 // ******************************************************************************** //
 // Translationsmatrix (Verschiebungsmatrix) berechnen
-Matrix2x3	OrE::Math::Matrix2x3Translation(const Vec2& v)
+Matrix2x3 OrE::Math::Matrix2x3Translation(const Vec2& v)
 {
 	return Matrix2x3(1.0f, 0.0f, v.x,
-					   0.0f, 1.0f, v.y);
+					 0.0f, 1.0f, v.y);
 }
 
 // ******************************************************************************** //
 // Translationsmatrix (Verschiebungsmatrix) berechnen
-Matrix2x3	OrE::Math::Matrix2x3Translation(const float x, const float y)
+Matrix2x3 OrE::Math::Matrix2x3Translation(const float x, const float y)
 {
 	return Matrix2x3(1.0f, 0.0f, x,
-					   0.0f, 1.0f, y);
+					 0.0f, 1.0f, y);
 }
 
 // ******************************************************************************** //
 // Rotationsmatrix um die "Z-Achse" berechnen
-Matrix2x3	OrE::Math::Matrix2x3Rotation(const float f)
+Matrix2x3 OrE::Math::Matrix2x3Rotation(const float f)
 {
 	float fCos = Cos(f);
 	float fSin = Sin(f);
 	return Matrix2x3(fCos, -fSin, 0.0f,
-					   fSin , fCos, 0.0f);
+					 fSin , fCos, 0.0f);
 }
 
 // ******************************************************************************** //
 // Skalierungsmatrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Scaling(const Vec2& v)
+Matrix2x3 OrE::Math::Matrix2x3Scaling(const Vec2& v)
 {
 	return Matrix2x3(v.x , 0.0f, 0.0f,
-					   0.0f, v.y , 0.0f);
+					 0.0f, v.y , 0.0f);
 }
 
 // ******************************************************************************** //
 // Skalierungsmatrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Scaling(const float x, const float y)
+Matrix2x3 OrE::Math::Matrix2x3Scaling(const float x, const float y)
 {
 	return Matrix2x3(x   , 0.0f, 0.0f,
-					   0.0f, y   , 0.0f);
+					 0.0f, y   , 0.0f);
 }
 
 // ******************************************************************************** //
 // Skalierungsmatrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Scaling(const float f)
+Matrix2x3 OrE::Math::Matrix2x3Scaling(const float f)
 {
 	return Matrix2x3(f , 0.0f, 0.0f,
-					   0.0f, f , 0.0f);
+					 0.0f, f , 0.0f);
 }
 
 // ******************************************************************************** //
 // Liefert eine Achsenmatrix
-Matrix2x3	OrE::Math::Matrix2x3Axis(const Vec2& vXAxis, const Vec2& vYAxis)
+Matrix2x3 OrE::Math::Matrix2x3Axis(const Vec2& vXAxis, const Vec2& vYAxis)
 {
 	return Matrix2x3(vXAxis.x, vXAxis.y, 0.0f,
-					   vYAxis.x, vYAxis.y, 0.0f);
+					 vYAxis.x, vYAxis.y, 0.0f);
 }
 
 // ******************************************************************************** //
 // Invertierte (umgekehrte) Matrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Invert(const Matrix2x3& m)
+Matrix2x3 OrE::Math::Matrix2x3Invert(const Matrix2x3& m)
 {
 	float fDet = 1.0f/Matrix2x3Det(m);
 	// Simuliere 3x3 Matrix mit (0,0,1) in der 3. Zeile
 	return Matrix2x3(m.m22*fDet, -m.m12*fDet, (m.m12*m.m23-m.m13*m.m22)*fDet,
-					   -m.m21*fDet, m.m11*fDet, (m.m13*m.m21-m.m11*m.m23)*fDet);
+					 -m.m21*fDet, m.m11*fDet, (m.m13*m.m21-m.m11*m.m23)*fDet);
 }
 
 // ******************************************************************************** //
 // Scherungs Matrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Transvection(const Vec2& v)
+Matrix2x3 OrE::Math::Matrix2x3Transvection(const Vec2& v)
 {
 	return Matrix2x3(1.0f, v.x , 0.0f,
-					   v.y , 1.0f, 0.0f);
+					 v.y , 1.0f, 0.0f);
 }
 
 // ******************************************************************************** //
 // Scherungs Matrix berechnen
-Matrix2x3	OrE::Math::Matrix2x3Transvection(const float x, const float y)
+Matrix2x3 OrE::Math::Matrix2x3Transvection(const float x, const float y)
 {
 	return Matrix2x3(1.0f, x   , 0.0f,
-					   y   , 1.0f, 0.0f);
+					 y   , 1.0f, 0.0f);
 }
 
 // ******************************************************************************** //
 // Determinante berechnen (Laplaceches Entwicklungsschema)
-float		OrE::Math::Matrix2x3Det(const Matrix2x3& m)
+float OrE::Math::Matrix2x3Det(const Matrix2x3& m)
 {
 	return m.m11 * m.m22 -
            m.m12 * m.m21;

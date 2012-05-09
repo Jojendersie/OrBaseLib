@@ -84,7 +84,7 @@ enum HashMapMode
 
 // ******************************************************************************** //
 // The buckets are a very simple binary trees without any optimation.
-struct Bucket: public ADTElement
+class Bucket: public ADTElement
 {
 	Bucket(void* _pObj, const qword& _qwKey, Bucket* _pParent) :
 			ADTElement(_pObj, _qwKey),
@@ -97,6 +97,10 @@ private:
 	Bucket* pParent;
 
 	friend class HashMap;
+
+	// Prevent copy constructor and operator = being generated.
+	Bucket(const Bucket&);
+	const Bucket& operator = (const Bucket&);
 };
 typedef Bucket* BucketP;
 
@@ -104,7 +108,8 @@ typedef Bucket* BucketP;
 // The hash map is a structur to store and find data in nearly constant time (stochasticly).
 class HashMap: public ADT
 {
-	BucketP			m_pBuckets;					// Ein Array mit Eimern (Bin-Trees)
+private:
+	BucketP*		m_apBuckets;				// Ein Array mit Eimern (Bin-Trees)
 	dword			m_dwSize;					// Größe des Arrays
 	dword			m_dwNumElements;			// Anzahl Elemente in der Hashmap (kann größer als Arraygröße sein)
 	HashMapMode		m_Mode;						// Resizemodus und optinal String Modus
@@ -113,6 +118,11 @@ class HashMap: public ADT
 	void RecursiveReAdd(BucketP _pBucket);
 	void RecursiveRelease(BucketP _pBucket);
 	void TestSize();							// Checks if a resize is required in the current mode
+	int ListIndex(BucketP _pBucket);			// If _pBucket points to the initial list this will calculate the index, and -1 if not
+
+	// Prevent copy constructor and operator = being generated.
+	HashMap(const HashMap&);
+	const HashMap& operator = (const HashMap&);
 public:
 	HashMap(dword _dwSize, HashMapMode _Mode);
 	virtual ~HashMap();

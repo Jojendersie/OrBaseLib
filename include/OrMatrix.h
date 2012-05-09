@@ -24,6 +24,7 @@ namespace Math {
 // Verwendete Symbole vordefinieren
 class Matrix;
 class Matrix2x3;
+class Plane;
 Matrix MatrixInvert(const Matrix& m);
 Matrix2x3 Matrix2x3Invert(const Matrix2x3& m);
 inline Matrix operator * (const Matrix& a, const Matrix& b);
@@ -289,7 +290,7 @@ inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f
 		Matrix	MatrixRotationY(const float f);																													// Rotationsmatrix um die Y-Achse berechnen
 		Matrix	MatrixRotationZ(const float f);																													// Rotationsmatrix um die Z-Achse berechnen
 		Matrix	MatrixRotation(const float x, const float y, const float z);																					// Rotiert um alle drei Achsen
-		Matrix	MatrixRotation(const Vec3& v);																												// Rotiert um alle drei Achsen
+inline	Matrix	MatrixRotation(const Vec3& v)		{return MatrixRotation(v.x, v.y, v.z);}
 		Matrix	MatrixRotation_Translatation(const Vec3& vR, const Vec3& vP);																				// Direkte Berechnung von MatrixRotation*MatrixTranslation
 		Matrix	MatrixRotationAxis(const Vec3& v, const float f);																							// Rotationsmatrix um eine beliebige Achse berechnen
 		Matrix	MatrixScaling(const Vec3& v);																												// Skalierungsmatrix berechnen
@@ -304,8 +305,7 @@ inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f
 		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vLookAt, const Vec3& vUp = Vec3(0.0f, 1.0f, 0.0f));										// Kameramatrix erzeugen
 		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& vUp, const Vec3& vBidir);												// Kameramatrix erzeugen
 		Matrix	MatrixToTex2DMatrix(const Matrix& m);																											// In Texturmatrix umwandeln
-//		Matrix	MatrixMirror(const OrPlane& p);																													// Eine Spiegelmatrix an gegebener Ebene berechnen
-//		Matrix	MatrixMirror_Normalize(const OrPlane& p);																										// Eine Spiegelmatrix an gegebener Ebene (wird normalisiert) berechnen
+		Matrix	MatrixMirror(const Plane& p);																													// Eine Spiegelmatrix an gegebener Ebene berechnen
 		bool	MatrixSolveEquation(Matrix _A, Vec4* _pV_X);																									// Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
 		Matrix	MatrixOrthonormal(const Vec3& vNormal);
 		Matrix	MatrixTransvection(const Vec3& v);																											// Scherungsmatrix berechnen TODO

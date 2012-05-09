@@ -24,6 +24,15 @@ typedef unsigned __int16 word;
 typedef unsigned __int8 byte;
 
 // ******************************************************************************** //
+// An integral type which has always the size of (void*)
+template <int BYTES> struct PtrToInt;
+template <> struct PtrToInt<2> {typedef word int_t;};
+template <> struct PtrToInt<4> {typedef dword int_t;};
+template <> struct PtrToInt<8> {typedef qword int_t;};
+typedef PtrToInt<sizeof(void*)>::int_t uiptr;
+
+
+// ******************************************************************************** //
 // Classes
 
 namespace OrE {
@@ -54,5 +63,20 @@ __forceinline void OrUnlock(volatile dword* _pLockVar)
 {
 	*_pLockVar = 0;
 }*/
+
+// ******************************************************************************** //
+// My own assertion, which doesn't jump into an other file and did not ask for debugging
+#ifdef DEBUG
+#include <intrin.h>
+#define Assert(a) if(!(a)) __debugbreak()
+// The Assert__ execute A (even in release) and test for non-/equality with Const  (debug only)
+#define AssertEq(A,Const) if((A)!=(Const)) __debugbreak()
+#define AssertNeq(A,Const) if((A)==(Const)) __debugbreak()
+#else
+#define Assert(a)
+// The Assert__ execute A (even in release) and test for non-/equality with Const (debug only)
+#define AssertEq(A,Const) A
+#define AssertNeq(A,Const) A
+#endif
 
 // *************************************EOF**************************************** //

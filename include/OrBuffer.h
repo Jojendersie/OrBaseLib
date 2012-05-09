@@ -46,6 +46,10 @@ class Buffer
 	volatile dword	m_dwSemaphore;			// Locking for multithreads
 	void**			m_Buffer;				// The storage array for all elements
 
+	// Prevent copy constructor and operator = being generated.
+	Buffer(const Buffer&);
+	const Buffer& operator = (const Buffer&);
+
 public:
 	Buffer(int _iSize);
 	virtual ~Buffer();

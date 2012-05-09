@@ -21,6 +21,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <cassert>
 
 using namespace OrE::Algorithm;
 using namespace OrE::ADT;
@@ -142,9 +143,9 @@ void OrE::ADT::HashMap::RecursiveReAdd(Bucket* _pBucket)
 OrE::ADT::HashMap::HashMap(dword _dwSize, HashMapMode _Mode)
 {
 	// Einfach nur Speicher bestellen für eine leere Tabelle
-	m_pBuckets = (Bucket*)malloc(sizeof(Bucket)*_dwSize);
-	if(!m_pBuckets) return;	// TODO report error
-	memset(m_pBuckets, 0, sizeof(Bucket)*_dwSize);
+	m_apBuckets = (BucketP*)malloc(sizeof(BucketP)*_dwSize);
+	if(!m_apBuckets) return;	// TODO report error
+	memset(m_apBuckets, 0, sizeof(BucketP)*_dwSize);
 	// Statische Größen setzen
 	m_dwSize = _dwSize;
 	m_dwNumElements = 0;
@@ -182,28 +183,26 @@ OrE::ADT::HashMap::~HashMap()
 	// Alle Eimer freigeben. Dazu alle Daten traversieren und löschen.
 	for(dword i=0;i<m_dwSize;++i)
 	{
-		// Daten löschen
-		RemoveData(m_pBuckets + i);
-		// Rekursionsstart
-		if(m_pBuckets[i].pLeft) RecursiveRelease(m_pBuckets[i].pLeft);
-		if(m_pBuckets[i].pRight) RecursiveRelease(m_pBuckets[i].pRight);
+		// Daten löschen (Bäume rekursiv entfernen)
+		// Precondition von RecursiveRelease: Bucket existiert
+		if(m_apBuckets[i])
+			RecursiveRelease(m_apBuckets[i]);
 	}
 
 	// Die Tabelle selbst löschen
-	free(m_pBuckets);
-	m_pBuckets = 0;
+	free(m_apBuckets);
 }
 
 // ******************************************************************************** //
 // Tabelle neu erzeugen und alle Elemente neu hinzufügen
 void OrE::ADT::HashMap::Resize(const dword _dwSize)
 {
-	Bucket* pOldList = m_pBuckets;
+	BucketP* pOldList = m_apBuckets;
 	dword dwOldSize = m_dwSize;
 	// Einfach nur Speicher bestellen für eine leere Tabelle
-	m_pBuckets = (Bucket*)malloc(sizeof(Bucket)*_dwSize);
-	if(!m_pBuckets) return;	// TODO report error
-	memset(m_pBuckets, 0, sizeof(Bucket)*_dwSize);
+	m_apBuckets = (BucketP*)malloc(sizeof(BucketP)*_dwSize);
+	if(!m_apBuckets) return;	// TODO report error
+	memset(m_apBuckets, 0, sizeof(Bucket)*_dwSize);
 	// Statische Größen setzen
 	m_dwSize = _dwSize;
 	m_dwNumElements = 0;
@@ -214,11 +213,7 @@ void OrE::ADT::HashMap::Resize(const dword _dwSize)
 	{
 		// Alles erneut einfügen
 		for(dword i=0;i<dwOldSize;++i)
-		{
-			if(pOldList[i].pObject) Insert(pOldList[i].pObject, pOldList[i].qwKey);
-			if(pOldList[i].pLeft) RecursiveReAdd(pOldList[i].pLeft);
-			if(pOldList[i].pRight) RecursiveReAdd(pOldList[i].pRight);
-		}
+			RecursiveReAdd(pOldList[i]);
 
 		// Alte Liste löschen
 		free(pOldList);
@@ -251,13 +246,20 @@ void OrE::ADT::HashMap::TestSize()
 }
 
 // ******************************************************************************** //
+// If _pBucket points to the initial list this will calculate the index, and -1 if not
+int OrE::ADT::HashMap::ListIndex(BucketP _pBucket)
+{
+	int iIndex = int((BucketP*)_pBucket - m_apBuckets);
+	if((iIndex >= (int)m_dwSize) || iIndex < 0) return -1;
+	return iIndex;
+}
+
+// ******************************************************************************** //
 // Standard operation insert
 ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 {
 #ifdef DEBUG
-	if(!m_pBuckets) return nullptr;		// TODO report error
-#endif
-#ifdef _DEBUG
+	if(!m_apBuckets) return nullptr;		// TODO report error
 	int iCollision = 0;
 #endif
 
@@ -268,12 +270,12 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 	
 	// Neues Element einsortieren
 	dword dwHash = _qwKey%m_dwSize;
-	if(m_pBuckets[dwHash].pObject)
+	if(m_apBuckets[dwHash])
 	{
-		Bucket* pBucket = &m_pBuckets[dwHash];
+		BucketP pBucket = m_apBuckets[dwHash];
 		while(true)
 		{
-#ifdef _DEBUG
+#ifdef DEBUG
 			++iCollision;
 #endif
 			// Schlüssel vollständig verlgeichen -> Baumsuche
@@ -287,10 +289,9 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 		}
 	} else
 	{
-		m_pBuckets[dwHash].pObject = _pObject;
-		m_pBuckets[dwHash].qwKey = _qwKey;
+		m_apBuckets[dwHash] = new Bucket(_pObject, _qwKey, BucketP(m_apBuckets+dwHash));
 		++m_dwNumElements;
-		return &m_pBuckets[dwHash];
+		return m_apBuckets[dwHash];
 	}
 }
 
@@ -312,45 +313,62 @@ void OrE::ADT::HashMap::Delete(ADTElementP _pElement)
 	// stattdessen diesen Knoten.
 	if((BucketP(_pElement))->pLeft)
 	{
-		// Es existiert ein linker Teilbaum -> maximum davon erhält Baumeigenschaft
+		// Es existiert ein linker Teilbaum -> maximum davon erhält Baumeigenschaft (Werteverschiebung)
 		BucketP pBuck = (BucketP(_pElement))->pLeft;
 		while(pBuck->pRight) pBuck = pBuck->pRight;
-		_pElement->pObject = pBuck->pObject;
-		_pElement->qwKey = pBuck->qwKey;
-		Delete(pBuck);
+		// FALLBACK: entartet etwas mehr: einfach Teilbaum anhängen
+		// Zuerst potetiellen Halbbaum von rechts anhängen
+		pBuck->pRight = (BucketP(_pElement))->pRight;
+		if(pBuck->pRight)
+			pBuck->pRight->pParent = pBuck;
+		// Dann den linken Teilbaum an Liste (bzw.Elternelement) anhängen.
+		(BucketP(_pElement))->pLeft->pParent = (BucketP(_pElement))->pParent;
+		// Echtes Elternelement oder Liste updaten.
+		int iI;
+		if( (iI = ListIndex((BucketP(_pElement))->pParent))==-1)
+		{
+			// Fall: kein Listenelement, sondern bereits ein Subknoten
+			if((BucketP(_pElement))->pParent->pLeft == BucketP(_pElement))
+				(BucketP(_pElement))->pParent->pLeft = (BucketP(_pElement))->pLeft;
+			else (BucketP(_pElement))->pParent->pRight = (BucketP(_pElement))->pLeft;
+		} else m_apBuckets[iI] = (BucketP(_pElement))->pLeft;
 	} else if((BucketP(_pElement))->pRight)
 	{
-		// Es existiert ein rechter Teilbaum -> minimum davon erhält Baumeigenschaft
+		// Es existiert ein rechter Teilbaum -> minimum davon erhält Baumeigenschaft (Werteverschiebung)
 		BucketP pBuck = (BucketP(_pElement))->pRight;
 		while(pBuck->pLeft) pBuck = pBuck->pLeft;
-		_pElement->pObject = pBuck->pObject;
-		_pElement->qwKey = pBuck->qwKey;
-		Delete(pBuck);
+		// FALLBACK: entartet etwas mehr: einfach Teilbaum anhängen
+		// Zuerst potetiellen Halbbaum von links anhängen
+		pBuck->pLeft = (BucketP(_pElement))->pLeft;
+		if(pBuck->pLeft)
+			pBuck->pLeft->pParent = pBuck;
+		// Dann den rechten Teilbaum an Liste(bzw.Elternelement) anhängen.
+		(BucketP(_pElement))->pRight->pParent = (BucketP(_pElement))->pParent;
+		// Echtes Elternelement oder Liste updaten.
+		int iI;
+		if( (iI = ListIndex((BucketP(_pElement))->pParent))==-1)
+		{
+			// Fall: kein Listenelement, sondern bereits ein Subknoten
+			if((BucketP(_pElement))->pParent->pLeft == BucketP(_pElement))
+				(BucketP(_pElement))->pParent->pLeft = (BucketP(_pElement))->pRight;
+			else (BucketP(_pElement))->pParent->pRight = (BucketP(_pElement))->pRight;
+		} else m_apBuckets[iI] = (BucketP(_pElement))->pRight;
 	} else
 	{
-		// Listenelement?
-		if(!(BucketP(_pElement))->pParent)
+		// Echtes Elternelement oder Liste updaten.
+		int iI;
+		if( (iI = ListIndex((BucketP(_pElement))->pParent)) == -1)
 		{
-			// Daten löschen
-			RemoveData((BucketP)_pElement);
-			// Inhalt auf 0 setzen
-			_pElement->pObject = nullptr;
-			_pElement->qwKey = 0;
-		} else
-		{
-			// Referencen auf diesen Teil des Eimers entfernen
-			if(BucketP(_pElement)->pParent->pLeft == _pElement)
-				BucketP(_pElement)->pParent->pLeft = nullptr;
-			else
-				BucketP(_pElement)->pParent->pRight = nullptr;
-
-			// Das Element hat keine Kinder mehr (und wenn dann würden wir die Referenz verlieren)
-			// Daher kann es gefahrlos mit dem Standard freigegeben werden
-			RecursiveRelease((BucketP)_pElement);
-		}
-		// Jetzt ist es definitiv weg
-		--m_dwNumElements;
+			if((BucketP(_pElement))->pParent->pLeft == BucketP(_pElement))
+				(BucketP(_pElement))->pParent->pLeft = nullptr;
+			else (BucketP(_pElement))->pParent->pRight = nullptr;
+		} else m_apBuckets[iI] = nullptr;
 	}
+	// Daten löschen
+	RemoveData((BucketP)_pElement);
+	delete (BucketP)_pElement;
+	// Jetzt ist es definitiv weg
+	--m_dwNumElements;
 }
 
 // ******************************************************************************** //
@@ -359,8 +377,8 @@ ADTElementP OrE::ADT::HashMap::Search(qword _qwKey)
 {
 	// Listeneintrag?
 	dword dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
-	Bucket* pBucket = &m_pBuckets[dwHash];
-	if(!pBucket->pObject) return 0;
+	BucketP pBucket = m_apBuckets[dwHash];
+	if(pBucket) return nullptr;
 	// Baumsuche
 	while(pBucket)
 	{
@@ -379,7 +397,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 {
 	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
 	#ifdef DEBUG
-	if(!m_pBuckets) return nullptr;		// TODO report error
+	if(!m_apBuckets) return nullptr;		// TODO report error
 	int iCollision = 0;
 #endif
 
@@ -388,9 +406,9 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 	// Neues Element einsortieren
 	dword dwH = OrStringHash(_pcKey);
 	dword dwHash = dwH%m_dwSize;
-	if(m_pBuckets[dwHash].pObject)
+	if(m_apBuckets[dwHash])
 	{
-		Bucket* pBucket = &m_pBuckets[dwHash];
+		BucketP pBucket = m_apBuckets[dwHash];
 		bool bAdded = false;
 		while(!bAdded)
 		{
@@ -430,17 +448,17 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 		return pBucket;
 	} else
 	{
-		m_pBuckets[dwHash].pObject = _pObject;
+		m_apBuckets[dwHash] = new Bucket(_pObject, 0, BucketP(m_apBuckets+dwHash));
 		// Stringkopie
 		int iLen = (int)strlen(_pcKey)+1;
 		void* pStr = malloc(iLen);
 		memcpy(pStr, _pcKey, iLen);
-		m_pBuckets[dwHash].qwKey = ((((qword)pStr)<<16)<<16) | dwH;
+		m_apBuckets[dwHash]->qwKey = ((((qword)pStr)<<16)<<16) | dwH;
 		++m_dwNumElements;
-		return &m_pBuckets[dwHash];
+		return m_apBuckets[dwHash];
 	}
 
-#ifdef _DEBUG
+#ifdef DEBUG
 	//return iCollision;
 #endif
 }
@@ -460,8 +478,8 @@ ADTElementP OrE::ADT::HashMap::Search(const char* _pcKey)
 	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
 	// Listeneintrag?
 	dword dwHash = OrStringHash(_pcKey)%m_dwSize;
-	Bucket* pBucket = &m_pBuckets[dwHash];
-	if(!pBucket->pObject) return 0;
+	BucketP pBucket = m_apBuckets[dwHash];
+	if(pBucket) return nullptr;
 	// Baumsuche
 	while(pBucket)
 	{
@@ -482,9 +500,9 @@ ADTElementP OrE::ADT::HashMap::GetFirst()
 {
 	for(dword i=0;i<m_dwSize;++i)
 		// Wenn die Stelle im Array leer ist einfach überspringen.
-		if(m_pBuckets[i].pObject)
+		if(m_apBuckets[i])
 		{
-			Bucket* pBuck = m_pBuckets+i;
+			BucketP pBuck = m_apBuckets[i];
 			// Kleinstes Element
 			while(pBuck->pLeft) pBuck = pBuck->pLeft;
 			return pBuck;
@@ -498,9 +516,9 @@ ADTElementP OrE::ADT::HashMap::GetLast()
 {
 	for(dword i=m_dwSize-1;i>=0;--i)
 		// Wenn die Stelle im Array leer ist einfach überspringen.
-		if(m_pBuckets[i].pObject)
+		if(m_apBuckets[i])
 		{
-			BucketP pBuck = m_pBuckets+i;
+			BucketP pBuck = m_apBuckets[i];
 			// Größtes Element
 			while(pBuck->pRight) pBuck = pBuck->pRight;
 			return pBuck;
@@ -513,70 +531,70 @@ ADTElementP OrE::ADT::HashMap::GetLast()
 ADTElementP OrE::ADT::HashMap::GetNext(ADTElementP _pCurrent)
 {
 	BucketP pBuck = (BucketP)_pCurrent;
-	// In Eimern Baumnavigation
 	// Inorder traverse -> left site was seen before
 	if(pBuck->pRight) 
 	{
 		pBuck = pBuck->pRight;
 		while(pBuck->pLeft) pBuck = pBuck->pLeft;
 		return pBuck;
-	} else if(pBuck->pParent) {
+	} else {
 		// With no right child we have to move to the parent. We could have seen this,
 		// if we are in the right branch now. Then we have to move much more upwards
 		// until we come back from an left branch.
-		while(pBuck->pParent->pRight == pBuck) 
+		int iIndex = ListIndex(pBuck->pParent);
+		while(pBuck->pParent->pRight == pBuck && iIndex==-1)
 		{
 			pBuck = pBuck->pParent;
-			if(!pBuck->pParent) goto ListSearch;
+			iIndex = ListIndex(pBuck->pParent);
 		}
-		return pBuck->pParent;
+		if(iIndex!=-1)
+		{
+			++iIndex;
+			if(iIndex == (int)m_dwSize) return nullptr;			// Am Ende gibt es kein nächstes Element
+			while(!m_apBuckets[iIndex])
+				if(++iIndex == (int)m_dwSize) return nullptr;	// Am Ende gibt es kein nächstes Element
+			// Minimales Element im Eimer
+			pBuck = m_apBuckets[iIndex];
+			while(pBuck->pLeft) pBuck = pBuck->pLeft;
+			return pBuck;
+		} else
+			return pBuck->pParent;
 	}
-
-ListSearch:
-	dword dwIndex = (dword)(pBuck - m_pBuckets);
-	++dwIndex;
-	if(dwIndex == m_dwSize) return nullptr;	// Am Ende gibt es kein nächstes Element
-	while(!m_pBuckets[dwIndex].pObject)
-		if(++dwIndex == m_dwSize) return nullptr;	// Am Ende gibt es kein nächstes Element
-	// Minimales Element im Eimer
-	pBuck = m_pBuckets + dwIndex;
-	while(pBuck->pLeft) pBuck = pBuck->pLeft;
-	return pBuck;
 }
 
 // ******************************************************************************** //
 ADTElementP OrE::ADT::HashMap::GetPrevious(ADTElementP _pCurrent)
 {
 	BucketP pBuck = (BucketP)_pCurrent;
-	// In Eimern Baumnavigation
 	// Inorder traverse -> left site was seen before
 	if(pBuck->pLeft) 
 	{
 		pBuck = pBuck->pLeft;
 		while(pBuck->pRight) pBuck = pBuck->pRight;
 		return pBuck;
-	} else if(pBuck->pParent) {
+	} else {
 		// With no right child we have to move to the parent. We could have seen this,
 		// if we are in the right branch now. Then we have to move much more upwards
 		// until we come back from an left branch.
-		while(pBuck->pParent->pLeft == pBuck) 
+		int iIndex = ListIndex(pBuck->pParent);
+		while(pBuck->pParent->pLeft == pBuck && iIndex==-1) 
 		{
 			pBuck = pBuck->pParent;
-			if(!pBuck->pParent) goto ListSearch;
+			iIndex = ListIndex(pBuck->pParent);
 		}
-		return pBuck->pParent;
+		if(iIndex != -1)
+		{
+			--iIndex;
+			if(iIndex == -1) return nullptr;	// Am Ende gibt es kein nächstes Element
+			while(!m_apBuckets[iIndex])
+				if(--iIndex == -1) return nullptr;	// Am Ende gibt es kein nächstes Element
+			// Maximales Element im Eimer
+			pBuck = m_apBuckets[iIndex];
+			while(pBuck->pRight) pBuck = pBuck->pRight;
+			return pBuck;
+		} else
+			return pBuck->pParent;
 	}
-
-ListSearch:
-	dword dwIndex = pBuck - m_pBuckets;
-	--dwIndex;
-	if(dwIndex == 0xffffffff) return nullptr;	// Am Ende gibt es kein nächstes Element
-	while(!m_pBuckets[dwIndex].pObject)
-		if(--dwIndex == 0xffffffff) return nullptr;	// Am Ende gibt es kein nächstes Element
-	// Maximales Element im Eimer
-	pBuck = m_pBuckets + dwIndex;
-	while(pBuck->pRight) pBuck = pBuck->pRight;
-	return pBuck;
 }
 
 // *************************************EOF**************************************** //

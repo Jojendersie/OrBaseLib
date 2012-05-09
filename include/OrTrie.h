@@ -40,6 +40,10 @@ private:
 	// Oberster Knoten mit der leeren Zeichenkette
 	TrieNodeP	m_pFirstNode;
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
+
+	// Prevent copy constructor and operator = being generated.
+	Trie(const Trie&);
+	const Trie& operator = (const Trie&);
 public:
 	// Konstruktor
 	Trie(): m_pDeleteCallback(0),m_pFirstNode(0)	{}

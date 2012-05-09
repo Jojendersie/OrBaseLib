@@ -39,7 +39,7 @@ namespace ADT {
 
 // ******************************************************************************** //
 // Simple node for all binary trees
-struct BinaryTreeNode: public ADTElement
+class BinaryTreeNode: public ADTElement
 {
 	// Make nodes uneditable for all users except the trees. So the trees kann return
 	// references to non constant nodes without any (large) risk.
@@ -56,6 +56,10 @@ protected:
 	int iParam;					// Statistic information to mark nodes (usecase differs on application)
 
 	BinaryTreeNode(BinaryTreeNode* _pParent, void* _pObj, const qword& _qwKey):ADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr),pParent(_pParent)	{}
+
+	// Prevent copy constructor and operator = being generated.
+	BinaryTreeNode(const BinaryTreeNode&);
+	const BinaryTreeNode& operator = (const BinaryTreeNode&);
 };
 typedef BinaryTreeNode* BinaryTreeNodeP;
 typedef BinaryTreeNode const * BinaryTreeNodePC;
@@ -66,6 +70,10 @@ class BinaryTree: public ADT
 {
 private:
 	void DeleteAll(BinaryTreeNodeP _pNode);
+
+	// Prevent copy constructor and operator = being generated.
+	BinaryTree(const BinaryTree&);
+	const BinaryTree& operator = (const BinaryTree&);
 protected:
 	BinaryTreeNodeP m_pRoot;
 	virtual BinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)

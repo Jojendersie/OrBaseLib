@@ -123,7 +123,7 @@ float OrE::Math::InvSqrt(float fValue)
 	//fValue -= 0.00025f;
 	// Newtonstep
 	fValue *= (1.5f-fValueHalf*fValue*fValue);
-	return fValue;//+0.000013f;
+	return fValue * (1.5f-fValueHalf*fValue*fValue);//+0.000013f;
 }
 
 // Schnellere Variante ohne Fehlerkorrektur

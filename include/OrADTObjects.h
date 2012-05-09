@@ -27,10 +27,14 @@ typedef void (*ADTDeleteObjectCallbackP)(void* _pObject);
 // Interface for all nodes,... of ADTs
 // The ADTs will not make copies of the data. It will just hold the pointer and eventually
 // destroy the resource with the callback.
-struct ADTElement
+class ADTElement
 {
-private:
+protected:
 	int iRef;					// Reference counter: how often was this element insertet?
+
+	// Prevent copy constructor and operator = being generated.
+	ADTElement(const ADTElement&);
+	const ADTElement& operator = (const ADTElement&);
 public:
 	qword qwKey;				// 64 Key value
 	void* pObject;				// Stored data
@@ -60,6 +64,10 @@ protected:
 	// The callback to delete the data assigned in ADTElement.pObject on
 	// Delete and Destroy events.
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
+
+	// Prevent copy constructor and operator = being generated.
+	ADT(const ADT&);
+	const ADT& operator = (const ADT&);
 public:
 	ADT():m_pDeleteCallback(nullptr)	{}							// Creates a consistent ADT object
 	virtual ~ADT()						{}

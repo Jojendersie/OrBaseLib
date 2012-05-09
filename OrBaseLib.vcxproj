@@ -175,6 +175,7 @@
     <ClInclude Include="include\OrHuffman.h" />
     <ClInclude Include="include\OrList.h" />
     <ClInclude Include="include\OrMatrix.h" />
+    <ClInclude Include="include\OrPlane.h" />
     <ClInclude Include="include\OrRandom.h" />
     <ClInclude Include="include\OrSetBuilder.h" />
     <ClInclude Include="include\OrSplayTree.h" />

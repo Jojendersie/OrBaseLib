@@ -40,10 +40,14 @@ namespace ADT {
 
 	// ******************************************************************************** //
 	// One node in the fibonacci heap
-	struct HeapNode: public ADTElement
+	class HeapNode: public ADTElement
 	{
 		// Make nodes uneditable for all users except the heap.
 		friend class Heap;
+
+		// Prevent copy constructor and operator = being generated.
+		HeapNode(const HeapNode&);
+		const HeapNode& operator = (const HeapNode&);
 	protected:
 		// Linked list of nodes which are siblings
 		HeapNode* pLeft;
@@ -75,6 +79,10 @@ namespace ADT {
 	// ******************************************************************************** //
 	class Heap: public ADT
 	{
+	private:
+		// Prevent copy constructor and operator = being generated.
+		Heap(const Heap&);
+		const Heap& operator = (const Heap&);
 	protected:
 		HeapNodeP m_pRoot;
 

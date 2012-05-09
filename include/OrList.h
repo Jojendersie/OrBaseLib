@@ -35,11 +35,15 @@ namespace ADT {
 
 	// ******************************************************************************** //
 	// Simple node for all double linked lists
-	struct ListNode: public ADTElement
+	class ListNode: public ADTElement
 	{
 		// Make nodes uneditable for all users except the lists. So the lists kann return
 		// references to non constant nodes without any (large) risk.
 		friend class List;
+
+		// Prevent copy constructor and operator = being generated.
+		ListNode(const ListNode&);
+		const ListNode& operator = (const ListNode&);
 	protected:
 		ListNode* pLeft;
 		ListNode* pRight;
@@ -55,6 +59,9 @@ namespace ADT {
 	{
 	private:
 		void DeleteAll(ListNodeP _pNode);
+		// Prevent copy constructor and operator = being generated.
+		List(const List&);
+		const List& operator = (const List&);
 	protected:
 		ListNodeP m_pFirst;
 		ListNodeP m_pLast;

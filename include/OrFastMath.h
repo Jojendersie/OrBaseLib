@@ -119,7 +119,7 @@ __forceinline float Sqrt( float r )		{return sqrt(r);}
 
 // ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
-// Accuracy: worst case error 1%, avg 0.1%
+// Accuracy: smaller than 0.1%
 float InvSqrt(float fValue);
 // Accuracy: worst case error 4%, avg 2.1%
 float _InvSqrt(float fValue);

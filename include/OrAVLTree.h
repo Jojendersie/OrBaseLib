@@ -54,6 +54,10 @@ class AVLTree : public BinaryTree
 protected:
 	void Rebalance(BinaryTreeNodeP _pNode);							// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
 	BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key (searches for nearest element)
+
+	// Prevent copy constructor and operator = being generated.
+	AVLTree(const AVLTree&);
+	const AVLTree& operator = (const AVLTree&);
 public:
 	AVLTree():BinaryTree()	{}
 	BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
@@ -65,7 +69,7 @@ public:
 
 // ******************************************************************************** //
 // Advanced node for binary trees (containing a double linked list)
-struct BinaryTreeLinkedNode: public BinaryTreeNode
+class BinaryTreeLinkedNode: public BinaryTreeNode
 {
 	// Make nodes uneditable for all users except the trees. So the trees kann return
 	// references to non constant nodes without any (large) risk.
@@ -75,6 +79,10 @@ private:
 	BinaryTreeLinkedNode* pPrev;
 
 	BinaryTreeLinkedNode(BinaryTreeLinkedNode* _pParent, void* _pObj, const qword& _qwKey):BinaryTreeNode(_pParent, _pObj, _qwKey), pNext(nullptr), pPrev(nullptr)	{}
+
+	// Prevent copy constructor and operator = being generated.
+	BinaryTreeLinkedNode(const BinaryTreeLinkedNode&);
+	const BinaryTreeLinkedNode& operator = (const BinaryTreeLinkedNode&);
 };
 typedef BinaryTreeLinkedNode* BinaryTreeLinkedNodeP;
 typedef BinaryTreeLinkedNode const* BinaryTreeLinkedNodePC;
@@ -84,6 +92,9 @@ typedef BinaryTreeLinkedNode const* BinaryTreeLinkedNodePC;
 // Allows faster navigation by iterators.
 class LinkedAVLTree : public AVLTree
 {
+	// Prevent copy constructor and operator = being generated.
+	LinkedAVLTree(const LinkedAVLTree&);
+	const LinkedAVLTree& operator = (const LinkedAVLTree&);
 public:
 	LinkedAVLTree():AVLTree()	{}
 	virtual BinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation

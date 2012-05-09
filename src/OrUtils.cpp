@@ -20,6 +20,7 @@
 #include <ctime>
 #include <cstring>
 #include <cstdlib>
+#include <cassert>
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrUtils.h"
 #include "..\include\OrFastMath.h"
@@ -97,6 +98,24 @@ dword OrE::Utils::Match(const char* _pcStr1, const char* _pcStr2)
 	dword i;
 	for(i=0; (_pcStr1[i]*_pcStr2[i] != 0) && (_pcStr1[i]==_pcStr2[i]); ++i);
 	return i;
+}
+
+// ******************************************************************************** //
+// Compare a string and ignore the case.
+int OrE::Utils::Strcmpic(const char* _pcStr1, const char* _pcStr2)
+{
+	while(*_pcStr1 && *_pcStr2)
+	{
+		// "lexicographic" order and early 0 in one of the strings causes
+		// one of the following returns.
+		if(tolower(*_pcStr1) < tolower(*_pcStr2)) return -1;
+		if(tolower(*_pcStr1) > tolower(*_pcStr2)) return 1;
+		++_pcStr1; ++_pcStr2;
+	}
+	// One or both strings ended
+	if(tolower(*_pcStr1) < tolower(*_pcStr2)) return -1;
+	if(tolower(*_pcStr1) > tolower(*_pcStr2)) return 1;
+	return 0;
 }
 
 // *************************************EOF**************************************** //
