@@ -8,8 +8,7 @@
 // Here is a quiete easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
-// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
-// Futhermore you have to state this project as a source of your project.			//
+// project is. You can do this by writing a comment at github.com/Jojendersie/.		//
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
@@ -258,7 +257,7 @@ int OrE::ADT::HashMap::ListIndex(BucketP _pBucket)
 // Standard operation insert
 ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 {
-#ifdef DEBUG
+#ifdef _DEBUG
 	if(!m_apBuckets) return nullptr;		// TODO report error
 	int iCollision = 0;
 #endif
@@ -275,7 +274,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 		BucketP pBucket = m_apBuckets[dwHash];
 		while(true)
 		{
-#ifdef DEBUG
+#ifdef _DEBUG
 			++iCollision;
 #endif
 			// Schlüssel vollständig verlgeichen -> Baumsuche
@@ -396,7 +395,7 @@ ADTElementP OrE::ADT::HashMap::Search(qword _qwKey)
 ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 {
 	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
-	#ifdef DEBUG
+	#ifdef _DEBUG
 	if(!m_apBuckets) return nullptr;		// TODO report error
 	int iCollision = 0;
 #endif
@@ -412,7 +411,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 		bool bAdded = false;
 		while(!bAdded)
 		{
-#ifdef DEBUG
+#ifdef _DEBUG
 			++iCollision;
 #endif
 			// String vollständig verlgeichen -> Baumsuche
@@ -458,7 +457,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 		return m_apBuckets[dwHash];
 	}
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	//return iCollision;
 #endif
 }

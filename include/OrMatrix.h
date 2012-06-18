@@ -8,8 +8,7 @@
 // Here is a quiete easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
-// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
-// Futhermore you have to state this project as a source of your project.			//
+// project is. You can do this by writing a comment at github.com/Jojendersie/.		//
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
@@ -28,15 +27,6 @@ class Plane;
 Matrix MatrixInvert(const Matrix& m);
 Matrix2x3 Matrix2x3Invert(const Matrix2x3& m);
 inline Matrix operator * (const Matrix& a, const Matrix& b);
-
-// ******************************************************************************** //
-// Idee: zur Renderbeschleunigung
-// Matriezen werden beim Erzeugen mit IDs ausgestattet. Das hat zur Folge,
-// dass wahrscheinlich identische Matrizen als solche ermittelt werden
-// können.
-// Die Vergleichsoperatoren beziehen sich jedoch nur auf die
-// mathematische Gleichheit.
-//static dword Or_MatrixIDCounter = 1;
 
 // ******************************************************************************** //
 // Die 4D - Matrixklasse (Für 3D Transformationen)
@@ -195,45 +185,45 @@ inline Matrix operator * (const Matrix& a,
 }
 
 inline Matrix operator * (const Matrix& m,
-							const float f)
+						  const float f)
 {
 	return Matrix(m.m11 * f, m.m12 * f, m.m13 * f, m.m14 * f,
-			        m.m21 * f, m.m22 * f, m.m23 * f, m.m24 * f,
-					m.m31 * f, m.m32 * f, m.m33 * f, m.m34 * f,
-					m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
+			      m.m21 * f, m.m22 * f, m.m23 * f, m.m24 * f,
+				  m.m31 * f, m.m32 * f, m.m33 * f, m.m34 * f,
+				  m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
 }
 
 inline Matrix operator * (const float f,
-							const Matrix& m)
+						  const Matrix& m)
 {
 	return Matrix(m.m11 * f, m.m12 * f, m.m13 * f, m.m14 * f,
-			        m.m21 * f, m.m22 * f, m.m23 * f, m.m24 * f,
-					m.m31 * f, m.m32 * f, m.m33 * f, m.m34 * f,
-					m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
+			      m.m21 * f, m.m22 * f, m.m23 * f, m.m24 * f,
+				  m.m31 * f, m.m32 * f, m.m33 * f, m.m34 * f,
+				  m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
 }
 
-inline Vec3 operator * (const Vec3& v,
-							const Matrix& m)
-{
-	return Vec3TransformCoords(v, m);
-}
+// Multiply vector from left (interpret v as row vector with a fourth component of one)
+Vec3 operator * (const Vec3& v, const Matrix& m);
 
-inline Vec3 operator * (const Matrix& m,
-							const Vec3& v)
-{
-	return Vec3TransformCoords(v, m);
-}
+// Multiply vector from right (interpret v as col vector with a fourth component of one)
+Vec3 operator * (const Matrix& m, const Vec3& v);
+
+// Multiply 4D-vector from left (interpret v as row vector)
+Vec4 operator * (const Vec4& v, const Matrix& m);
+
+// Multiply 4D-vector from right
+Vec4 operator * (const Matrix& m, const Vec4& v);
 
 inline Matrix operator / (const Matrix& a, const Matrix& b) {return a * MatrixInvert(b);}
 
 inline Matrix operator / (const Matrix& m,
-							float f)
+						  float f)
 {
 	f = 1/f;
 	return Matrix(m.m11 * f, m.m12 * f, m.m13 * f, m.m14 * f,
-			        m.m21 * f, m.m22 * f, m.m23 * f, m.m24 * f,
-					m.m31 * f, m.m32 * f, m.m33 * f, m.m34 * f,
-					m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
+			      m.m21 * f, m.m22 * f, m.m23 * f, m.m24 * f,
+				  m.m31 * f, m.m32 * f, m.m33 * f, m.m34 * f,
+				  m.m41 * f, m.m42 * f, m.m43 * f, m.m44 * f);
 }
 
 // ******************************************************************************** //
@@ -426,7 +416,7 @@ inline Matrix2x3 operator - (const Matrix2x3& a, const Matrix2x3& b)	{return Mat
 inline Matrix2x3 operator - (const Matrix2x3& m)						{return Matrix2x3(-m.m11, -m.m12, -m.m13, -m.m21, -m.m22, -m.m23);}
 
 inline Matrix2x3 operator * (const Matrix2x3& a,
-							   const Matrix2x3& b)
+							 const Matrix2x3& b)
 {
 	return Matrix2x3(b.m11 * a.m11 + b.m21 * a.m12,
 					   b.m12 * a.m11 + b.m22 * a.m12,
@@ -437,29 +427,32 @@ inline Matrix2x3 operator * (const Matrix2x3& a,
 }
 
 inline Matrix2x3 operator * (const Matrix2x3& m,
-							   const float f)
+							 const float f)
 {
 	return Matrix2x3(m.m11 * f, m.m12 * f, m.m13 * f,
 			           m.m21 * f, m.m22 * f, m.m23 * f);
 }
 
 inline Matrix2x3 operator * (const float f,
-							   const Matrix2x3& m)
+							 const Matrix2x3& m)
 {
 	return Matrix2x3(m.m11 * f, m.m12 * f, m.m13 * f,
 			           m.m21 * f, m.m22 * f, m.m23 * f);
 }
 
 inline Vec2 operator * (const Vec2& v,
-							 const Matrix2x3& m)
+						const Matrix2x3& m)
 {
-	return Vec2Transform(v, m);
+	return Vec2(v.x * m.m11 + v.y * m.m21,
+				v.x * m.m12 + v.y * m.m22);
 }
 
 inline Vec2 operator * (const Matrix2x3& m,
-							 const Vec2& v)
+						const Vec2& v)
 {
-	return Vec2Transform(v, m);
+	// Multiply matrix from left: 2x3 * (2+1)x1 = 2x1
+	return Vec2(m.m11*v.x + m.m12*v.y + m.m13,
+				m.m21*v.x + m.m22*v.y + m.m23);
 }
 
 inline Matrix2x3 operator / (const Matrix2x3& a, const Matrix2x3& b) {return a * Matrix2x3Invert(b);}
@@ -469,7 +462,7 @@ inline Matrix2x3 operator / (const Matrix2x3& m,
 {
 	f = 1/f;
 	return Matrix2x3(m.m11 * f, m.m12 * f, m.m13 * f,
-			           m.m21 * f, m.m22 * f, m.m23 * f);
+			         m.m21 * f, m.m22 * f, m.m23 * f);
 }
 
 // ******************************************************************************** //

@@ -9,7 +9,6 @@
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by a comment at	https://github.com/Jojendersie/.	//
-// Futhermore you have to state this project as a source of your project.			//
 //																					//
 // For details on this project see: Readme.txt										//
 //																					//
@@ -38,6 +37,10 @@ enum TimeQuerySlots {
 	TIME_SLOT_7
 };
 double TimeQuery(TimeQuerySlots _Slot);
+
+// ******************************************************************************** //
+// Finds out if TimeQuery() with the current slot was used scince program start.
+bool IsTimeSlotUsed(TimeQuerySlots _Slot);
 
 // ******************************************************************************** //
 // Returns the time elapsed since the program was started in seconds.

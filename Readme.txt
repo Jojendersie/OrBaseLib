@@ -12,8 +12,7 @@ Content:
 Here is a quiete easy licensing as open source:
 http://creativecommons.org/licenses/by/3.0/
 If you use parts of this project, please let me know what the purpose of your
-project. You can do this by a comment at https://github.com/Jojendersie/.
-Futhermore you have to state this project as a source of your project.
+project is. You can do this by writing a comment at https://github.com/Jojendersie/.
 
 ********************************************************************************
 2. Project intention
@@ -31,6 +30,8 @@ Math:
 	Vector2, Vector3, Vector4 - 2D, 3D and 4D vector math - all you need for 3D game development
 	Matrix - 4x4 matrix transformation matrizes for the 3D space (left handed like OpenGL)*
 	Matrix2x3 - a small matrix simulating a 3x3 matrix where the third row is always (0,0,1); this can be used for 2D transformations (textures, 2D games)
+	Complex numbers - nothing to worry about, just basic arithmetic
+	SetBuilder - fast clustering of graph structures
 ADT:
 	AVLTree - balanced binary search tree (autobalancing)
 	SplayTree - self organisationg search tree (statisticaly optimal)
@@ -44,3 +45,6 @@ Algorithm:
 	Hash - CRC and other likely hash functions
 	Adaptive huffman - lossless compression codec
 	AVCoder - something like an LZ77 coder with adaptive huffman - not that fast in compression, but good rate and uncoding speed
+	fft - 1D implemented 2D not yet
+Debug Utilities:
+	Assertions - Test real pointer validity and some other usefull assertions

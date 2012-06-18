@@ -85,7 +85,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WINDOWS;DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WINDOWS;_DEBUG;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -168,6 +168,7 @@
     <ClInclude Include="include\OrBaseLib.h" />
     <ClInclude Include="include\OrBinaryTree.h" />
     <ClInclude Include="include\OrBuffer.h" />
+    <ClInclude Include="include\OrDebug.h" />
     <ClInclude Include="include\OrFastMath.h" />
     <ClInclude Include="include\OrFFT.h" />
     <ClInclude Include="include\OrHash.h" />
@@ -191,6 +192,8 @@
     <ClCompile Include="src\OrAVLTree.cpp" />
     <ClCompile Include="src\OrBinaryTree.cpp" />
     <ClCompile Include="src\OrBuffer.cpp" />
+    <ClCompile Include="src\OrComplexNumber.cpp" />
+    <ClCompile Include="src\OrDebug.cpp" />
     <ClCompile Include="src\OrEntropyCoder.cpp" />
     <ClCompile Include="src\OrFastMath.cpp" />
     <ClCompile Include="src\OrFFT.cpp" />

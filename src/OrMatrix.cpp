@@ -8,8 +8,7 @@
 // Here is a quiete easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
-// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
-// Futhermore you have to state this project as a source of your project.			//
+// project is. You can do this by writing a comment at github.com/Jojendersie/.		//
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
@@ -29,8 +28,56 @@ using namespace OrE::Math;
 Matrix::Matrix(const float* pfValue)	{memcpy(n, pfValue, sizeof(float)*16);/*dwMatrixID = Or_MatrixIDCounter++;*/}
 
 // ******************************************************************************** //
-// Zuweisungsoperatoren
+// Operators
 Matrix& Matrix::operator = (const Matrix& m) {memcpy(n, m.n, sizeof(float)*16); return *this;}
+
+// ******************************************************************************** //
+// Multiply vector from left (interpret v as row vector with a fourth component of one)
+Vec3 OrE::Math::operator * (const Vec3& v,
+				 const Matrix& m)
+{
+	// Uniform coordinates in 4D -> division through w
+	const double w = 1.0/(v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + m.m44);
+
+	return Vec3(float( w * (v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41) ),
+				float( w * (v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42) ),
+				float( w * (v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43) ));
+}
+
+// ******************************************************************************** //
+// Multiply vector from right (interpret v as col vector with a fourth component of one)
+Vec3 OrE::Math::operator * (const Matrix& m,
+				 const Vec3& v)
+{
+	// Uniform coordinates in 4D -> division through w
+	const double w = 1.0/(v.x * m.m41 + v.y * m.m42 + v.z * m.m43 + m.m44);
+
+	return Vec3(float( w * (v.x * m.m11 + v.y * m.m12 + v.z * m.m13 + m.m14) ),
+				float( w * (v.x * m.m21 + v.y * m.m22 + v.z * m.m23 + m.m24) ),
+				float( w * (v.x * m.m31 + v.y * m.m32 + v.z * m.m33 + m.m34) ));
+}
+
+// ******************************************************************************** //
+// Multiply 4D-vector from left (interpret v as row vector)
+Vec4 OrE::Math::operator * (const Vec4& v,
+				 const Matrix& m)
+{
+	return Vec4( v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41 ,
+				 v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42 ,
+				 v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43 ,
+				 v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + m.m44 );
+}
+
+// ******************************************************************************** //
+// Multiply 4D-vector from right
+Vec4 OrE::Math::operator * (const Matrix& m,
+				 const Vec4& v)
+{
+	return Vec4( v.x * m.m11 + v.y * m.m12 + v.z * m.m13 + m.m14 ,
+				 v.x * m.m21 + v.y * m.m22 + v.z * m.m23 + m.m24 ,
+				 v.x * m.m31 + v.y * m.m32 + v.z * m.m33 + m.m34 ,
+				 v.x * m.m41 + v.y * m.m42 + v.z * m.m43 + m.m44 );
+}
 
 // ******************************************************************************** //
 // Translationsmatrix berechnen
@@ -138,7 +185,7 @@ Matrix OrE::Math::MatrixRotationAxis(const Vec3& vAxis,
 	const double fSin = sin(double(-f));
 	const double fCos = cos(double(-f));
 	const double fOneMinusCos = 1.0 - fCos;
-	const double AxSin = vAxis.z * fSin;
+	const double AxSin = vAxis.x * fSin;
 	const double AySin = vAxis.y * fSin;
 	const double AzSin = vAxis.z * fSin;
 
@@ -277,7 +324,7 @@ Matrix OrE::Math::MatrixInvert(const Matrix& m)
 	for(int i=0; i<4; i++)
 	{
 		// Determinantenentwicklung als Kreuzprodukt
-		v = Vec4Cross(m.m[0<i?0:1], m.m[1<i?1:2], m.m[2<i?2:3]);
+		v = Vec4::Cross(m.m[0<i?0:1], m.m[1<i?1:2], m.m[2<i?2:3]);
 
 		// Vorzeichen * Determinante_i / Determinante
 		mSolution.m[0][i] = fSignDet * v.x;
@@ -348,13 +395,13 @@ Matrix OrE::Math::MatrixCamera(const Vec3& vPos,
 						const Vec3& vUp) // = Vec3(0.0f, 1.0f, 0.0f)
 {
 	// Die z-Achse des Kamerakoordinatensystems berechnen
-	Vec3 vZAxis(Vec3Normalize(vLookAt - vPos));
+	Vec3 vZAxis(Vec3::Normalize(vLookAt - vPos));
 
 	// Die x-Achse ist das Kreuzprodukt aus y- und z-Achse
-	Vec3 vXAxis(Vec3Normalize(Vec3Cross(vUp, vZAxis)));
+	Vec3 vXAxis(Vec3::Normalize(Vec3::Cross(vUp, vZAxis)));
 
 	// y-Achse berechnen
-	Vec3 vYAxis(Vec3Normalize(Vec3Cross(vZAxis, vXAxis)));
+	Vec3 vYAxis(Vec3::Normalize(Vec3::Cross(vZAxis, vXAxis)));
 
 	// Rotationsmatrix erzeugen und die Translationsmatrix mit ihr multiplizieren
 	return MatrixTranslation(-vPos) *
@@ -464,9 +511,9 @@ bool OrE::Math::MatrixSolveEquation(Matrix _A, Vec4* _pV_X)
 Matrix OrE::Math::MatrixOrthonormal(const Vec3& vNormal)
 {
 	// Über das Skalarprudukt den 2. Vektor bestimmen.
-	Vec3 v2 = (vNormal.x==1.0f)?Vec3(0.0f, 1.0f, 0.0f): Vec3Normalize((vNormal.y != 0.0f)? Vec3(1.0f, -vNormal.x/vNormal.y, 0.0f) : Vec3(1.0f, 0.0f, -vNormal.x/vNormal.z));
+	Vec3 v2 = (vNormal.x==1.0f)?Vec3(0.0f, 1.0f, 0.0f): Vec3::Normalize((vNormal.y != 0.0f)? Vec3(1.0f, -vNormal.x/vNormal.y, 0.0f) : Vec3(1.0f, 0.0f, -vNormal.x/vNormal.z));
 	// 3. Vektor über Kreuzprodukt ermitteln
-	Vec3 v3 = Vec3Cross(vNormal, v2);
+	Vec3 v3 = Vec3::Cross(vNormal, v2);
 	return Matrix(v2.x,		v2.y,		v2.z,		0.0f,
 					v3.x,		v3.y,		v3.z,		0.0f,
 					vNormal.x,	vNormal.y,	vNormal.z,	0.0f,

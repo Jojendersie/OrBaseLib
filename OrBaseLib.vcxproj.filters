@@ -102,6 +102,9 @@
     <ClInclude Include="include\OrPlane.h">
       <Filter>Headerdateien\Math</Filter>
     </ClInclude>
+    <ClInclude Include="include\OrDebug.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -163,6 +166,12 @@
     </ClCompile>
     <ClCompile Include="src\OrFFT.cpp">
       <Filter>Quelldateien\Algorithms</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrComplexNumber.cpp">
+      <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrDebug.cpp">
+      <Filter>Quelldateien</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

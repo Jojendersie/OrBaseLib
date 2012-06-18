@@ -8,8 +8,7 @@
 // Here is a quiete easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
-// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
-// Futhermore you have to state this project as a source of your project.			//
+// project is. You can do this by writing a comment at github.com/Jojendersie/.		//
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
@@ -63,20 +62,5 @@ __forceinline void OrUnlock(volatile dword* _pLockVar)
 {
 	*_pLockVar = 0;
 }*/
-
-// ******************************************************************************** //
-// My own assertion, which doesn't jump into an other file and did not ask for debugging
-#ifdef DEBUG
-#include <intrin.h>
-#define Assert(a) if(!(a)) __debugbreak()
-// The Assert__ execute A (even in release) and test for non-/equality with Const  (debug only)
-#define AssertEq(A,Const) if((A)!=(Const)) __debugbreak()
-#define AssertNeq(A,Const) if((A)==(Const)) __debugbreak()
-#else
-#define Assert(a)
-// The Assert__ execute A (even in release) and test for non-/equality with Const (debug only)
-#define AssertEq(A,Const) A
-#define AssertNeq(A,Const) A
-#endif
 
 // *************************************EOF**************************************** //

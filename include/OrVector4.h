@@ -8,8 +8,7 @@
 // Here is a quiete easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
-// project. You can do this by a comment at	https://github.com/Jojendersie/.		//
-// Futhermore you have to state this project as a source of your project.			//
+// project is. You can do this by writing a comment at github.com/Jojendersie/.		//
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
@@ -61,18 +60,25 @@ public:
 
 	// Konstruktoren
 	Vec4()																										{}
-	Vec4(const Vec4& v) : x(v.x), y(v.y), z(v.z), w(v.w)													{}
-	Vec4(const Vec3& v) : x(v.x), y(v.y), z(v.z), w(1.0f)													{}
-	Vec4(const Vec3& v, const float fw) : x(v.x), y(v.y), z(v.z), w(fw)									{}
-	Vec4(const Vec2& v) : x(v.x), y(v.y), z(1.0f), w(1.0f)												{}
-	Vec4(const Vec2& v, const Vec2& v2) : x(v.x), y(v.y), z(v2.x), w(v2.y)							{}
+	Vec4(const Vec4& v) : x(v.x), y(v.y), z(v.z), w(v.w)														{}
+	Vec4(const Vec3& v) : x(v.x), y(v.y), z(v.z), w(1.0f)														{}
+	Vec4(const Vec3& v, const float fw) : x(v.x), y(v.y), z(v.z), w(fw)											{}
+	Vec4(const float fx, const Vec3& v) : x(fx), y(v.x), z(v.y), w(v.z)											{}
+	Vec4(const Vec2& v) : x(v.x), y(v.y), z(1.0f), w(1.0f)														{}
+	Vec4(const Vec2& v, float fz, float fw) : x(v.x), y(v.y), z(fz), w(fw)										{}
+	Vec4(float fx, const Vec2& v, float fw) : x(fx), y(v.x), z(v.y), w(fw)										{}
+	Vec4(float fx, float fy, const Vec2& v) : x(fx), y(fy), z(v.x), w(v.y)										{}
+	Vec4(const Vec2& v, const Vec2& v2) : x(v.x), y(v.y), z(v2.x), w(v2.y)										{}
 	Vec4(const float f) : x(f), y(f), z(f), w(f)																{}
 	Vec4(const float _x, const float _y, const float _z, const float _w) : x(_x), y(_y), z(_z), w(_w)			{}
-	Vec4(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1]), z(pfComponent[2]), w(pfComponent[3]){}
+	Vec4(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1]), z(pfComponent[2]), w(pfComponent[3])	{}
 
 	// Casting-Operatoren
-	operator float* ()						{return (float*)(c);}
-	operator Vec3 ()						{return v3;}
+	operator float* () const				{return (float*)(c);}
+	operator Vec3 () const					{return v3;}
+
+	// Casting to "color"
+	operator dword () const					{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | byte(Clamp(w*255.0, 0.0, 255.0));}
 
 	// Zuweisungsoperatoren
 	Vec4& operator = (const Vec4& v)	{x = v.x; y = v.y; z = v.z; w = v.w; return *this;}
@@ -83,44 +89,53 @@ public:
 	Vec4& operator *= (const float f)	{x *= f; y *= f; z *= f; w *= f; return *this;}
 	Vec4& operator /= (const Vec4& v)	{x /= v.x; y /= v.y; z /= v.z; w /= v.w; return *this;}
 	Vec4& operator /= (float f)			{f = 1/f; x *= f; y *= f; z *= f; w *= f; return *this;}
+
+	// ******************************************************************************** //
+	// Arithmetische Operatoren
+	inline Vec4 operator + (const Vec4& b) const	{return Vec4(x + b.x, y + b.y, z + b.z, w + b.w);}
+	inline Vec4 operator - (const Vec4& b) const	{return Vec4(x - b.x, y - b.y, z - b.z, w - b.w);}
+	inline Vec4 operator - () const					{return Vec4(-x, -y, -z, -w);}
+	inline Vec4 operator * (const Vec4& b) const	{return Vec4(x * b.x, y * b.y, z * b.z, w * b.w);}
+	inline Vec4 operator * (const float f) const	{return Vec4(x * f, y * f, z * f, w * f);}
+	inline Vec4 operator / (const Vec4& b) const	{return Vec4(x / b.x, y / b.y, z / b.z, w / b.w);}
+	inline Vec4 operator / (float f) const			{f = 1/f; return Vec4(x * f, y * f, z * f, w * f);}
+
+	// ******************************************************************************** //
+	// Vergleichsoperatoren
+	inline bool operator == (const Vec4& b) {if(x != b.x) return false; if(y != b.y) return false; if(z != b.z) return false; return w == b.w;}
+	inline bool operator != (const Vec4& b) {if(x != b.x) return true; if(y != b.y) return true; if(z != b.z) return true; return w != b.w;}
+	inline bool operator == (const Vec3& b) {if(x != b.x) return false; if(y != b.y) return false; if(z != b.z) return false; return w == 1.0f;}
+	inline bool operator != (const Vec3& b) {if(x != b.x) return true; if(y != b.y) return true; if(z != b.z) return true; return w != 1.0f;}
+
+	
+	// ******************************************************************************** //
+	// Vector4 functions
+	// The non-static and non-const functions always change the calling object
+	inline float		Length() const											{return Sqrt(x * x + y * y + z * z + w * w);}
+	inline float		LengthSq() const										{return x * x + y * y + z * z + w * w;}
+	inline const Vec4&	Normalize()												{*this *= InvSqrt(x * x + y * y + z * z + w * w); return *this;}
+	inline static Vec4	Normalize(const Vec4& v)								{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
+	inline const Vec4&	NormalizeEx()											{float fL = Sqrt(x * x + y * y + z * z + w * w); *this /= OrE::Math::Max(fL, 0.0000000000000000001f); return *this;}
+	inline static Vec4	NormalizeEx(const Vec4& v)								{float fL = Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
+	inline float		Dot(const Vec4& v) const								{return x * v.x + y * v.y + z * v.z + w * v.w;}
+//	inline static float	Dot(const Vec4& v1, const Vec4& v2)						{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
+	inline float		Angle(const Vec4& v) const								{return Cos((x * v.x + y * v.y + z * v.z + w * v.w) * InvSqrt((x * x + y * y + z * z + w * w) * (v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)));}
+//	inline static float	Angle(const Vec4& v1, const Vec4& v2)					{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
+	static Vec4			Random();
+	const Vec4&			Cross(const Vec4& v2, const Vec4& v3);
+	static Vec4			Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3);
 };
 
 // ******************************************************************************** //
-// Arithmetische Operatoren
-inline Vec4 operator + (const Vec4& a, const Vec4& b)	{return Vec4(a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w);}
-inline Vec4 operator - (const Vec4& a, const Vec4& b)	{return Vec4(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);}
-inline Vec4 operator - (const Vec4& v)					{return Vec4(-v.x, -v.y, -v.z, -v.w);}
-inline Vec4 operator * (const Vec4& a, const Vec4& b)	{return Vec4(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);}
-inline Vec4 operator * (const Vec4& v, const float f)		{return Vec4(v.x * f, v.y * f, v.z * f, v.w * f);}
 inline Vec4 operator * (const float f, const Vec4& v)		{return Vec4(v.x * f, v.y * f, v.z * f, v.w * f);}
-inline Vec4 operator / (const Vec4& a, const Vec4& b)	{return Vec4(a.x / b.x, a.y / b.y, a.z / b.z, a.w / b.w);}
-inline Vec4 operator / (const Vec4& v, float f)			{f = 1/f; return Vec4(v.x * f, v.y * f, v.z * f, v.w * f);}
+inline bool operator == (const Vec3& b, const Vec4& a)		{if(a.x != b.x) return false; if(a.y != b.y) return false; if(a.z != b.z) return false; return a.w == 1.0f;}
+inline bool operator != (const Vec3& b, const Vec4& a)		{if(a.x != b.x) return true; if(a.y != b.y) return true; if(a.z != b.z) return true; return a.w != 1.0f;}
+
 
 // ******************************************************************************** //
-// Vergleichsoperatoren
-inline bool operator == (const Vec4& a, const Vec4& b) {if(a.x != b.x) return false; if(a.y != b.y) return false; if(a.z != b.z) return false; return a.w == b.w;}
-inline bool operator != (const Vec4& a, const Vec4& b) {if(a.x != b.x) return true; if(a.y != b.y) return true; if(a.z != b.z) return true; return a.w != b.w;}
-inline bool operator == (const Vec4& a, const Vec3& b) {if(a.x != b.x) return false; if(a.y != b.y) return false; if(a.z != b.z) return false; return a.w == 1.0f;}
-inline bool operator != (const Vec4& a, const Vec3& b) {if(a.x != b.x) return true; if(a.y != b.y) return true; if(a.z != b.z) return true; return a.w != 1.0f;}
-inline bool operator == (const Vec3& b, const Vec4& a) {if(a.x != b.x) return false; if(a.y != b.y) return false; if(a.z != b.z) return false; return a.w == 1.0f;}
-inline bool operator != (const Vec3& b, const Vec4& a) {if(a.x != b.x) return true; if(a.y != b.y) return true; if(a.z != b.z) return true; return a.w != 1.0f;}
-
-// ******************************************************************************** //
-// Funktionen deklarieren
-inline float Vec4Length(const Vec4& v)											{return Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
-inline float Vec4LengthSq(const Vec4& v)										{return v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;}
-inline Vec4	 Vec4Normalize(const Vec4& v)										{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);}
-inline Vec4	 Vec4NormalizeEx(const Vec4& v)										{float fL = Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
-inline float Vec4Dot(const Vec4& v1, const Vec4& v2)							{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
-inline float Vec4Angle(const Vec4& v1, const Vec4& v2)							{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
-inline Vec4	 Vec4LrpNormal(const Vec4& v1, const Vec4& v2, const float p)		{return Vec4NormalizeEx(v1 + p * (v2 - v1));}
-inline Vec4	 Vec4Min(const Vec4& v1, const Vec4& v2)							{return Vec4(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z), Min(v1.w, v2.w));}
-inline Vec4	 Vec4Max(const Vec4& v1, const Vec4& v2)							{return Vec4(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z), Max(v1.w, v2.w));}
-inline Vec4	 Vec4Lrp(const Vec4& v1, const Vec4& v2, const float f)				{return Vec4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
-Vec4		 Vec4Transform(const Vec4& v, const Matrix& m);																																														// 4D-Vektor mit Matrix multiplizieren
-Vec4		 Vec4Random();
-Vec4		 Vec4Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3);
-
+inline Vec4	Min(const Vec4& v1, const Vec4& v2)							{return Vec4(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z), Min(v1.w, v2.w));}
+inline Vec4	Max(const Vec4& v1, const Vec4& v2)							{return Vec4(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z), Max(v1.w, v2.w));}
+inline Vec4	Lerp(const Vec4& v1, const Vec4& v2, const float f)			{return Vec4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
 
 // ******************************************************************************** //
 // Die Quaternion-Klasse (4D Hyperkugel)
