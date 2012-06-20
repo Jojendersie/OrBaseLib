@@ -16,19 +16,25 @@
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrList.h"
+//#include "..\include\OrDebug.h"
+
 
 using namespace OrE::ADT;
 
 // ******************************************************************************** //
 void OrE::ADT::List::DeleteAll(ListNodeP _pNode)
 {
-	if(_pNode)
+	while(_pNode)
 	{
-		DeleteAll(_pNode->pRight);
+		// Save next one
+		ListNodeP pNext = _pNode->pRight;
 
 		// Release resources ...
 		if(m_pDeleteCallback) m_pDeleteCallback(_pNode->pObject);
 		delete _pNode;
+
+		// Go to the next one
+		_pNode = pNext;
 	}
 }
 
@@ -97,7 +103,7 @@ void OrE::ADT::List::Delete(qword _qwKey)
 	while(++It)
 		if(It->qwKey == _qwKey)
 		{
-			Delete(It);
+			Delete(ADTElementP(It));
 			return;
 		}
 }

@@ -143,7 +143,8 @@ void* operator new(size_t sz, const char* pcFile, int iLine) {
 
 // This deletes are even used, if memory was not allocated with our
 // new operator. The drawback is a little performance loss.
-void operator delete(void* m) {
+void operator delete(void* m)
+{
 	if(m)
 	{
 		Col.Collection.erase(m);
@@ -151,7 +152,26 @@ void operator delete(void* m) {
 	}
 }
 
-void operator delete[](void* m) {
+void operator delete[](void* m)
+{
+	if(m)
+	{
+		Col.Collection.erase(m);
+		free(m);
+	}
+}
+
+void operator delete(void* m, const char* pcFile, int iLine)
+{
+	if(m)
+	{
+		Col.Collection.erase(m);
+		free(m);
+	}
+}
+
+void operator delete[](void* m, const char* pcFile, int iLine)
+{
 	if(m)
 	{
 		Col.Collection.erase(m);

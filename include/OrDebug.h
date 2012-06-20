@@ -49,13 +49,15 @@ void* operator new(size_t sz, const char* pcFile, int iLine);
 // new operator. The drawback is a little performance loss.
 void operator delete(void* m);
 void operator delete[](void* m);
+void operator delete(void* m, const char* pcFile, int iLine);
+void operator delete[](void* m, const char* pcFile, int iLine);
 
 // ******************************************************************************** //
 // This line enables the garbage collector. The implementation of the new(file, line)
 // is in the OrDebug.cpp.
 // THIS LINE CAN CAUSES ERRORS IN STDLIB.
 // You have two options: don't use it and write new(__FILE__, __LINE__) manually
-// everywhere or rename it.
+// everywhere or rename the makro.
 // OR include this header as the very last one (Or at least after the std-headers).
 #define new new(__FILE__, __LINE__)
 
@@ -72,7 +74,8 @@ void operator delete[](void* m);
 // assertion is lokated in not in some other file like the std::assert.
 #define Assert(a) if(!(a)) __debugbreak()
 
-// Complex, slow assertion to check pointer validity
+// Complex, slow assertion to check pointer validity.
+// You can use the function to handle bad pointers your own way.
 bool IsPointerInvalid(const void* _Pointer);
 #define AssertPointerValidity(p) if( IsPointerInvalid(p) ) __debugbreak()
 

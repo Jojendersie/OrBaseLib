@@ -130,6 +130,9 @@ public:
 	// Override boolean operator that if(Iterator) can be asked
 	operator bool () const {return m_pCurrentElement != 0;}
 
+	// Override implicit convertion to the element type
+	operator Type* () const {return (Type*)m_pCurrentElement;}
+
 	// Casting operators
 	bool operator==(const Iterator& T) const {return m_pCurrentElement == T.m_pCurrentElement;}
 	bool operator!=(const Iterator& T) const {return m_pCurrentElement != T.m_pCurrentElement;}
