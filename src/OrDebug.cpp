@@ -18,8 +18,11 @@
 
 #include <csignal>
 #include <string>
-#include <unordered_map>
+//#include <unordered_map>
+#include "..\include\OrTypeDef.h"
+#include "..\include\OrADTObjects.h"
 #include "..\include\OrDebug.h"
+#include "..\include\OrHash.h"
 
 #pragma warning(disable: 4996)
 
@@ -80,7 +83,7 @@ struct Garbage
 };
 
 // Each memory is identified by its adress (obviously)
-typedef std::pair<void*, Garbage> PGarbage;
+//typedef std::pair<void*, Garbage> PGarbage;
 
 // PART II the collector
 // Store all garbage objects in the collector and remove them on delete.
@@ -90,21 +93,22 @@ class Collector
 public:
 	// Not that clean -> should be private, but this knowledge of the class.. will
 	// never leave the borders of this file!
-	std::unordered_map<void*, Garbage> Collection;
+	//std::unordered_map<void*, Garbage> Collection;
+	OrE::ADT::HashMap Collection;
 
 	// Nothing to do - standard constructor
-	Collector() {}
+	Collector() : Collection(50000, OrE::ADT::HM_PREFER_SIZE) {}
 
 	// Log every unfreed memory
 	~Collector()
 	{
-		if(!Collection.empty())
+		if(!Collection.IsEmpty())
 		{
 			char acDesc[256];
-			auto it = Collection.begin();
-			while(it != Collection.end())
+			OrE::ADT::Iterator<OrE::ADT::Bucket> It( &Collection );
+			while(++It)
 			{
-				sprintf(acDesc, "Memoryleak detected. Allocation at ['%.23s': %d], %d bytes not freed.\n", it->second.acFileName, it->second.iLine, it->second.iSize);
+				sprintf(acDesc, "Memoryleak detected. Allocation at ['%.23s': %d], %d bytes not freed.\n", ((Garbage*)It->pObject)->acFileName, ((Garbage*)It->pObject)->iLine, ((Garbage*)It->pObject)->iSize);
 
 				#ifdef OR_GC_DEBUGOUT
 				OutputDebugString(acDesc);
@@ -120,11 +124,10 @@ public:
 				#ifdef OR_GC_BREAK
 				__debugbreak();
 				#endif
-				++it;
 			}
 			// The leaks don't matter. We are in the program-dieing-phase were the OS will
 			// remove all remainings.
-			Collection.clear();
+			Collection.Clear();
 		}
 	}
 };
@@ -134,49 +137,52 @@ static Collector Col;
 // ******************************************************************************** //
 // Operator overloading.
 #undef new
+int g_iInOperator = 0;
 void* operator new(size_t sz, const char* pcFile, int iLine) {
 	void* m = malloc(sz);
-	PGarbage G = PGarbage(m, Garbage(sz, pcFile, iLine));
-	Col.Collection.insert(G);
+	//PGarbage G = PGarbage(m, Garbage(sz, pcFile, iLine));
+
+	++g_iInOperator;
+	Col.Collection.Insert(new Garbage(sz, pcFile, iLine), qword(m));
+	--g_iInOperator;
 	return m;
+}
+
+// This is the deletion kernel
+inline void Delete(void* m)
+{
+	if(m)
+	{
+		if(!g_iInOperator)
+		{
+			++g_iInOperator;
+			Col.Collection.Delete(qword(m));
+			--g_iInOperator;
+		}
+		free(m);
+	}
 }
 
 // This deletes are even used, if memory was not allocated with our
 // new operator. The drawback is a little performance loss.
 void operator delete(void* m)
 {
-	if(m)
-	{
-		Col.Collection.erase(m);
-		free(m);
-	}
+	Delete(m);
 }
 
 void operator delete[](void* m)
 {
-	if(m)
-	{
-		Col.Collection.erase(m);
-		free(m);
-	}
+	Delete(m);
 }
 
 void operator delete(void* m, const char* pcFile, int iLine)
 {
-	if(m)
-	{
-		Col.Collection.erase(m);
-		free(m);
-	}
+	Delete(m);
 }
 
 void operator delete[](void* m, const char* pcFile, int iLine)
 {
-	if(m)
-	{
-		Col.Collection.erase(m);
-		free(m);
-	}
+	Delete(m);
 }
 
 #endif	// _DEBUG

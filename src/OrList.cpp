@@ -16,7 +16,7 @@
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrList.h"
-//#include "..\include\OrDebug.h"
+#include "..\include\OrDebug.h"
 
 
 using namespace OrE::ADT;

@@ -164,7 +164,7 @@ void OrE::ADT::HashMap::RemoveData(BucketP _pBucket)
 }
 
 // ******************************************************************************** //
-// Freigeben alles Ressourcen
+// Freigeben aller Ressourcen
 void OrE::ADT::HashMap::RecursiveRelease(BucketP _pBucket)
 {
 	// Daten löschen
@@ -179,6 +179,16 @@ void OrE::ADT::HashMap::RecursiveRelease(BucketP _pBucket)
 // ******************************************************************************** //
 OrE::ADT::HashMap::~HashMap()
 {
+	Clear();
+
+	// Die Tabelle selbst löschen
+	free(m_apBuckets);
+}
+
+// ******************************************************************************** //
+// Remove everything
+void OrE::ADT::HashMap::Clear()
+{
 	// Alle Eimer freigeben. Dazu alle Daten traversieren und löschen.
 	for(dword i=0;i<m_dwSize;++i)
 	{
@@ -186,10 +196,8 @@ OrE::ADT::HashMap::~HashMap()
 		// Precondition von RecursiveRelease: Bucket existiert
 		if(m_apBuckets[i])
 			RecursiveRelease(m_apBuckets[i]);
+		m_apBuckets[i] = nullptr;
 	}
-
-	// Die Tabelle selbst löschen
-	free(m_apBuckets);
 }
 
 // ******************************************************************************** //
@@ -377,7 +385,7 @@ ADTElementP OrE::ADT::HashMap::Search(qword _qwKey)
 	// Listeneintrag?
 	dword dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
-	if(pBucket) return nullptr;
+	//if(pBucket) return nullptr;
 	// Baumsuche
 	while(pBucket)
 	{
@@ -385,7 +393,7 @@ ADTElementP OrE::ADT::HashMap::Search(qword _qwKey)
 		else if(_qwKey<pBucket->qwKey) pBucket = pBucket->pLeft;
 		else pBucket = pBucket->pRight;
 	}
-	return 0;
+	return nullptr;
 }
 
 // ******************************************************************************** //
@@ -478,7 +486,6 @@ ADTElementP OrE::ADT::HashMap::Search(const char* _pcKey)
 	// Listeneintrag?
 	dword dwHash = OrStringHash(_pcKey)%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
-	if(pBucket) return nullptr;
 	// Baumsuche
 	while(pBucket)
 	{
@@ -491,7 +498,7 @@ ADTElementP OrE::ADT::HashMap::Search(const char* _pcKey)
 			else pBucket = pBucket->pRight;
 		} else pBucket = pBucket->pRight;
 	}
-	return 0;
+	return nullptr;
 }
 
 // ******************************************************************************** //

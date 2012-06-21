@@ -126,6 +126,8 @@ public:
 	HashMap(dword _dwSize, HashMapMode _Mode);
 	virtual ~HashMap();
 
+	void Clear();												// Remove everything
+
 	void Resize(const dword _dwSize);							// Tabelle neu erzeugen und alle Elemente neu hinzufügen
 
 	ADTElementP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert; If already exists the object is NOT overwritten, but referenccounter is increased
@@ -142,6 +144,10 @@ public:
 	ADTElementP GetLast() override;
 	ADTElementP GetNext(ADTElementP _pCurrent) override;
 	ADTElementP GetPrevious(ADTElementP _pCurrent) override;
+
+	bool IsEmpty()			{return m_dwNumElements==0;}
+	dword GetNumElements()	{return m_dwNumElements;}
+	dword GetSize()			{return m_dwSize;}
 };
 typedef HashMap* HashMapP;
 
