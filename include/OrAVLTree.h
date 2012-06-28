@@ -51,8 +51,14 @@ namespace ADT {
 class AVLTree : public BinaryTree
 {
 protected:
+	// Sets the iParam - Height value of _pNode and in the path
+	// to the root.
+	void RepairHeightProperty(BinaryTreeNodeP _pNode);
+
 	void Rebalance(BinaryTreeNodeP _pNode);							// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
 	BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key (searches for nearest element)
+	void RecursiveDelete(BinaryTreeNodeP _pNode);					// Internal called from clear
+	static int GetHeight(BinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
 
 	// Prevent copy constructor and operator = being generated.
 	AVLTree(const AVLTree&);
@@ -62,8 +68,9 @@ public:
 	BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
 	void Delete(qword _qwKey) override;								// Standard operation delete
 	void Delete(ADTElementP _pNode) override;						// Faster delete operation without search
+	void Clear() override;											// The remove everything method
 
-	static int GetHeight(BinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
+	int GetHeight()		{return GetHeight( m_pRoot );}
 };
 
 // ******************************************************************************** //
@@ -96,11 +103,12 @@ class LinkedAVLTree : public AVLTree
 	const LinkedAVLTree& operator = (const LinkedAVLTree&);
 public:
 	LinkedAVLTree():AVLTree()	{}
-	virtual BinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
-	virtual void Delete(ADTElementP _pNode) override;								// Faster delete operation without search
+	BinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
+	void Delete(qword _qwKey) override	{AVLTree::Delete( _qwKey );}		// Standard operation delete
+	void Delete(ADTElementP _pNode) override;								// Faster delete operation without search
 
-	virtual BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;			// Fast inorder traverse
-	virtual BinaryTreeLinkedNodeP GetPrevious(ADTElementP _pCurrent) override;		// Fast inorder traverse
+	BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;			// Fast inorder traverse
+	BinaryTreeLinkedNodeP GetPrevious(ADTElementP _pCurrent) override;		// Fast inorder traverse
 };
 
 }; // namespace ADT

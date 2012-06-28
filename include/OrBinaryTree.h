@@ -59,6 +59,12 @@ protected:
 	// Prevent copy constructor and operator = being generated.
 	BinaryTreeNode(const BinaryTreeNode&);
 	const BinaryTreeNode& operator = (const BinaryTreeNode&);
+
+public:
+	// Accessors to traverse the tree
+	BinaryTreeNode* GetLeft()		{return pLeft;}
+	BinaryTreeNode* GetRight()		{return pRight;}
+	BinaryTreeNode* GetParent()		{return pParent;}
 };
 typedef BinaryTreeNode* BinaryTreeNodeP;
 typedef BinaryTreeNode const * BinaryTreeNodePC;
@@ -77,9 +83,19 @@ protected:
 	BinaryTreeNodeP m_pRoot;
 	virtual BinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
 
-	void Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2);		// Exchange two nodes
-	BinaryTreeNodeP RotateRight(BinaryTreeNodeP _pNode);		// Replaces the current node by its left child. Does nothing if there is no child.
-	BinaryTreeNodeP RotateLeft(BinaryTreeNodeP _pNode);			// Replaces the current node by its right child. Does nothing if there is no child.
+	// Exchange two nodes by changing there 3 conections.
+	// The node will keep its adress and its data.
+	void Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2);
+
+	// Replaces the current node by its left child. Does nothing
+	// if there is no child. The return value is the new root
+	// of the subtree.
+	BinaryTreeNodeP RotateRight(BinaryTreeNodeP _pNode);
+
+	// Replaces the current node by its right child. Does nothing
+	// if there is no child. The return value is the new root
+	// of the subtree.
+	BinaryTreeNodeP RotateLeft(BinaryTreeNodeP _pNode);
 public:
 	BinaryTree():m_pRoot(nullptr) {}
 	virtual ~BinaryTree();

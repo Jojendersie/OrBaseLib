@@ -11,3 +11,6 @@
 
 // Test of OrE::ADT::List
 void test_list();
+
+// Test of OrE::ADT::AVLTree and OrE::ADT::LinkedAVLTree
+void test_avl();

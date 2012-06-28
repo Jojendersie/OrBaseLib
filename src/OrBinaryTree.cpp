@@ -74,14 +74,48 @@ void OrE::ADT::BinaryTree::Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2)
 	BinaryTreeNodeP pP = _pN1->pParent;
 	BinaryTreeNodeP pL = _pN1->pLeft;
 	BinaryTreeNodeP pR = _pN1->pRight;
-	// Copy nodepointers from one to the other.
-	_pN1->pParent = _pN2->pParent;
-	_pN1->pLeft = _pN2->pLeft;
-	_pN1->pRight = _pN2->pRight;
+	// Copy node pointers from one to the other.
+	_pN1->pParent = (_pN2->pParent == _pN1) ? _pN2 : _pN2->pParent;
+	_pN1->pLeft = (_pN2->pLeft == _pN1) ? _pN2 : _pN2->pLeft;
+	_pN1->pRight = (_pN2->pRight == _pN1) ? _pN2 : _pN2->pRight;
 	// Fill second node from temporary variables.
-	_pN2->pParent = pP;
-	_pN2->pLeft = pL;
-	_pN2->pRight = pR;
+	_pN2->pParent = (pP == _pN2) ? _pN1 : pP;
+	_pN2->pLeft = (pL == _pN2) ? _pN1 : pL;
+	_pN2->pRight = (pR == _pN2) ? _pN1 : pR;
+
+	// Repair surrounding of node 1
+	if( _pN1->pLeft ) _pN1->pLeft->pParent = _pN1;
+	if( _pN1->pRight ) _pN1->pRight->pParent = _pN1;
+
+	// Repair surrounding of node 2
+	if( _pN2->pLeft ) _pN2->pLeft->pParent = _pN2;
+	if( _pN2->pRight ) _pN2->pRight->pParent = _pN2;
+
+	// Special case: exchange two children of the same node -> swap left and right
+	if( _pN1->pParent == _pN2->pParent )
+	{
+		pL = _pN1->pParent->pLeft;
+		_pN1->pParent->pLeft = _pN1->pParent->pRight;
+		_pN1->pParent->pRight = pL;
+	} else {
+		// Repair surrounding of node 1
+		if( _pN1->pParent )
+		{
+			if( _pN1->pParent->pLeft == _pN2 )
+				_pN1->pParent->pLeft = _pN1;
+			else if( _pN1->pParent->pRight == _pN2 )
+				_pN1->pParent->pRight = _pN1;
+		} else m_pRoot = _pN1;
+
+		// Repair surrounding of node 2
+		if( _pN2->pParent )
+		{
+			if( _pN2->pParent->pLeft == _pN1 )
+				_pN2->pParent->pLeft = _pN2;
+			else if( _pN2->pParent->pRight == _pN1 )
+				_pN2->pParent->pRight = _pN2;
+		} else m_pRoot = _pN2;
+	}
 }
 
 // ******************************************************************************** //
@@ -100,10 +134,11 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::RotateRight(BinaryTreeNodeP _pNode)
 		// Just replace some pointers (look in the picture)
 		BinaryTreeNodeP pO = _pNode->pLeft;
 		_pNode->pLeft = pO->pRight;
-		pO->pRight = _pNode;// change parents of all changed childs
+		pO->pRight = _pNode;
+		// change parents of all changed childs
 		pO->pParent = _pNode->pParent;
-		if(_pNode->pLeft) _pNode->pLeft->pParent = _pNode;
 		_pNode->pParent = pO;
+		if(_pNode->pLeft) _pNode->pLeft->pParent = _pNode;
 		// Not in the picture: Parent of N has now the new node as child
 		if(pO->pParent)
 		{
@@ -113,7 +148,7 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::RotateRight(BinaryTreeNodeP _pNode)
 		} else m_pRoot = pO;
 		return pO;
 	}
-	return nullptr;
+	return _pNode;
 }
 
 // ******************************************************************************** //
@@ -133,9 +168,10 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::RotateLeft(BinaryTreeNodeP _pNode)
 		BinaryTreeNodeP pO = _pNode->pRight;
 		_pNode->pRight = pO->pLeft;
 		pO->pLeft = _pNode;
+		// change parents of all changed childs
 		pO->pParent = _pNode->pParent;
-		if(_pNode->pRight) _pNode->pRight->pParent = _pNode;
 		_pNode->pParent = pO;
+		if(_pNode->pRight) _pNode->pRight->pParent = _pNode;
 		// Not in the picture: Parent of N has now the new node as child
 		if(pO->pParent)
 		{
@@ -145,7 +181,7 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::RotateLeft(BinaryTreeNodeP _pNode)
 		} else m_pRoot = pO;
 		return pO;
 	}
-	return nullptr;
+	return _pNode;
 }
 
 // ******************************************************************************** //

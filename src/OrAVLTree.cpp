@@ -18,9 +18,26 @@
 #include "..\include\OrBinaryTree.h"
 #include "..\include\OrAVLTree.h"
 #include "..\include\OrFastMath.h"
-#include <assert.h>
+#include "..\include\OrDebug.h"
 
 using namespace OrE::ADT;
+
+// ******************************************************************************** //
+// Sets the iParam - Height value of _pNode and in the path
+// to the root.
+void OrE::ADT::AVLTree::RepairHeightProperty(BinaryTreeNodeP _pNode)
+{
+	bool bChanged;
+	do {
+		// Calculate and set new height. If height of the current node didn't
+		// change the parent one cannot change at all.
+		int iHeight = Math::Max( GetHeight(_pNode->pLeft), GetHeight(_pNode->pRight) ) + 1;
+		bChanged = iHeight != _pNode->iParam;
+		_pNode->iParam = iHeight;
+
+		_pNode = _pNode->pParent;
+	} while( _pNode && bChanged );
+}
 
 // ******************************************************************************** //
 // Rebuild AVL property, if and only if _pNode changed it's height by one.
@@ -28,8 +45,11 @@ using namespace OrE::ADT;
 void OrE::ADT::AVLTree::Rebalance(BinaryTreeNodeP _pNode)
 {
 	bool bChanged = true;
-	while(bChanged && _pNode)
+
+	while(_pNode)
 	{
+		BinaryTreeNodeP pNewRoot = _pNode;
+
 		int iHl = GetHeight(_pNode->pLeft);
 		int iHr = GetHeight(_pNode->pRight);
 		// Rebalance?
@@ -40,7 +60,8 @@ void OrE::ADT::AVLTree::Rebalance(BinaryTreeNodeP _pNode)
 			if(iHrl>iHrr)		// right-left case
 				RotateRight(_pNode->pRight);
 			// right-right case
-			RotateLeft(_pNode);
+			pNewRoot = RotateLeft(_pNode);
+			Assert( pNewRoot != _pNode );
 		} else if(iHl-1 > iHr)	// Balance -2
 		{
 			int iHll = GetHeight(_pNode->pLeft->pLeft);
@@ -48,18 +69,22 @@ void OrE::ADT::AVLTree::Rebalance(BinaryTreeNodeP _pNode)
 			if(iHll<iHlr)		// left-right case
 				RotateLeft(_pNode->pLeft);
 			// left-left case
-			RotateRight(_pNode);
+			pNewRoot = RotateRight(_pNode);
+			Assert( pNewRoot != _pNode );
 		}
 
 		// Renew height for all possible touched nodes
-		if(_pNode->pLeft) _pNode->pLeft->iParam = Math::Max(GetHeight(_pNode->pLeft->pLeft), GetHeight(_pNode->pLeft->pRight))+1;
-		if(_pNode->pRight) _pNode->pRight->iParam = Math::Max(GetHeight(_pNode->pRight->pLeft), GetHeight(_pNode->pRight->pRight))+1;
-		int iNewHeight = Math::Max(GetHeight(_pNode->pLeft), GetHeight(_pNode->pRight))+1;
-		bChanged = (iNewHeight!=_pNode->iParam);
-		_pNode->iParam = iNewHeight;
+		if(bChanged = (pNewRoot!=_pNode))
+		{
+			if(pNewRoot->pLeft) pNewRoot->pLeft->iParam = Math::Max(GetHeight(pNewRoot->pLeft->pLeft), GetHeight(pNewRoot->pLeft->pRight))+1;
+			if(pNewRoot->pRight) pNewRoot->pRight->iParam = Math::Max(GetHeight(pNewRoot->pRight->pLeft), GetHeight(pNewRoot->pRight->pRight))+1;
+		}
+		RepairHeightProperty( pNewRoot );
 
-		_pNode = _pNode->pParent;
+		_pNode = pNewRoot->pParent;
 	}
+
+	Assert( GetHeight( m_pRoot ) <= Math::Ld( m_iNumElements )+1 );
 }
 
 // ******************************************************************************** //
@@ -75,7 +100,7 @@ BinaryTreeNodeP OrE::ADT::AVLTree::SearchNode(qword _qwKey)
 		{
 			if(!pCurrent->pRight) return pCurrent;	// Return nearest one if not found
 			pCurrent = pCurrent->pRight;
-		} else {			// Search in the left tree
+		} else {					// Search in the left tree
 			if(!pCurrent->pLeft) return pCurrent;	// Return nearest one if not found
 			pCurrent = pCurrent->pLeft;
 		}
@@ -89,12 +114,13 @@ BinaryTreeNodeP OrE::ADT::AVLTree::SearchNode(qword _qwKey)
 BinaryTreeNodeP OrE::ADT::AVLTree::Insert(void* _pObject, qword _qwKey)
 {
 	// Search for the element. If already in tree just increase the reference counter.
-	BinaryTreeNodeP pParent = SearchNode(_qwKey);
+	BinaryTreeNodeP pParent = SearchNode( _qwKey );
 	BinaryTreeNodeP pNewNode = nullptr;
 	if(!pParent)
 	{
 		// Insert first node
 		m_pRoot = new BinaryTreeNode(nullptr, _pObject, _qwKey);
+		++m_iNumElements;
 		m_pRoot->iParam = 1;
 		return m_pRoot;
 	} else if(_qwKey == pParent->qwKey)
@@ -105,15 +131,25 @@ BinaryTreeNodeP OrE::ADT::AVLTree::Insert(void* _pObject, qword _qwKey)
 	} else {
 		// Otherwise we now know the parent for the new node.
 		pNewNode = new BinaryTreeNode(pParent, _pObject, _qwKey);
-		pNewNode->iParam = 1;
+		++m_iNumElements;
 		if(_qwKey < pParent->qwKey)
 			pParent->pLeft = pNewNode;
 		else
 			pParent->pRight = pNewNode;
+
+		// Go up the (whole) path and reset the height values
+		RepairHeightProperty( pNewNode );
 	}
 
 	// Rebuild AVL property
-	Rebalance(pParent);
+	Rebalance( pParent->pParent );
+
+	// Check consistency of the node
+	Assert( pNewNode->pParent != pNewNode );
+	Assert( pNewNode->pLeft != pNewNode );
+	Assert( pNewNode->pRight != pNewNode );
+	Assert( pNewNode->pRight != pNewNode->pLeft || pNewNode->pLeft==nullptr );
+	AssertPointerValidity( pNewNode->pParent );
 
 	return pNewNode;
 }
@@ -124,7 +160,9 @@ void OrE::ADT::AVLTree::Delete(qword _qwKey)
 {
 	// Search the node
 	BinaryTreeNodeP pNode = Search(_qwKey);
-	Delete(pNode);
+	// Search finds the nearest, not necessary the element itself
+	if(pNode && pNode->qwKey == _qwKey)
+		Delete(pNode);
 }
 
 // ******************************************************************************** //
@@ -135,40 +173,91 @@ void OrE::ADT::AVLTree::Delete(ADTElementP _pNode)
 	if(_pNode->Release()) return;	// Return if there is still an reference
 
 	BinaryTreeNodeP pNode = (BinaryTreeNodeP)_pNode;
+
 DeleteNow:
+	Assert( pNode->pParent != pNode );
 	// If node is an half-leaf/leaf delete
 	if(!pNode->pRight)
 	{
 		// Remove references
-		if(IsLeftChild(pNode)) pNode->pParent->pLeft = pNode->pLeft;
-		else pNode->pParent->pRight = pNode->pLeft;
-		if(pNode->pLeft) pNode->pLeft->pParent = pNode->pParent;
 		BinaryTreeNodeP pParent = pNode->pParent;
+		if( pParent )
+		{
+			if( pParent->pLeft == pNode )
+				pParent->pLeft = pNode->pLeft;
+			else pParent->pRight = pNode->pLeft;
+		} else m_pRoot = pNode->pLeft;
+		if( pNode->pLeft ) pNode->pLeft->pParent = pParent;
+
 		// Delete now
 		if(m_pDeleteCallback) m_pDeleteCallback(pNode->pObject);
 		delete pNode;
+		--m_iNumElements;
+
 		// Rebuild AVL property
-		Rebalance(pParent);
+		RepairHeightProperty( pParent );
+		Rebalance( pParent );
 	} else if(!pNode->pLeft) {
 		// Remove references
-		if(IsLeftChild(pNode)) pNode->pParent->pLeft = pNode->pRight;
-		else pNode->pParent->pRight = pNode->pRight;
-		pNode->pRight->pParent = pNode->pParent;
 		BinaryTreeNodeP pParent = pNode->pParent;
+		if( pParent )
+		{
+			if( pParent->pLeft == pNode )
+				pParent->pLeft = pNode->pRight;
+			else pParent->pRight = pNode->pRight;
+		} else m_pRoot = pNode->pRight;
+		if( pNode->pRight ) pNode->pRight->pParent = pParent;
+
 		// Delete now
 		if(m_pDeleteCallback) m_pDeleteCallback(pNode->pObject);
 		delete pNode;
+		--m_iNumElements;
+		
 		// Rebuild AVL property
-		Rebalance(pParent);
+		RepairHeightProperty( pParent );
+		Rebalance( pParent );
 	} else {
 		// Replace the node with the largest of the left site (half leaf guaranteed)
 		BinaryTreeNodeP _pLMax = Max(pNode->pLeft);
+
+		// Exchange, but Swap does not repair the height property
 		Swap(pNode, _pLMax);
+		int tmp = pNode->iParam;
+		pNode->iParam = _pLMax->iParam;
+		_pLMax->iParam = tmp;
 
 		// Delete the half-leaf
 		goto DeleteNow;
 	}
 }
+
+// ******************************************************************************** //
+// Internal called from clear
+void OrE::ADT::AVLTree::RecursiveDelete(BinaryTreeNodeP _pNode)
+{
+	// Delete all references
+	if( _pNode->pLeft ) RecursiveDelete( _pNode->pLeft );
+	if( _pNode->pRight ) RecursiveDelete( _pNode->pRight );
+
+	// Delete now
+	if( m_pDeleteCallback ) m_pDeleteCallback( _pNode->pObject );
+	delete _pNode;
+}
+
+// ******************************************************************************** //
+// The remove everything method
+void OrE::ADT::AVLTree::Clear()
+{
+	if( !IsPointerInvalid( m_pRoot ) )
+		RecursiveDelete( m_pRoot );
+	m_pRoot = nullptr;
+	m_iNumElements = 0;
+}
+
+
+
+
+
 
 // ******************************************************************************** //
 // Insert operation
@@ -199,8 +288,8 @@ BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, qword _qwK
 			pParent->pRight = pNewNode;
 	}
 
-	assert(pNewNode->pLeft == nullptr);
-	assert(pNewNode->pRight == nullptr);
+	Assert( pNewNode->pLeft == nullptr );
+	Assert( pNewNode->pRight == nullptr );
 	// Update double linked list. The Next or Prev element is the parent (assertions)!
 	if(IsLeftChild(pNewNode))
 	{
@@ -220,6 +309,16 @@ BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, qword _qwK
 	Rebalance(pParent);
 	return pNewNode;
 }
+
+
+// ******************************************************************************** //
+// Standard operation delete
+/*void OrE::ADT::LinkedAVLTree::Delete(qword _qwKey)
+{
+	// Search the node
+	BinaryTreeNodeP pNode = Search(_qwKey);
+	Delete(pNode);
+}*/
 
 // ******************************************************************************** //
 // Faster delete operation without search

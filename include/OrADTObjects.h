@@ -64,16 +64,20 @@ protected:
 	// Delete and Destroy events.
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
 
+	// Save number of contained elments
+	int m_iNumElements;
+
 	// Prevent copy constructor and operator = being generated.
 	ADT(const ADT&);
 	const ADT& operator = (const ADT&);
 public:
-	ADT():m_pDeleteCallback(nullptr)	{}							// Creates a consistent ADT object
+	ADT():m_pDeleteCallback(nullptr), m_iNumElements(0)	{}							// Creates a consistent ADT object
 	virtual ~ADT()						{}
 	virtual ADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
 	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
 	virtual void Delete(ADTElementP _pElement) = 0;					// Sometimes faster operation delete (no search)
 	virtual ADTElementP Search(qword _qwKey) = 0;					// Standard search with a key
+	virtual void Clear() = 0;										// The remove everything method
 
 	// Navigation on the structur. The order depends on the specified
 	// structur but there should always be the possibility to access
@@ -85,6 +89,9 @@ public:
 
 	// Change the delete behavior
 	void SetDeleteCallback(ADTDeleteObjectCallbackP _pDeleteCallback)	{m_pDeleteCallback = _pDeleteCallback;}
+
+	// Ask for the fill-state
+	int GetNumElements()		{return m_iNumElements;}
 };
 typedef ADT* ADTP;
 

@@ -41,7 +41,8 @@ void OrE::ADT::List::DeleteAll(ListNodeP _pNode)
 // ******************************************************************************** //
 OrE::ADT::List::~List()
 {
-	DeleteAll(m_pFirst);
+	if( !IsPointerInvalid( m_pFirst ) )
+		DeleteAll( m_pFirst );
 }
 
 // ******************************************************************************** //
@@ -49,6 +50,7 @@ OrE::ADT::List::~List()
 ListNodeP OrE::ADT::List::Insert(void* _pObject, qword _qwKey)
 {
 	// Create Node
+	++m_iNumElements;
 	ListNodeP pNew = new ListNode(_pObject, _qwKey);
 	// Insert at end of the list
 	if(m_pLast)
@@ -82,6 +84,7 @@ ListNodeP OrE::ADT::List::SetInsert(void* _pObject, qword _qwKey)
 	{
 		// Insert left of the current elmenent (which has a larger key value)
 		// Create Node
+		++m_iNumElements;
 		ListNodeP pNew = new ListNode(_pObject, _qwKey);
 		if(pCurrent->pLeft) pCurrent->pLeft->pRight = pNew;
 		else m_pFirst = pNew;
@@ -124,7 +127,18 @@ void OrE::ADT::List::Delete(ADTElementP _pElement)
 		// Release resources ...
 		if(m_pDeleteCallback) m_pDeleteCallback(_pElement->pObject);
 		delete _pElement;
+		--m_iNumElements;
 	}
+}
+
+// ******************************************************************************** //
+// Remove everything
+void OrE::ADT::List::Clear()
+{
+	if( !IsPointerInvalid( m_pFirst ) )
+		DeleteAll( m_pFirst );
+	m_pFirst = nullptr;
+	m_iNumElements = 0;
 }
 
 // ******************************************************************************** //
