@@ -137,7 +137,7 @@ void OrE::ADT::List::Clear()
 {
 	if( !IsPointerInvalid( m_pFirst ) )
 		DeleteAll( m_pFirst );
-	m_pFirst = nullptr;
+	m_pLast = m_pFirst = nullptr;
 	m_iNumElements = 0;
 }
 

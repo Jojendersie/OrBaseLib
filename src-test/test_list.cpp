@@ -38,9 +38,19 @@ void test_list()
 
 	// Delete 1000 elements
 	for( int i=0; i<1000; ++i )
-		MyList.Delete( OrE::Algorithm::Rand(0,20000) );
+		MyList.Delete( OrE::Algorithm::Rand(0,10000) );
 
 	std::cout << "\tTime to remove 1000 elements: " << OrE::Utils::TimeQuery( OrE::Utils::TIME_SLOT_0 ) << '\n';
+
+	MyList.Clear();
+	std::cout << "\tTime to remove everything else with Clear(): " << OrE::Utils::TimeQuery( OrE::Utils::TIME_SLOT_0 ) << '\n';
+
+	// Add primitive data (intergers) to the list
+	OrE::Utils::TimeQuery( OrE::Utils::TIME_SLOT_0 );
+	for( int i=0; i<10000; ++i )
+		MyList.SetInsert( (void*)OrE::Algorithm::Rand(0,1000), i );
+
+	std::cout << "\tTime for 10000 SetInsert (Insertionsort Worst Case) " << OrE::Utils::TimeQuery( OrE::Utils::TIME_SLOT_0 ) << '\n';
 
 	std::cout << '\n';
 }

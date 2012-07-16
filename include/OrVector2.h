@@ -105,10 +105,11 @@ public:
 inline Vec2 operator * (const float f, const Vec2& v)			{return Vec2(v.x * f, v.y * f);}
 
 // ******************************************************************************** //
-// Lerp, Min and Max have to be in global scope to override the default template
+// Lerp, Min, Max and Abs have to be in global scope to override the default template
 inline Vec2	Min(const Vec2& v1, const Vec2& v2)					{return Vec2(Min(v1.x, v2.x), Min(v1.y, v2.y));}
 inline Vec2	Max(const Vec2& v1, const Vec2& v2)					{return Vec2(Max(v1.x, v2.x), Max(v1.y, v2.y));}
 inline Vec2	Lerp(const Vec2& v1, const Vec2& v2, const float f)	{return Vec2(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y));}
+inline Vec2	Abs(const Vec2& v1)									{return Vec2(Abs(v1.x), Abs(v1.y));}
 
 }; // namespace Math
 }; // namespace OrE

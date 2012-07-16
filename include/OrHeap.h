@@ -82,6 +82,9 @@ namespace ADT {
 		// Prevent copy constructor and operator = being generated.
 		Heap(const Heap&);
 		const Heap& operator = (const Heap&);
+
+		// Clear Kernel function
+		void RecursiveDelete( HeapNodeP _pCurrent );
 	protected:
 		HeapNodeP m_pRoot;
 
@@ -93,19 +96,20 @@ namespace ADT {
 		~Heap();
 
 		// Heap operations
-		void* DeleteMin();														// Delete minimum element and return the data (element is deleted)
-		HeapNodeP Min();														// Show the minimum element
-		void ChangeKey(HeapNodeP _pElement, qword _qwNewKey);					// Change the key value and reorder the elements if necessary
+		void* DeleteMin();												// Delete minimum element and return the data (element is deleted)
+		HeapNodeP Min();												// Show the minimum element
+		void ChangeKey(HeapNodeP _pElement, qword _qwNewKey);			// Change the key value and reorder the elements if necessary
 
 		// general ADT operations
-		virtual HeapNodeP Insert(void* _pObject, qword _qwKey) override;		// Standard operation insert
-		virtual void Delete(qword _qwKey) override;								// Unsupported function (doing nothing)
-		virtual void Delete(ADTElementP _pElement) override;					// The only arbitary delete operation for the heap
-		virtual HeapNodeP Search(qword _qwKey) override;						// Unsupported function (returning 0)
-		virtual HeapNodeP GetFirst() override;									// First element = min element
-		virtual HeapNodeP GetLast() override;
-		virtual HeapNodeP GetNext(ADTElementP _pCurrent) override;				// Preorder traverse
-		virtual HeapNodeP GetPrevious(ADTElementP _pCurrent) override;			// Preorder traverse
+		HeapNodeP Insert(void* _pObject, qword _qwKey) override;		// Standard operation insert
+		void Delete(qword _qwKey) override;								// Unsupported function (doing nothing)
+		void Delete(ADTElementP _pElement) override;					// The only arbitary delete operation for the heap
+		void Clear() override;											// Remove everything
+		HeapNodeP Search(qword _qwKey) override;						// Unsupported function (returning 0)
+		HeapNodeP GetFirst() override;									// First element = min element
+		HeapNodeP GetLast() override;
+		HeapNodeP GetNext(ADTElementP _pCurrent) override;				// Preorder traverse
+		HeapNodeP GetPrevious(ADTElementP _pCurrent) override;			// Preorder traverse
 	};
 
 }; // namespace ADT

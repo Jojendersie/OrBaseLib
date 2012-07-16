@@ -19,8 +19,8 @@ int main()
 {
 	OrE::Algorithm::SRand( 2 );
 
-	test_avl();
 	test_list();
+	test_avl();
 
 	std::cout << "\nPress any key to close ...\n";
 	_getch();

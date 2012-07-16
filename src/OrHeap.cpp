@@ -282,6 +282,29 @@ void OrE::ADT::Heap::Delete(ADTElementP _pElement)
 }
 
 // ******************************************************************************** //
+// Remove everything
+void OrE::ADT::Heap::RecursiveDelete(HeapNodeP _pCurrent)
+{
+	// Recursive deletion
+	if( _pCurrent->pChild )
+		RecursiveDelete( _pCurrent->pChild );
+	// Don't hang up in the Ring.
+	_pCurrent->pLeft->pRight = nullptr;
+	if( _pCurrent->pRight )
+		RecursiveDelete( _pCurrent->pRight );
+
+	// Delete the resources
+	if( m_pDeleteCallback ) m_pDeleteCallback( _pCurrent->pObject );
+	delete _pCurrent;
+}
+
+void OrE::ADT::Heap::Clear()
+{
+	RecursiveDelete( m_pRoot );
+	m_pRoot = nullptr;
+}
+
+// ******************************************************************************** //
 // Unsupported function
 HeapNodeP OrE::ADT::Heap::Search(qword _qwKey)
 {

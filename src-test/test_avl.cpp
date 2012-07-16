@@ -47,7 +47,7 @@ void test_avl()
 	// Delete 1000 elements
 	for( int i=0; i<1000; ++i )
 	{
-		MyAVL.Delete( OrE::Algorithm::Rand(0,20000) );
+		MyAVL.Delete( OrE::Algorithm::Rand(0,10000) );
 		while(++It) {
 			OrE::ADT::BinaryTreeNode* pNode = It;
 			Assert( pNode->GetLeft() != pNode );
@@ -89,7 +89,7 @@ void test_avl()
 
 	// Delete 1000 elements
 	for( int i=0; i<1000; ++i )
-		MyLAVL.Delete( OrE::Algorithm::Rand(0,20000) );
+		MyLAVL.Delete( OrE::Algorithm::Rand(0,10000) );
 
 	std::cout << "\tTime to remove 1000 elements: " << OrE::Utils::TimeQuery( OrE::Utils::TIME_SLOT_0 ) << '\n';
 

@@ -136,6 +136,7 @@ inline bool operator != (const Vec3& b, const Vec4& a)		{if(a.x != b.x) return t
 inline Vec4	Min(const Vec4& v1, const Vec4& v2)							{return Vec4(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z), Min(v1.w, v2.w));}
 inline Vec4	Max(const Vec4& v1, const Vec4& v2)							{return Vec4(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z), Max(v1.w, v2.w));}
 inline Vec4	Lerp(const Vec4& v1, const Vec4& v2, const float f)			{return Vec4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
+inline Vec4	Abs(const Vec4& v1)											{return Vec4(Abs(v1.x), Abs(v1.y), Abs(v1.z), Abs(v1.w));}
 
 // ******************************************************************************** //
 // Die Quaternion-Klasse (4D Hyperkugel)

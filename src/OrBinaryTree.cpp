@@ -201,7 +201,8 @@ void OrE::ADT::BinaryTree::DeleteAll(BinaryTreeNodeP _pNode)
 // ******************************************************************************** //
 OrE::ADT::BinaryTree::~BinaryTree()
 {
-	DeleteAll(m_pRoot);
+	if( m_pRoot )
+		DeleteAll( m_pRoot );
 }
 
 // *************************************EOF**************************************** //

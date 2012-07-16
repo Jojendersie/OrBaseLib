@@ -129,10 +129,11 @@ public:
 inline Vec3 operator * (const float f, const Vec3& v)				{return Vec3(v.x * f, v.y * f, v.z * f);}
 
 // ******************************************************************************** //
-// Lerp, Min and Max have to be in global scope to override the default template
+// Lerp, Abs, Min and Max have to be in global scope to override the default template
 inline Vec3	Vec3Min(const Vec3& v1, const Vec3& v2)					{return Vec3(Min(v1.x, v2.x), Min(v1.y, v2.y), Min(v1.z, v2.z));}
 inline Vec3	Vec3Max(const Vec3& v1, const Vec3& v2)					{return Vec3(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z));}
 inline Vec3	Lerp(const Vec3& v1, const Vec3& v2, const float f)		{return Vec3(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z));}
+inline Vec3	Abs(const Vec3& v1)										{return Vec3(Abs(v1.x), Abs(v1.y), Abs(v1.z));}
 
 }; // namespace Math
 }; // namespace OrE

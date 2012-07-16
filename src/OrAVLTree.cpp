@@ -272,6 +272,7 @@ BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, qword _qwK
 		// Insert first node
 		m_pRoot = new BinaryTreeLinkedNode(nullptr, _pObject, _qwKey);
 		m_pRoot->iParam = 1;
+		++m_iNumElements;
 		return (BinaryTreeLinkedNodeP)m_pRoot;
 	} else if(_qwKey == pParent->qwKey)
 	{
@@ -282,27 +283,35 @@ BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, qword _qwK
 		// Otherwise we now know the parent for the new node.
 		pNewNode = new BinaryTreeLinkedNode(pParent, _pObject, _qwKey);
 		pNewNode->iParam = 1;
+		++m_iNumElements;
 		if(_qwKey < pParent->qwKey)
 			pParent->pLeft = pNewNode;
 		else
 			pParent->pRight = pNewNode;
+
+		// Go up the (whole) path and reset the height values
+		RepairHeightProperty( pNewNode );
 	}
 
 	Assert( pNewNode->pLeft == nullptr );
 	Assert( pNewNode->pRight == nullptr );
+	Assert( pNewNode->pParent == pParent );
 	// Update double linked list. The Next or Prev element is the parent (assertions)!
-	if(IsLeftChild(pNewNode))
+	if(IsLeftChild( pNewNode ))
 	{
 		pNewNode->pPrev = pParent->pPrev;
 		pNewNode->pNext = pParent;
 		if(pNewNode->pPrev) pNewNode->pPrev->pNext = pNewNode;
-		BinaryTreeLinkedNodeP(pNewNode->pParent)->pPrev = pNewNode;
+		pParent->pPrev = pNewNode;
+		//BinaryTreeLinkedNodeP(pNewNode->pParent)->pPrev = pNewNode;
 	} else
 	{
+		Assert( pParent->pRight == pNewNode );
 		pNewNode->pNext = pParent->pNext;
 		pNewNode->pPrev = pParent;
 		if(pNewNode->pNext) pNewNode->pNext->pPrev = pNewNode;
-		BinaryTreeLinkedNodeP(pNewNode->pParent)->pNext = pNewNode;
+		pParent->pNext = pNewNode;
+		//BinaryTreeLinkedNodeP(pNewNode->pParent)->pNext = pNewNode;
 	}
 
 	// Rebuild AVL property
@@ -310,15 +319,6 @@ BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, qword _qwK
 	return pNewNode;
 }
 
-
-// ******************************************************************************** //
-// Standard operation delete
-/*void OrE::ADT::LinkedAVLTree::Delete(qword _qwKey)
-{
-	// Search the node
-	BinaryTreeNodeP pNode = Search(_qwKey);
-	Delete(pNode);
-}*/
 
 // ******************************************************************************** //
 // Faster delete operation without search

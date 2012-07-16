@@ -14,15 +14,9 @@
 // ******************************************************************************** //
 
 
-#ifdef _DEBUG
-
 #include <csignal>
 #include <string>
-//#include <unordered_map>
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrADTObjects.h"
 #include "..\include\OrDebug.h"
-#include "..\include\OrHash.h"
 
 #pragma warning(disable: 4996)
 
@@ -49,6 +43,12 @@ bool IsPointerInvalid(const void* _Pointer)
 
 	return bRet;
 }
+
+#ifdef _DEBUG
+
+#include "..\include\OrTypeDef.h"
+#include "..\include\OrADTObjects.h"
+#include "..\include\OrHash.h"
 
 // ******************************************************************************** //
 // Implementation of the garbage collector.

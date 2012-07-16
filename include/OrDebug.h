@@ -76,7 +76,6 @@ void operator delete[](void* m, const char* pcFile, int iLine);
 
 // Complex, slow assertion to check pointer validity.
 // You can use the function to handle bad pointers your own way.
-bool IsPointerInvalid(const void* _Pointer);
 #define AssertPointerValidity(p) if( IsPointerInvalid(p) ) __debugbreak()
 
 // The Assert__ execute A (even in release) and test for non-/equality with Const (debug only)
@@ -95,4 +94,9 @@ bool IsPointerInvalid(const void* _Pointer);
 #define AssertNeq(A,Const) A
 
 #endif // _DEBUG
+
+// ******************************************************************************** //
+bool IsPointerInvalid(const void* _Pointer);
+
+
 // *************************************EOF**************************************** //
