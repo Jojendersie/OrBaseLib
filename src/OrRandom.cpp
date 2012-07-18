@@ -249,7 +249,7 @@ float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, f
 {
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = 1.0f;
+	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		fRes += fAmplitude*Rand1D(_fX, fFrequence);
@@ -267,7 +267,7 @@ float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, f
 	_vOutGrad = 0.0f;
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = 1.0f;
+	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		float vNormal;
@@ -344,7 +344,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, f
 {
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = 1.0f;
+	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		fRes += fAmplitude*Rand2D(_fX, _fY, fFrequence);
@@ -364,7 +364,7 @@ float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, f
 	_vOutGrad.x = _vOutGrad.y = 0.0f;
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = 1.0f;
+	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		OrE::Math::Vec2 vNormal;
@@ -468,7 +468,7 @@ float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, f
 {
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = 1.0f;
+	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		fRes += fAmplitude*Rand3D(_fX, _fY, _fZ, fFrequence);
@@ -486,7 +486,7 @@ float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, f
 	_vOutGrad.x = _vOutGrad.y = _vOutGrad.z = 0.0f;
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = 1.0f;
+	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		OrE::Math::Vec3 vNormal;
