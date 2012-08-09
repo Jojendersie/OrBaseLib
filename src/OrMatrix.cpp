@@ -84,9 +84,9 @@ Vec4 OrE::Math::operator * (const Matrix& m,
 Matrix OrE::Math::MatrixTranslation(const Vec3& v)
 {
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
-		            0.0f, 1.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, 1.0f, 0.0f,
-					v.x,  v.y,  v.z,  1.0f);
+		          0.0f, 1.0f, 0.0f, 0.0f,
+				  0.0f, 0.0f, 1.0f, 0.0f,
+				  v.x,  v.y,  v.z,  1.0f);
 }
 
 // ******************************************************************************** //
@@ -94,9 +94,9 @@ Matrix OrE::Math::MatrixTranslation(const Vec3& v)
 Matrix OrE::Math::MatrixTranslation(const float x, const float y, const float z)
 {
 	return Matrix(1.0f, 0.0f, 0.0f, 0.0f,
-		            0.0f, 1.0f, 0.0f, 0.0f,
-					0.0f, 0.0f, 1.0f, 0.0f,
-					x,    y,    z,    1.0f);
+		          0.0f, 1.0f, 0.0f, 0.0f,
+				  0.0f, 0.0f, 1.0f, 0.0f,
+				  x,    y,    z,    1.0f);
 }
 
 // ******************************************************************************** //
@@ -230,9 +230,9 @@ Matrix OrE::Math::MatrixScaling(const Vec3& v)
 {
 	// Skalierungsmatrix berechnen
 	return Matrix(v.x,  0.0f, 0.0f, 0.0f,
-		            0.0f, v.y,  0.0f, 0.0f,
-					0.0f, 0.0f, v.z,  0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f);
+		          0.0f, v.y,  0.0f, 0.0f,
+				  0.0f, 0.0f, v.z,  0.0f,
+				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 // ******************************************************************************** //
@@ -241,9 +241,9 @@ Matrix OrE::Math::MatrixScaling(const float f)
 {
 	// Skalierungsmatrix berechnen
 	return Matrix(f,  0.0f, 0.0f, 0.0f,
-					0.0f, f,  0.0f, 0.0f,
-					0.0f, 0.0f, f,  0.0f,
-					0.0f, 0.0f, 0.0f, 1.0f);
+				  0.0f, f,  0.0f, 0.0f,
+				  0.0f, 0.0f, f,  0.0f,
+				  0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 // ******************************************************************************** //
@@ -253,9 +253,9 @@ Matrix OrE::Math::MatrixAxis(const Vec3& vXAxis,
 					  const Vec3& vZAxis)
 {
 	return Matrix(vXAxis.x, vXAxis.y, vXAxis.z, 0.0f,
-		            vYAxis.x, vYAxis.y, vYAxis.z, 0.0f,
-					vZAxis.x, vZAxis.y, vZAxis.z, 0.0f,
-					0.0f,     0.0f,     0.0f,     1.0f);
+		          vYAxis.x, vYAxis.y, vYAxis.z, 0.0f,
+				  vZAxis.x, vZAxis.y, vZAxis.z, 0.0f,
+				  0.0f,     0.0f,     0.0f,     1.0f);
 }
 
 // ******************************************************************************** //
@@ -297,12 +297,12 @@ float OrE::Math::MatrixDet(const Matrix& m)
 
 // ******************************************************************************** //
 // Funktion für das Tauschen von Variablen (32 bit)
-inline void OrSwap32(void* p1, void* p2)
+/*inline void OrSwap32(void* p1, void* p2)
 {
 	*(__int32*)(p1) = *(__int32*)(p1) ^ *(__int32*)(p2);
 	*(__int32*)(p2) = *(__int32*)(p1) ^ *(__int32*)(p2);
 	*(__int32*)(p1) = *(__int32*)(p1) ^ *(__int32*)(p2);
-}
+}*/
 
 // ******************************************************************************** //
 // Invertierte Matrix berechnen
@@ -343,9 +343,9 @@ Matrix OrE::Math::MatrixTranspose(const Matrix& m)
 {
 	// Matrix transponieren
 	return Matrix(m.m11, m.m21, m.m31, m.m41,
-		            m.m12, m.m22, m.m32, m.m42,
-					m.m13, m.m23, m.m33, m.m43,
-					m.m14, m.m24, m.m34, m.m44);
+		          m.m12, m.m22, m.m32, m.m42,
+				  m.m13, m.m23, m.m33, m.m43,
+				  m.m14, m.m24, m.m34, m.m44);
 }
 
 // ******************************************************************************** //
@@ -358,7 +358,7 @@ Matrix OrE::Math::MatrixProjection(const float fFOV,
 	const float s = 1.0f / Tan(fFOV * 0.5f);
 	const float fFrustumLengthInv = 1.0f / (fNearPlane - fFarPlane);
 
-	return Matrix(s / fAspect,	0.0f, 0.0f,											0.0f,
+	return Matrix(s / fAspect,	0.0f,  0.0f,										0.0f,
 				  0.0f,			s,	   0.0f,										0.0f,
 				  0.0f,			0.0f, (fNearPlane + fFarPlane)*fFrustumLengthInv,	(2.0f*fNearPlane*fFarPlane)*fFrustumLengthInv,
 				  0.0f,			0.0f, -1.0f,										0.0f);
@@ -389,6 +389,18 @@ Matrix OrE::Math::MatrixParallelProjection(const float fWidth,
 }
 
 // ******************************************************************************** //
+Matrix OrE::Math::MatrixParallelProjection(const float l, const float r, const float t, const float b, const float n, const float f)
+{
+	const float	r_l = 1.0f/(r - l);
+	const float t_b = 1.0f/(t - b);
+	const float f_n = 1.0f/(n - f);
+	return Matrix( 2.0f*r_l,	0.0f,		0.0f,		-(l+r)*r_l,
+				   0.0f,		2.0f*t_b,	0.0f,		-(b+t)*t_b,
+				   0.0f,		0.0f,		2.0f*f_n,	(f+n)*f_n,
+				   0.0f,		0.0f,		0.0f,		1.0f);
+}
+
+// ******************************************************************************** //
 // Kameramatrix berechnen
 Matrix OrE::Math::MatrixCamera(const Vec3& vPos,
 						const Vec3& vLookAt,
@@ -408,7 +420,8 @@ Matrix OrE::Math::MatrixCamera(const Vec3& vPos,
 	       Matrix(vXAxis.x, vYAxis.x, vZAxis.x, 0.0f,
 		          vXAxis.y, vYAxis.y, vZAxis.y, 0.0f,
 				  vXAxis.z, vYAxis.z, vZAxis.z, 0.0f,
-				  0.0f,     0.0f,     0.0f,     1.0f);
+				  0.0f,     0.0f,     0.0f,     1.0f);// *
+		   //MatrixTranslation(-vPos);
 }
 
 // ******************************************************************************** //
@@ -420,7 +433,8 @@ Matrix OrE::Math::MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& v
 	       Matrix(vBidir.x, vUp.x, vDir.x, 0.0f,
 		          vBidir.y, vUp.y, vDir.y, 0.0f,
 				  vBidir.z, vUp.z, vDir.z, 0.0f,
-				  0.0f,     0.0f,  0.0f,   1.0f);
+				  0.0f,     0.0f,  0.0f,   1.0f);// *
+		//   MatrixTranslation(-vPos);
 }
 
 // ******************************************************************************** //
@@ -466,13 +480,11 @@ bool OrE::Math::MatrixSolveEquation(Matrix _A, Vec4* _pV_X)
 				if(_A.m[i][j]!=0.0f && _A.m[j][i]!=0)
 				{
 					// gesuchte Zeile gefunden -> tauschen
-					// !!!Zugriffe Beschleunigen, indem wir die
-					// Pointerarithmetik manuell machen.
-					OrSwap32(&_A.m[i][0],&_A.m[j][0]);
-					OrSwap32(&_A.m[i][1],&_A.m[j][1]);
-					OrSwap32(&_A.m[i][2],&_A.m[j][2]);
-					OrSwap32(&_A.m[i][3],&_A.m[j][3]);
-					OrSwap32(((float*)_pV_X)+i,((float*)_pV_X)+j);
+					float fSwap0 = _A.m[i][0]; _A.m[i][0] = _A.m[j][0]; _A.m[j][0] = fSwap0;
+					float fSwap1 = _A.m[i][1]; _A.m[i][1] = _A.m[j][1]; _A.m[j][1] = fSwap1;
+					float fSwap2 = _A.m[i][2]; _A.m[i][2] = _A.m[j][2]; _A.m[j][2] = fSwap2;
+					float fSwap3 = _A.m[i][3]; _A.m[i][3] = _A.m[j][3]; _A.m[j][3] = fSwap3;
+					float fSwap = _pV_X->c[i]; _pV_X->c[i] = _pV_X->c[j]; _pV_X->c[j] = fSwap;
 					// weiterprüfen ist unnötig
 					break;
 				}

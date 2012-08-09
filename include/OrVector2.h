@@ -51,6 +51,7 @@ public:
 
 	// Casting-Operatoren
 	operator float* () {return (float*)(c);}
+	operator const float* () const {return (const float*)(c);}
 
 	// Zuweisungsoperatoren
 	Vec2& operator = (const Vec2& v)	{x = v.x; y = v.y; return *this;}

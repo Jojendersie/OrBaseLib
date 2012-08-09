@@ -26,7 +26,7 @@ class Matrix2x3;
 class Plane;
 Matrix MatrixInvert(const Matrix& m);
 Matrix2x3 Matrix2x3Invert(const Matrix2x3& m);
-inline Matrix operator * (const Matrix& a, const Matrix& b);
+//inline Matrix operator * (const Matrix& a, const Matrix& b);
 
 // ******************************************************************************** //
 // Die 4D - Matrixklasse (Für 3D Transformationen)
@@ -54,17 +54,17 @@ public:
 	Matrix() {/*dwMatrixID = Or_MatrixIDCounter++;*/}
 
 	Matrix(const Matrix& m) : m11(m.m11), m12(m.m12), m13(m.m13), m14(m.m14),
-                                  m21(m.m21), m22(m.m22), m23(m.m23), m24(m.m24),
-								  m31(m.m31), m32(m.m32), m33(m.m33), m34(m.m34),
-								  m41(m.m41), m42(m.m42), m43(m.m43), m44(m.m44) {/*dwMatrixID = Or_MatrixIDCounter++;*/}
+                              m21(m.m21), m22(m.m22), m23(m.m23), m24(m.m24),
+							  m31(m.m31), m32(m.m32), m33(m.m33), m34(m.m34),
+							  m41(m.m41), m42(m.m42), m43(m.m43), m44(m.m44) {/*dwMatrixID = Or_MatrixIDCounter++;*/}
 
 	Matrix(float _m11, float _m12, float _m13, float _m14,
-			 float _m21, float _m22, float _m23, float _m24,
-			 float _m31, float _m32, float _m33, float _m34,
-			 float _m41, float _m42, float _m43, float _m44) : m11(_m11), m12(_m12), m13(_m13), m14(_m14),
-			                                                   m21(_m21), m22(_m22), m23(_m23), m24(_m24),
-															   m31(_m31), m32(_m32), m33(_m33), m34(_m34),
-															   m41(_m41), m42(_m42), m43(_m43), m44(_m44) {/*dwMatrixID = Or_MatrixIDCounter++;*/}
+		   float _m21, float _m22, float _m23, float _m24,
+		   float _m31, float _m32, float _m33, float _m34,
+		   float _m41, float _m42, float _m43, float _m44) : m11(_m11), m12(_m12), m13(_m13), m14(_m14),
+			                                                 m21(_m21), m22(_m22), m23(_m23), m24(_m24),
+															 m31(_m31), m32(_m32), m33(_m33), m34(_m34),
+															 m41(_m41), m42(_m42), m43(_m43), m44(_m44) {/*dwMatrixID = Or_MatrixIDCounter++;*/}
 
 	Matrix(const float* pfValue);
 
@@ -99,22 +99,27 @@ public:
 
 	Matrix& operator *= (const Matrix& m)
 	{
-		return *this = *this*m;/*Matrix(m.m11 * m11 + m.m21 * m12 + m.m31 * m13 + m.m41 * m14,
-								m.m12 * m11 + m.m22 * m12 + m.m32 * m13 + m.m42 * m14,
-								m.m13 * m11 + m.m23 * m12 + m.m33 * m13 + m.m43 * m14,
-								m.m14 * m11 + m.m24 * m12 + m.m34 * m13 + m.m44 * m14,
-								m.m11 * m21 + m.m21 * m22 + m.m31 * m23 + m.m41 * m24,
-								m.m12 * m21 + m.m22 * m22 + m.m32 * m23 + m.m42 * m24,
-								m.m13 * m21 + m.m23 * m22 + m.m33 * m23 + m.m43 * m24,
-								m.m14 * m21 + m.m24 * m22 + m.m34 * m23 + m.m44 * m24,
-								m.m11 * m31 + m.m21 * m32 + m.m31 * m33 + m.m41 * m34,
-								m.m12 * m31 + m.m22 * m32 + m.m32 * m33 + m.m42 * m34,
-								m.m13 * m31 + m.m23 * m32 + m.m33 * m33 + m.m43 * m34,
-								m.m14 * m31 + m.m24 * m32 + m.m34 * m33 + m.m44 * m34,
-								m.m11 * m41 + m.m21 * m42 + m.m31 * m43 + m.m41 * m44,
-								m.m12 * m41 + m.m22 * m42 + m.m32 * m43 + m.m42 * m44,
-								m.m13 * m41 + m.m23 * m42 + m.m33 * m43 + m.m43 * m44,
-								m.m14 * m41 + m.m24 * m42 + m.m34 * m43 + m.m44 * m44);*/
+		float r1 = m11, r2 = m12, r3 = m13;
+		m11 = m.m11 * m11 + m.m21 * m12 + m.m31 * m13 + m.m41 * m14;
+		m12 = m.m12 * r1  + m.m22 * m12 + m.m32 * m13 + m.m42 * m14;
+		m13 = m.m13 * r1  + m.m23 * r2  + m.m33 * m13 + m.m43 * m14;
+		m14 = m.m14 * r1  + m.m24 * r2  + m.m34 * r3  + m.m44 * m14;
+		r1 = m21, r2 = m22, r3 = m23;
+		m21 = m.m11 * m21 + m.m21 * m22 + m.m31 * m23 + m.m41 * m24;
+		m22 = m.m12 * r1  + m.m22 * m22 + m.m32 * m23 + m.m42 * m24;
+		m23 = m.m13 * r1  + m.m23 * r2  + m.m33 * m23 + m.m43 * m24;
+		m24 = m.m14 * r1  + m.m24 * r2  + m.m34 * r3  + m.m44 * m24;
+		r1 = m31, r2 = m32, r3 = m33;
+		m31 = m.m11 * m31 + m.m21 * m32 + m.m31 * m33 + m.m41 * m34;
+		m32 = m.m12 * r1  + m.m22 * m32 + m.m32 * m33 + m.m42 * m34;
+		m33 = m.m13 * r1  + m.m23 * r2  + m.m33 * m33 + m.m43 * m34;
+		m34 = m.m14 * r1  + m.m24 * r2  + m.m34 * r3  + m.m44 * m34;
+		r1 = m41, r2 = m42, r3 = m43;
+		m41 = m.m11 * m41 + m.m21 * m42 + m.m31 * m43 + m.m41 * m44;
+		m42 = m.m12 * r1  + m.m22 * m42 + m.m32 * m43 + m.m42 * m44;
+		m43 = m.m13 * r1  + m.m23 * r2  + m.m33 * m43 + m.m43 * m44;
+		m44 = m.m14 * r1  + m.m24 * r2  + m.m34 * r3  + m.m44 * m44;
+		 return *this;
 	}
 
 	Matrix& operator *= (const float f)
@@ -150,9 +155,9 @@ public:
 	Matrix operator - () const
 	{
 		return Matrix(-m11, -m12, -m13, -m14,
-						-m21, -m22, -m23, -m24,
-						-m31, -m32, -m33, -m34,
-						-m41, -m42, -m43, -m44);
+					  -m21, -m22, -m23, -m24,
+					  -m31, -m32, -m33, -m34,
+					  -m41, -m42, -m43, -m44);
 	}
 };
 
@@ -161,27 +166,27 @@ typedef Matrix* MatrixP;
 // Arithmetische Operatoren
 inline Matrix operator + (const Matrix& a, const Matrix& b)	{return Matrix(a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13, a.m14 + b.m14, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23, a.m24 + b.m24, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33, a.m34 + b.m34, a.m41 + b.m41, a.m42 + b.m42, a.m43 + b.m43, a.m44 + b.m44);}
 inline Matrix operator - (const Matrix& a, const Matrix& b)	{return Matrix(a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13, a.m14 - b.m14, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23, a.m24 - b.m24, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33, a.m34 - b.m34, a.m41 - b.m41, a.m42 - b.m42, a.m43 - b.m43, a.m44 - b.m44);}
-inline Matrix operator - (const Matrix& m)						{return Matrix(-m.m11, -m.m12, -m.m13, -m.m14, -m.m21, -m.m22, -m.m23, -m.m24, -m.m31, -m.m32, -m.m33, -m.m34, -m.m41, -m.m42, -m.m43, -m.m44);}
+inline Matrix operator - (const Matrix& m)					{return Matrix(-m.m11, -m.m12, -m.m13, -m.m14, -m.m21, -m.m22, -m.m23, -m.m24, -m.m31, -m.m32, -m.m33, -m.m34, -m.m41, -m.m42, -m.m43, -m.m44);}
 
 inline Matrix operator * (const Matrix& a,
-							const Matrix& b)
+						  const Matrix& b)
 {
 	return Matrix(b.m11 * a.m11 + b.m21 * a.m12 + b.m31 * a.m13 + b.m41 * a.m14,
-					b.m12 * a.m11 + b.m22 * a.m12 + b.m32 * a.m13 + b.m42 * a.m14,
-					b.m13 * a.m11 + b.m23 * a.m12 + b.m33 * a.m13 + b.m43 * a.m14,
-					b.m14 * a.m11 + b.m24 * a.m12 + b.m34 * a.m13 + b.m44 * a.m14,
-					b.m11 * a.m21 + b.m21 * a.m22 + b.m31 * a.m23 + b.m41 * a.m24,
-					b.m12 * a.m21 + b.m22 * a.m22 + b.m32 * a.m23 + b.m42 * a.m24,
-					b.m13 * a.m21 + b.m23 * a.m22 + b.m33 * a.m23 + b.m43 * a.m24,
-					b.m14 * a.m21 + b.m24 * a.m22 + b.m34 * a.m23 + b.m44 * a.m24,
-					b.m11 * a.m31 + b.m21 * a.m32 + b.m31 * a.m33 + b.m41 * a.m34,
-					b.m12 * a.m31 + b.m22 * a.m32 + b.m32 * a.m33 + b.m42 * a.m34,
-					b.m13 * a.m31 + b.m23 * a.m32 + b.m33 * a.m33 + b.m43 * a.m34,
-					b.m14 * a.m31 + b.m24 * a.m32 + b.m34 * a.m33 + b.m44 * a.m34,
-					b.m11 * a.m41 + b.m21 * a.m42 + b.m31 * a.m43 + b.m41 * a.m44,
-					b.m12 * a.m41 + b.m22 * a.m42 + b.m32 * a.m43 + b.m42 * a.m44,
-					b.m13 * a.m41 + b.m23 * a.m42 + b.m33 * a.m43 + b.m43 * a.m44,
-					b.m14 * a.m41 + b.m24 * a.m42 + b.m34 * a.m43 + b.m44 * a.m44);
+				  b.m12 * a.m11 + b.m22 * a.m12 + b.m32 * a.m13 + b.m42 * a.m14,
+				  b.m13 * a.m11 + b.m23 * a.m12 + b.m33 * a.m13 + b.m43 * a.m14,
+				  b.m14 * a.m11 + b.m24 * a.m12 + b.m34 * a.m13 + b.m44 * a.m14,
+				  b.m11 * a.m21 + b.m21 * a.m22 + b.m31 * a.m23 + b.m41 * a.m24,
+				  b.m12 * a.m21 + b.m22 * a.m22 + b.m32 * a.m23 + b.m42 * a.m24,
+				  b.m13 * a.m21 + b.m23 * a.m22 + b.m33 * a.m23 + b.m43 * a.m24,
+				  b.m14 * a.m21 + b.m24 * a.m22 + b.m34 * a.m23 + b.m44 * a.m24,
+				  b.m11 * a.m31 + b.m21 * a.m32 + b.m31 * a.m33 + b.m41 * a.m34,
+				  b.m12 * a.m31 + b.m22 * a.m32 + b.m32 * a.m33 + b.m42 * a.m34,
+				  b.m13 * a.m31 + b.m23 * a.m32 + b.m33 * a.m33 + b.m43 * a.m34,
+				  b.m14 * a.m31 + b.m24 * a.m32 + b.m34 * a.m33 + b.m44 * a.m34,
+				  b.m11 * a.m41 + b.m21 * a.m42 + b.m31 * a.m43 + b.m41 * a.m44,
+				  b.m12 * a.m41 + b.m22 * a.m42 + b.m32 * a.m43 + b.m42 * a.m44,
+				  b.m13 * a.m41 + b.m23 * a.m42 + b.m33 * a.m43 + b.m43 * a.m44,
+				  b.m14 * a.m41 + b.m24 * a.m42 + b.m34 * a.m43 + b.m44 * a.m44);
 }
 
 inline Matrix operator * (const Matrix& m,
@@ -292,6 +297,7 @@ inline	Matrix	MatrixRotation(const Vec3& v)		{return MatrixRotation(v.x, v.y, v.
 		Matrix	MatrixTranspose(const Matrix& m);																												// Transponierte Matrix berechnen
 		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);											// Projektionsmatrix berechnen
 		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);								// Projektionsmatrix berechnen
+		Matrix	MatrixParallelProjection(const float fLeft, const float fRight, const float fTop, const float fBottom, const float fNear, const float fFar);	// Projektionsmatrix berechnen
 		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vLookAt, const Vec3& vUp = Vec3(0.0f, 1.0f, 0.0f));										// Kameramatrix erzeugen
 		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& vUp, const Vec3& vBidir);												// Kameramatrix erzeugen
 		Matrix	MatrixToTex2DMatrix(const Matrix& m);																											// In Texturmatrix umwandeln
@@ -365,12 +371,15 @@ public:
 
 	Matrix2x3& operator *= (const Matrix2x3& m)
 	{
-		return *this = Matrix2x3(m.m11 * m11 + m.m21 * m12,
-								   m.m12 * m11 + m.m22 * m12,
-								   m.m13 * m11 + m.m23 * m12 + m13,
-								   m.m11 * m21 + m.m21 * m22,
-								   m.m12 * m21 + m.m22 * m22,
-								   m.m13 * m21 + m.m23 * m22 + m23);
+		float r1 = m11, r2 = m12;
+		m11 = m.m11 * m11 + m.m21 * m12;
+		m12 = m.m12 * r1  + m.m22 * m12;
+		m13 = m.m13 * r1  + m.m23 * r2  + m13;
+		r1 = m21, r2 = m22;
+		m21 = m.m11 * m21 + m.m21 * m22;
+		m22 = m.m12 * r1  + m.m22 * m22;
+		m23 = m.m13 * r1  + m.m23 * r2  + m23;
+		 return *this;
 	}
 
 	Matrix2x3& operator *= (const float f)
@@ -402,7 +411,7 @@ public:
 	Matrix2x3 operator - () const
 	{
 		return Matrix2x3(-m11, -m12, -m13,
-						   -m21, -m22, -m23);
+						 -m21, -m22, -m23);
 	}
 };
 

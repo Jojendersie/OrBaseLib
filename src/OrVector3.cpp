@@ -31,6 +31,12 @@ Vec3 OrE::Math::Vec3::Random()
 }
 
 // ******************************************************************************** //
+IVec3 OrE::Math::IVec3::Random()
+{
+	return IVec3( int(RandU()), int(RandU()), int(RandU()) ).Normalize( 1000 );
+}
+
+// ******************************************************************************** //
 // 3D-Positionsvektor transformieren
 /*Vec3 OrE::Math::Vec3::TransformCoords(const Matrix& m,
 									  float& fOutW)
@@ -166,6 +172,9 @@ Vec3 OrE::Math::Vec3::Rotate(const Vec3& vAxis, float fAngle) const
 	return Vec3(float(x * m11 + y * m21 + z * m31),
 				float(x * m12 + y * m22 + z * m32),
 				float(x * m13 + y * m23 + z * m33));
+/*	return Vec3(float(x * m11 + y * m12 + z * m13),
+				float(x * m21 + y * m22 + z * m23),
+				float(x * m31 + y * m32 + z * m33));*/
 }
 
 /*Vec3 OrE::Math::Vec3::Rotate(const Vec3& v, const Vec3& vAxis, float fAngle)

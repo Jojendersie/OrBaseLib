@@ -74,15 +74,16 @@ public:
 	Vec4(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1]), z(pfComponent[2]), w(pfComponent[3])	{}
 
 	// Casting-Operatoren
-	operator float* () const				{return (float*)(c);}
-	operator Vec3 () const					{return v3;}
+	operator float* ()					{return (float*)(c);}
+	operator const float* () const		{return (const float*)(c);}
+	operator Vec3 () const				{return v3;}
 
 	// Casting to "color"
-	operator dword () const					{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | byte(Clamp(w*255.0, 0.0, 255.0));}
+	operator dword () const				{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | byte(Clamp(w*255.0, 0.0, 255.0));}
 
 	// Zuweisungsoperatoren
 	Vec4& operator = (const Vec4& v)	{x = v.x; y = v.y; z = v.z; w = v.w; return *this;}
-	Vec4& operator = (const float f)		{x = f; y = f; z = f; w = f; return *this;}
+	Vec4& operator = (const float f)	{x = f; y = f; z = f; w = f; return *this;}
 	Vec4& operator += (const Vec4& v)	{x += v.x; y += v.y; z += v.z; w += v.w; return *this;}
 	Vec4& operator -= (const Vec4& v)	{x -= v.x; y -= v.y; z -= v.z; w -= v.w; return *this;}
 	Vec4& operator *= (const Vec4& v)	{x *= v.x; y *= v.y; z *= v.z; w *= v.w; return *this;}
