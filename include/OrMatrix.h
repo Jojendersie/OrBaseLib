@@ -297,7 +297,7 @@ inline	Matrix	MatrixRotation(const Vec3& v)		{return MatrixRotation(v.x, v.y, v.
 		Matrix	MatrixTranspose(const Matrix& m);																												// Transponierte Matrix berechnen
 		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);											// Projektionsmatrix berechnen
 		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);								// Projektionsmatrix berechnen
-		Matrix	MatrixParallelProjection(const float fLeft, const float fRight, const float fTop, const float fBottom, const float fNear, const float fFar);	// Projektionsmatrix berechnen
+		Matrix	MatrixParallelProjection(const float fLeft, const float fRight, const float fBottom, const float fTop, const float fNear, const float fFar);	// Projektionsmatrix berechnen
 		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vLookAt, const Vec3& vUp = Vec3(0.0f, 1.0f, 0.0f));										// Kameramatrix erzeugen
 		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& vUp, const Vec3& vBidir);												// Kameramatrix erzeugen
 		Matrix	MatrixToTex2DMatrix(const Matrix& m);																											// In Texturmatrix umwandeln

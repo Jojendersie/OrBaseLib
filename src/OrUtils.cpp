@@ -85,7 +85,7 @@ bool OrE::Utils::Strneq(const char* p1, const char* p2)
 char* OrE::Utils::Substr(const char* _pcString, const dword _dwFrom, dword _dwTo)
 {
 	// Spezialfall: String bis zum Ende
-	if(_dwTo == 0xffffffff) _dwTo = strlen(_pcString)-1;
+	if(_dwTo == 0xffffffff) _dwTo = Max(0,int(strlen(_pcString))-1);
 
 	// Definition: von 0 bis 0 bedeutet wir wollen ein Zeichen
 	char* pcRet = (char*)malloc((_dwTo+2-_dwFrom)*sizeof(char));

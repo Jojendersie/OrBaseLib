@@ -389,15 +389,15 @@ Matrix OrE::Math::MatrixParallelProjection(const float fWidth,
 }
 
 // ******************************************************************************** //
-Matrix OrE::Math::MatrixParallelProjection(const float l, const float r, const float t, const float b, const float n, const float f)
+Matrix OrE::Math::MatrixParallelProjection(const float l, const float r, const float b, const float t, const float n, const float f)
 {
 	const float	r_l = 1.0f/(r - l);
 	const float t_b = 1.0f/(t - b);
 	const float f_n = 1.0f/(n - f);
-	return Matrix( 2.0f*r_l,	0.0f,		0.0f,		-(l+r)*r_l,
-				   0.0f,		2.0f*t_b,	0.0f,		-(b+t)*t_b,
-				   0.0f,		0.0f,		2.0f*f_n,	(f+n)*f_n,
-				   0.0f,		0.0f,		0.0f,		1.0f);
+	return Matrix( 2.0f*r_l,	0.0f,		0.0f,		0.0f,
+				   0.0f,		2.0f*t_b,	0.0f,		0.0f,
+				   0.0f,		0.0f,		2.0f*f_n,	0.0f,
+				   -(l+r)*r_l,	-(b+t)*t_b,	(f+n)*f_n,	1.0f);
 }
 
 // ******************************************************************************** //

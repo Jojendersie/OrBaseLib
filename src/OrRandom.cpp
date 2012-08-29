@@ -90,12 +90,11 @@ dword OrE::Algorithm::RandU()
 
 
 	y = g_adwMT[g_dwMTIndex++];
-	y ^=y >> OR_MT_U;
-	y ^=y << OR_MT_S & OR_MT_B;
-	y ^=y << OR_MT_T & OR_MT_C;
-	y ^=y >> OR_MT_L;
+	y ^= y >> OR_MT_U;
+	y ^= y << OR_MT_S & OR_MT_B;
+	y ^= y << OR_MT_T & OR_MT_C;
+	y ^= y >> OR_MT_L;
 
-	// Bereichseinschränkung
 	return y;
 }
 
