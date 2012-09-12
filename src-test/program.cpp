@@ -19,6 +19,7 @@ int main()
 {
 	OrE::Algorithm::SRand( 2 );
 
+	test_math();
 	test_list();
 	test_avl();
 

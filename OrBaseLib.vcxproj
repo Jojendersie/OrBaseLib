@@ -167,6 +167,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\OrAnalyticalGeometry.h" />
     <ClInclude Include="include\OrComplexNumber.h" />
     <ClInclude Include="include\OrADTObjects.h" />
     <ClInclude Include="include\OrAVLTree.h" />
@@ -193,6 +194,7 @@
     <ClInclude Include="include\OrVector4.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\OrAnalyticalGeometry.cpp" />
     <ClCompile Include="src\OrAVCoder.cpp" />
     <ClCompile Include="src\OrAVLTree.cpp" />
     <ClCompile Include="src\OrBinaryTree.cpp" />

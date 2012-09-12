@@ -44,6 +44,14 @@ public:
 				  m41, m42, m43, m44;
 		};
 
+/*		struct
+		{
+			Vec4 v1,					// Zeilenvektoren
+				 v2,
+				 v3,
+				 v4;
+		};*/
+
 		float		m[4][4];			// Zweidimensionales Array der Elemente
 		float		n[16];				// Eindimensionales Array der Elemente
 	};
@@ -320,6 +328,12 @@ public:
 		{
 			float m11, m12, m13,		// Elemente der Matrix
 				  m21, m22, m23;
+		};
+
+		struct
+		{
+			Vec3 v1;					// Zeilenvektoren
+			Vec3 v2;
 		};
 
 		float		m[2][3];			// Zweidimensionales Array der Elemente

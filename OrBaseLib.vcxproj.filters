@@ -105,6 +105,9 @@
     <ClInclude Include="include\OrDebug.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="include\OrAnalyticalGeometry.h">
+      <Filter>Headerdateien\Math</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -172,6 +175,9 @@
     </ClCompile>
     <ClCompile Include="src\OrDebug.cpp">
       <Filter>Quelldateien</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrAnalyticalGeometry.cpp">
+      <Filter>Quelldateien\Math</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

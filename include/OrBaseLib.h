@@ -26,6 +26,7 @@
 #include "OrVector4.h"
 #include "OrMatrix.h"
 #include "OrComplexNumber.h"
+#include "OrAnalyticalGeometry.h"
 
 // ADT
 #include "OrADTObjects.h"

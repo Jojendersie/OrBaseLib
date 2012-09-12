@@ -14,3 +14,6 @@ void test_list();
 
 // Test of OrE::ADT::AVLTree and OrE::ADT::LinkedAVLTree
 void test_avl();
+
+// Test and benchmark of Math:: functions
+void test_math();

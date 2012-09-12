@@ -397,7 +397,7 @@ Matrix OrE::Math::MatrixParallelProjection(const float l, const float r, const f
 	return Matrix( 2.0f*r_l,	0.0f,		0.0f,		0.0f,
 				   0.0f,		2.0f*t_b,	0.0f,		0.0f,
 				   0.0f,		0.0f,		2.0f*f_n,	0.0f,
-				   -(l+r)*r_l,	-(b+t)*t_b,	(f+n)*f_n,	1.0f);
+				   -(l+r)*r_l,	-(b+t)*t_b,	-(f+n)*f_n,	1.0f);
 }
 
 // ******************************************************************************** //

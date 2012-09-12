@@ -29,35 +29,33 @@ using namespace OrE::Utils;
 
 // ******************************************************************************** //
 // TimeQuery() returns the number of passed seconds scince the last call.
-// There are 8 marks which can be used independently.
-qword g_QueryCounter[8] = {0};						// The 8 Timemarks
 
 #ifdef WINDOWS
 #include "windows.h"
 #endif
 const double CLOCKS_PER_SEC_INV = 1.0/CLOCKS_PER_SEC;	// Precalculated for performance
 
-double OrE::Utils::TimeQuery(TimeQuerySlots _Slot)
+double OrE::Utils::TimeQuery(TimeQuerySlot& _Slot)
 {
+	// Remember old timestamp and sample new one
+	qword OldTime = _Slot;
+#ifdef WINDOWS
 	qword qwF;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&qwF);
-	// Remember old timestamp and sample new one
-	qword OldTime = g_QueryCounter[_Slot];
-#ifdef WINDOWS
-	QueryPerformanceCounter((LARGE_INTEGER*)&g_QueryCounter[_Slot]);
+	QueryPerformanceCounter((LARGE_INTEGER*)&_Slot);
 #else
 	g_QueryCounter[_Slot] = clock();
 #endif
 	// Convergate difference to seconds
-	return (g_QueryCounter[_Slot] - OldTime)/double(qwF);
+	return (_Slot - OldTime)/double(qwF);
 }
 
 // ******************************************************************************** //
 // Finds out if TimeQuery() with the current slot was used scince program start.
-bool OrE::Utils::IsTimeSlotUsed(TimeQuerySlots _Slot)
+/*bool OrE::Utils::IsTimeSlotUsed(TimeQuerySlots _Slot)
 {
 	return g_QueryCounter[_Slot]!=0;
-}
+}*/
 
 // ******************************************************************************** //
 // Returns the time elapsed since the program was started in seconds.

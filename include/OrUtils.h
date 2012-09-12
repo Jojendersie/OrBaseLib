@@ -25,22 +25,13 @@ namespace Utils {
 // ******************************************************************************** //
 // Time measurement
 // TimeQuery() returns the number of passed seconds scince the last call.
-// There are 8 marks which can be used independently.
-enum TimeQuerySlots {
-	TIME_SLOT_0,
-	TIME_SLOT_1,
-	TIME_SLOT_2,
-	TIME_SLOT_3,
-	TIME_SLOT_4,
-	TIME_SLOT_5,
-	TIME_SLOT_6,
-	TIME_SLOT_7
-};
-double TimeQuery(TimeQuerySlots _Slot);
+// Use can use arbitrary independent time slots.
+typedef unsigned long long TimeQuerySlot;
+double TimeQuery(TimeQuerySlot& _Slot);
 
 // ******************************************************************************** //
 // Finds out if TimeQuery() with the current slot was used scince program start.
-bool IsTimeSlotUsed(TimeQuerySlots _Slot);
+// bool IsTimeSlotUsed(TimeQuerySlots _Slot);
 
 // ******************************************************************************** //
 // Returns the time elapsed since the program was started in seconds.
