@@ -1,6 +1,6 @@
 // ******************************************************************************** //
 // OrVec2.cpp																		//
-// ==========									s									//
+// ==========																		//
 // This file is part of the OrBaseLib.												//
 //																					//
 // Author: Johannes Jendersie														//
@@ -63,5 +63,16 @@ Vec2 OrE::Math::Vec2::Transform(const Vec2& v, const Matrix2x3& m)
 	return Vec2(m.m11*v.x + m.m12*v.y + m.m13,
 				m.m21*v.x + m.m22*v.y + m.m23);
 }*/
+
+// ******************************************************************************** //
+// The spherical interpolation applies only to normal vectors
+Vec2 OrE::Math::Slerp(const Vec2& v1, const Vec2& v2, const float t)
+{
+	float fOmega = Arccos( Clamp(v1.Dot(v2), -1.0f, 1.0f) );
+	//float fInvSin = 1.0f/Sin( fOmega );
+	float f1 = Sin( fOmega * (1.0f-t) );// * fInvSin;
+	float f2 = Sin( fOmega * t );// * fInvSin;
+	return Vec2( v1.x*f1+v2.x*f2, v1.y*f1+v2.y*f2 ).Normalize();
+}
 
 // *************************************EOF**************************************** //

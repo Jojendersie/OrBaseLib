@@ -112,7 +112,7 @@ float OrE::Math::Sqrt( float r )
 
 // ******************************************************************************** //
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
-float OrE::Math::InvSqrt(float fValue)
+/*float OrE::Math::InvSqrt(float fValue)
 {
 	float fValueHalf = fValue*0.5f;
 	int i = *(int*)&fValue;
@@ -121,6 +121,7 @@ float OrE::Math::InvSqrt(float fValue)
 	// Error reducing
 	//fValue -= 0.00025f;
 	// Newtonstep
+	//fValue *= (1.5f-fValueHalf*fValue*fValue);
 	fValue *= (1.5f-fValueHalf*fValue*fValue);
 	return fValue * (1.5f-fValueHalf*fValue*fValue);//+0.000013f;
 }
@@ -132,7 +133,7 @@ float OrE::Math::_InvSqrt(float fValue)
 	int i = *(int*)&fValue;
 	i = 0x5f3759df - (i>>1);
 	return (*(float*)&i) - 0.000056161f;
-}
+}*/
 
 
 /*float OrE::Math::InvSqrtEx( float r )

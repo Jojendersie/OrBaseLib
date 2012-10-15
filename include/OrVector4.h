@@ -29,7 +29,7 @@ public:
 	{
 		struct
 		{
-			float x;	// Koordinaten
+			float x;	// coordinates
 			float y;
 			float z;
 			float w;
@@ -37,7 +37,7 @@ public:
 
 		struct
 		{
-			float left;   // Texturkoordinaten
+			float left;   // 2D rectangle
 			float top;
 			float right;
 			float bottom;
@@ -45,20 +45,20 @@ public:
 
 		struct
 		{
-			Vec2 v1;	// Vektoren
-			Vec2 v2;
+			Vec2 xy;	// vector swizzel
+			Vec2 zw;
 		};
 
 		struct
 		{
-			Vec3 v3;
+			Vec3 xyz;
 			float	r;
 		};
 
-		float			c[4];			// Array der Koordinaten
+		float c[4];			// Array of coordinates
 	};
 
-	// Konstruktoren
+	// Constructors
 	Vec4()																										{}
 	Vec4(const Vec4& v) : x(v.x), y(v.y), z(v.z), w(v.w)														{}
 	Vec4(const Vec3& v) : x(v.x), y(v.y), z(v.z), w(1.0f)														{}
@@ -73,15 +73,15 @@ public:
 	Vec4(const float _x, const float _y, const float _z, const float _w) : x(_x), y(_y), z(_z), w(_w)			{}
 	Vec4(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1]), z(pfComponent[2]), w(pfComponent[3])	{}
 
-	// Casting-Operatoren
+	// Casting-operators
 	operator float* ()					{return (float*)(c);}
 	operator const float* () const		{return (const float*)(c);}
-	operator Vec3 () const				{return v3;}
+	operator Vec3 () const				{return xyz;}
 
 	// Casting to "color"
 	operator dword () const				{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | byte(Clamp(w*255.0, 0.0, 255.0));}
 
-	// Zuweisungsoperatoren
+	// Assignment operators
 	Vec4& operator = (const Vec4& v)	{x = v.x; y = v.y; z = v.z; w = v.w; return *this;}
 	Vec4& operator = (const float f)	{x = f; y = f; z = f; w = f; return *this;}
 	Vec4& operator += (const Vec4& v)	{x += v.x; y += v.y; z += v.z; w += v.w; return *this;}
@@ -92,7 +92,7 @@ public:
 	Vec4& operator /= (float f)			{f = 1/f; x *= f; y *= f; z *= f; w *= f; return *this;}
 
 	// ******************************************************************************** //
-	// Arithmetische Operatoren
+	// Arithmetic operators
 	inline Vec4 operator + (const Vec4& b) const	{return Vec4(x + b.x, y + b.y, z + b.z, w + b.w);}
 	inline Vec4 operator - (const Vec4& b) const	{return Vec4(x - b.x, y - b.y, z - b.z, w - b.w);}
 	inline Vec4 operator - () const					{return Vec4(-x, -y, -z, -w);}
@@ -102,7 +102,7 @@ public:
 	inline Vec4 operator / (float f) const			{f = 1/f; return Vec4(x * f, y * f, z * f, w * f);}
 
 	// ******************************************************************************** //
-	// Vergleichsoperatoren
+	// Comparision operators
 	inline bool operator == (const Vec4& b) {if(x != b.x) return false; if(y != b.y) return false; if(z != b.z) return false; return w == b.w;}
 	inline bool operator != (const Vec4& b) {if(x != b.x) return true; if(y != b.y) return true; if(z != b.z) return true; return w != b.w;}
 	inline bool operator == (const Vec3& b) {if(x != b.x) return false; if(y != b.y) return false; if(z != b.z) return false; return w == 1.0f;}
@@ -120,8 +120,8 @@ public:
 	inline static Vec4	NormalizeEx(const Vec4& v)								{float fL = Sqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
 	inline float		Dot(const Vec4& v) const								{return x * v.x + y * v.y + z * v.z + w * v.w;}
 //	inline static float	Dot(const Vec4& v1, const Vec4& v2)						{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
-	inline float		Angle(const Vec4& v) const								{return Cos((x * v.x + y * v.y + z * v.z + w * v.w) * InvSqrt((x * x + y * y + z * z + w * w) * (v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)));}
-//	inline static float	Angle(const Vec4& v1, const Vec4& v2)					{return Cos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
+	inline float		Angle(const Vec4& v) const								{return Arccos((x * v.x + y * v.y + z * v.z + w * v.w) * InvSqrt((x * x + y * y + z * z + w * w) * (v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)));}
+//	inline static float	Angle(const Vec4& v1, const Vec4& v2)					{return Arccos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
 	static Vec4			Random();
 	const Vec4&			Cross(const Vec4& v2, const Vec4& v3);
 	static Vec4			Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3);
@@ -138,97 +138,145 @@ inline Vec4	Min(const Vec4& v1, const Vec4& v2)							{return Vec4(Min(v1.x, v2.
 inline Vec4	Max(const Vec4& v1, const Vec4& v2)							{return Vec4(Max(v1.x, v2.x), Max(v1.y, v2.y), Max(v1.z, v2.z), Max(v1.w, v2.w));}
 inline Vec4	Lerp(const Vec4& v1, const Vec4& v2, const float f)			{return Vec4(v1.x+f*(v2.x-v1.x), v1.y+f*(v2.y-v1.y), v1.z+f*(v2.z-v1.z), v1.w+f*(v2.w-v1.w));}
 inline Vec4	Abs(const Vec4& v1)											{return Vec4(Abs(v1.x), Abs(v1.y), Abs(v1.z), Abs(v1.w));}
+// The spherical interpolation applies only to normal vectors
+Vec4 Slerp(const Vec4& v1, const Vec4& v2, const float t);
+
+
+
 
 // ******************************************************************************** //
-// Die Quaternion-Klasse (4D Hyperkugel)
-/*class ORKTECK_API OrQuaternion
+// Union quaternions (4D - complex numbers) for rotation in 3D space
+// Scalar operations are disabled because they only change the length of the quaternion
+class Quaternion
 {
+private:
+	Quaternion& operator *= (float f) { i*=f; j*=f; k*=f; r*=f; return *this; }
 public:
-	// Variablen
-	Vec3	m_v3;
-	float		m_fS;
+	// Variables
+	float i, j, k, r;
 
-	// Konstruktoren
-	OrQuaternion() : m_v3(0.0f), m_fS(1)										{}
-	OrQuaternion(const OrQuaternion& q) : m_v3(q.m_v3), m_fS(q.m_fS)		{}
-	OrQuaternion(const Vec4& v) : m_v3(v.x, v.y, v.z), m_fS(v.w)		{}
-	OrQuaternion(const float f, const Vec3& v) : m_fS(f), m_v3(v)		{}
-	OrQuaternion(const Vec3& v) : m_fS(1), m_v3(v)						{}
-	OrQuaternion(const float a, const float b, const float c, const float d) : m_v3(a, b, c), m_fS(d)	{}
-	OrQuaternion(const Vec3& v, float f)							// erzeugt die Quaternion anhand von Achsen
+	// Constructors
+	Quaternion() : i(0), j(0), k(0), r(1)										{}
+	Quaternion( const Quaternion& _q ) : i(_q.i), j(_q.j), k(_q.k), r(_q.r)		{}
+
+	// From unnormalized vector
+	Quaternion( const Vec4& v ) : i(v.x), j(v.y), k(v.z), r(v.w)					{ Normalize(); }
+
+	// From arbitrary components (attention: normalization - use tricks if you
+	// know what you do (Quaternion q(); q.i=...) )
+	Quaternion( float r, float i, float j, float k ) : i(i), j(j), k(k), r(r)		{ Normalize(); }
+
+	// arbitrary NORMALIZED axis + Angle.
+	Quaternion( const Vec3& _vAxis, float _a )
 	{
-		m_fS = cosf(f / 2);
-		m_v3 = v;
-		m_v3 *= sinf(f / 2);
+		// Using -sin to get the same result as for the matrix.
+		// TODO: Matrix wrong? - the conjugated = inverse rotation
+		float fSin = float( - sin( _a * 0.5 ) );
+		r = float( cos( _a * 0.5 ) );
+		i = _vAxis.x * fSin;
+		j = _vAxis.y * fSin;
+		k = _vAxis.z * fSin;
 	}
 
-	// Zuweisungsoperatoren
-	OrQuaternion&	operator+=(const OrQuaternion& q) { m_v3 += q.m_v3; m_fS += q.m_fS; return *this; }
-	OrQuaternion&	operator+=(const float f) { m_v3 += f; m_fS += f; return *this; }
-	OrQuaternion&	operator-=(const OrQuaternion& q) { m_v3 -= q.m_v3; m_fS -= q.m_fS; return *this; }
-	OrQuaternion&	operator-=(const float f) { m_v3 -= f; m_fS -= f; return *this; }
-	OrQuaternion&	operator*=(float f) { m_v3 *= f; m_fS *= f; return *this; }
-	OrQuaternion&	operator*=(const OrQuaternion& q) { m_fS *= q.m_fS; m_fS -= OrVec3Dot(m_v3, q.m_v3); m_v3 = m_fS * q.m_v3 + m_v3 * q.m_fS + OrVec3Cross(m_v3, q.m_v3); return *this;}
-	OrQuaternion&	operator/=(float f) { m_v3 /= f; m_fS /= f; return *this; }
-//	OrQuaternion&	operator/=(const OrQuaternion& q) { m_v3 /= f; m_fS /= f; return *this;}
-	OrQuaternion&	operator=(const OrQuaternion& q) { m_v3 = q.m_v3; m_fS = q.m_fS; return *this; }
+	// From Matrix
+	Quaternion(const Matrix& _m);
+
+	// From euler angles
+	Quaternion( float _fYaw, float _fPitch, float _fRoll );
+	// C++11 variant:  Quaternion( float _fYaw, float _fPitch, float _fRoll ) : Quaternion( MatrixRotation( _fYaw, _fPitch, _fRoll ) ) {}
+
+	// Functions
+	inline float				Length() const									{return Sqrt(i * i + j * j + k * k + r * r);}
+	inline float				LengthSq() const								{return i * i + j * j + k * k + r * r;}
+	inline const Quaternion&	Normalize()										{*this *= InvSqrt(i * i + j * j + k * k + r * r); return *this;}
+	inline static Quaternion	Normalize(const Quaternion& a)					{return Quaternion( a.r, a.i, a.j, a.k );}
+	inline const Quaternion&	NormalizeEx()									{float fL = Sqrt(i * i + j * j + k * k + r * r); *this *= 1.0f/OrE::Math::Max(fL, 0.0000001f); return *this;}
+	inline static Quaternion	NormalizeEx(const Quaternion& a)				{return Quaternion( a.r, a.i, a.j, a.k );}	// Same as non Ex version
+	inline float				Dot(const Quaternion& b) const					{return i * b.i + j * b.j + k * b.k + r * b.r;}
+	inline float				Angle(const Quaternion& b) const				{return Arccos( Dot( b ) );}
+
+	// Casting-operators
+	operator float* ()					{return (float*)(&i);}
+	operator const float* () const		{return (const float*)(&i);}
+	operator Vec4 () const				{return *this;}
+	operator Matrix () const;
+
+	// Assignment operators
+	Quaternion& operator += (const Quaternion& b) { i+=b.i; j+=b.j; k+=b.k; r+=b.r; Normalize(); return *this; }
+	Quaternion& operator -= (const Quaternion& b) { i-=b.i; j-=b.j; k-=b.k; r-=b.r; Normalize(); return *this; }
+	Quaternion& operator *= (const Quaternion& b)
+	{
+		// Quaternion multiplikation - non commutative (a*b != a*b)
+		float nr = r*b.r - i*b.i - j*b.j - k*b.k;
+		float ni = r*b.i + i*b.r + j*b.k - k*b.j;
+		float nj = r*b.j + j*b.r + k*b.i - i*b.k;
+		       k = r*b.k + k*b.r + i*b.j - j*b.i;
+		r = nr;
+		i = ni;
+		j = nj;
+		return *this;
+	}
+	Quaternion& operator /= (float f) { f = 1/f; i*=f; j*=f; k*=f; return *this; }
+
+	// a/=b  <=>  a=a*(b^-1)  <=>  a=a*~b (~b = b conjugated)
+	Quaternion& operator /= (const Quaternion& b)
+	{
+		float nr =   r*b.r + i*b.i + j*b.j + k*b.k;
+		float ni = - r*b.i + i*b.r - j*b.k + k*b.j;
+		float nj = - r*b.j + j*b.r - k*b.i + i*b.k;
+		       k = - r*b.k + k*b.r - i*b.j + j*b.i;
+		r = nr;
+		i = ni;
+		j = nj;
+		return *this;
+	}
+	Quaternion& operator = (const Quaternion& _q) { i=_q.i; j=_q.j; k=_q.k; r=_q.r; return *this; }
 };
 
-// Arithmetische Operatoren
-inline OrQuaternion operator + (const OrQuaternion& a, const OrQuaternion& b)	{return OrQuaternion(a.m_fS + b.m_fS, a.m_v3 + b.m_v3);}
-inline OrQuaternion operator - (const OrQuaternion& a, const OrQuaternion& b)	{return OrQuaternion(a.m_fS - b.m_fS, a.m_v3 - b.m_v3);}
-inline OrQuaternion operator - (const OrQuaternion& v)							{return OrQuaternion(-v.m_fS, -v.m_v3);}
-inline OrQuaternion operator * (const OrQuaternion& a, const OrQuaternion& b)	{return OrQuaternion(a.m_fS * b.m_fS - OrVec3Dot(a.m_v3, b.m_v3), a.m_fS * b.m_v3 + a.m_v3 * b.m_fS + OrVec3Cross(a.m_v3, b.m_v3));}
-//inline OrQuaternion operator * (const OrQuaternion& v, const float f)			{return OrQuaternion(v.m_fS * f; v.m_v3 * f);}
-//inline OrQuaternion operator * (const float f, const OrQuaternion& v)			{return OrQuaternion(v.m_fS * f; v.m_v3 * f);}
-//inline OrQuaternion operator / (const OrQuaternion& a, const OrQuaternion& b)	{return OrQuaternion( --- );}
-//inline OrQuaternion operator / (const OrQuaternion& v, const float f)			{return OrQuaternion(v.m_v4 / f);}
+// Arithmetic operators
+inline Quaternion operator + (const Quaternion& a, const Quaternion& b)	{return Quaternion(a.r+b.r, a.i+b.i, a.j+b.j, a.k+b.k);}
+inline Quaternion operator - (const Quaternion& a, const Quaternion& b)	{return Quaternion(a.r-b.r, a.i-b.i, a.j-b.j, a.k-b.k);}
+inline Quaternion operator - (const Quaternion& a)							{Quaternion b; b.r=-a.r; b.i=-a.i; b.j=-a.j; b.k=-a.k; return b;}	// Avoiding the normalize - no use of component constructor
+// Conjugation / inversion of a
+inline Quaternion operator ~ (const Quaternion& a)							{Quaternion b; b.r=a.r; b.i=-a.i; b.j=-a.j; b.k=-a.k; return b;}	// Avoiding the normalize - no use of component constructor
+// Quaternion multiplikation - non commutative (a*b != a*b)
+inline Quaternion operator * (const Quaternion& a, const Quaternion& b)
+{
+	// Return with impliciet normalization
+	return Quaternion(
+		a.r*b.r - a.i*b.i - a.j*b.j - a.k*b.k,
+		a.r*b.i + a.i*b.r + a.j*b.k - a.k*b.j,
+		a.r*b.j + a.j*b.r + a.k*b.i - a.i*b.k,
+		a.r*b.k + a.k*b.r + a.i*b.j - a.j*b.i
+		);
+}
 
-// Vergleichsoperatoren
-inline bool operator == (const OrQuaternion& a, const OrQuaternion& b) {if(a.m_v3.x != b.m_v3.x) return false; if(a.m_v3.y != b.m_v3.y) return false; if(a.m_v3.z != b.m_v3.z) return false; return a.m_fS == b.m_fS;}
-inline bool operator != (const OrQuaternion& a, const OrQuaternion& b) {if(a.m_v3.x != b.m_v3.x) return true; if(a.m_v3.y != b.m_v3.y) return true; if(a.m_v3.z != b.m_v3.z) return true; return a.m_fS != b.m_fS;}
+// a/b  <=>  a/(b^-1)  <=>  a/~b (~b = b conjugated)
+inline Quaternion operator / (const Quaternion& a, const Quaternion& b)
+{
+	// Return with impliciet normalization
+	return Quaternion(
+		  a.r*b.r + a.i*b.i + a.j*b.j + a.k*b.k,
+		- a.r*b.i + a.i*b.r - a.j*b.k + a.k*b.j,
+		- a.r*b.j + a.j*b.r - a.k*b.i + a.i*b.k,
+		- a.r*b.k + a.k*b.r - a.i*b.j + a.j*b.i
+		);
+}
+
+// Comparison operators
+#define Quaternion_EPSILON 0.000001f
+inline bool operator == (const Quaternion& a, const Quaternion& b) { if(Abs(a.r-b.r) > Quaternion_EPSILON) return false; if(Abs(a.i-b.i) > Quaternion_EPSILON) return false; if(Abs(a.j-b.j) > Quaternion_EPSILON) return false; return Abs(a.k-b.k) < Quaternion_EPSILON; }
+inline bool operator != (const Quaternion& a, const Quaternion& b) { if(Abs(a.r-b.r) >= Quaternion_EPSILON) return true; if(Abs(a.i-b.i) >= Quaternion_EPSILON) return true; if(Abs(a.j-b.j) >= Quaternion_EPSILON) return true; return Abs(a.k-b.k) >= Quaternion_EPSILON; }
+
+//Quaternion operator * (const Quaternion& a, const float f)			{return OrQuaternion(v.m_fS * f; v.m_v3 * f);}
+//Quaternion operator * (const float f, const Quaternion& a)			{return OrQuaternion(v.m_fS * f; v.m_v3 * f);}
+//Quaternion operator / (const Quaternion& v, const float f)			{return OrQuaternion(v.m_v4 / f);}
 
 // ******************************************************************************** //
-// Funktionen deklarieren
-inline OrQuaternion&	OrQuaternionNormalizeEx(OrQuaternion& q)												{float mag = Sqrt(q.m_fS * q.m_fS + OrVec3Dot(q.m_v3, q.m_v3)); if (mag > 0.0000001) { q.m_fS /= mag; q.m_v3 /= mag;} else {q.m_fS = 1; q.m_v3 = Vec3(0.0f, 0.0f, 0.0f);} return q;}
-inline OrQuaternion&	OrQuaternionNormalize(OrQuaternion& q)													{float mag = Sqrt(q.m_fS * q.m_fS + OrVec3Dot(q.m_v3, q.m_v3)); q.m_fS /= mag; q.m_v3 /= mag; return q;}
-//inline void				OrQuaternionApplyRotation(Vec3* pRes, const Vec3& v)						{*pRes = *pRes * OrQuaternion(0, v) * OrQuaternion(pRes->m_fS, -pRes->m_v3);}
-// optimiertere Varianten
-inline void				OrQuaternionApplyRotation(const OrQuaternion& q1, const Vec3& v, Vec3* pRes)	{Vec3 vq1 = q1.m_fS * v + OrVec3Cross(q1.m_v3, v); Vec3 iq1 = -q1.m_v3; *pRes = OrVec3Dot(q1.m_v3, v) * iq1 + vq1 * q1.m_fS + OrVec3Cross(vq1, iq1);}
-inline void				OrQuaternionApplyRotation(const OrQuaternion& q1, Vec3* pRes)						{Vec3 vq1 = q1.m_fS * *pRes + OrVec3Cross(q1.m_v3, *pRes); Vec3 iq1 = -q1.m_v3; *pRes = OrVec3Dot(q1.m_v3, *pRes) * iq1 + vq1 * q1.m_fS + OrVec3Cross(vq1, iq1);}
-inline OrQuaternion		OrQuaternionInterpolate(const OrQuaternion& q1, const OrQuaternion& q2, float f)
-{
-	OrQuaternion	result;
+// Functions
+// The spherical interpolation for union quaternions
+Quaternion Slerp(const Quaternion& a, const Quaternion& b, const float t);
 
-	float	f0, f1;
-
-	float	cos_omega = OrVec3Dot(q1.m_v3, q2.m_v3) + q1.m_fS * q2.m_fS;
-	OrQuaternion	qtemp(q2);
-
-	// angleichen wenn nötig.
-	if (cos_omega < 0) {
-		cos_omega = -cos_omega;
-		qtemp = -qtemp;
-	}
-
-	if (cos_omega < 0.99) {
-		// Spherische interp. durchführen
-		float	omega = acosf(cos_omega);
-		float	sin_omega = sinf(omega);
-		f0 = sinf((1 - f) * omega) / sin_omega;
-		f1 = sinf(f * omega) / sin_omega;
-	} else {
-		// Quaternions are close; just do straight lerp and avoid division by near-zero.
-		f0 = 1 - f;
-		f1 = f;
-	}
-	
-	result.m_v3 = q1.m_v3 * f0 + qtemp.m_v3 * f1;
-	result.m_fS = q1.m_fS * f0 + qtemp.m_fS * f1;
-
-	return OrQuaternionNormalize(result);
-}
-*/
 }; // namespace Math
 }; // namespace OrE
 // *************************************EOF**************************************** //

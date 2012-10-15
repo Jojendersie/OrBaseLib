@@ -24,6 +24,8 @@
 #include "OrVector2.h"
 #include "OrVector3.h"
 #include "OrVector4.h"
+#include "OrSRT.h"
+#include "OrPlane.h"
 #include "OrMatrix.h"
 #include "OrComplexNumber.h"
 #include "OrAnalyticalGeometry.h"

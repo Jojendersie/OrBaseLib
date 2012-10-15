@@ -24,7 +24,8 @@ using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
 // ******************************************************************************** //
-// Aus Abhängigkeitsgründen separieren
+// Create random direction vectors.
+// No inline because of Rand-dependency (-> more includes)
 Vec3 OrE::Math::Vec3::Random()
 {
 	return Vec3(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f).NormalizeEx();
@@ -36,94 +37,21 @@ IVec3 OrE::Math::IVec3::Random()
 	return IVec3( int(RandU()), int(RandU()), int(RandU()) ).Normalize( 1000 );
 }
 
-// ******************************************************************************** //
-// 3D-Positionsvektor transformieren
-/*Vec3 OrE::Math::Vec3::TransformCoords(const Matrix& m,
-									  float& fOutW)
-{
-	// Vierte Koordinate (w) berechnen. Wenn diese ungleich eins
-	// ist, müssen die anderen Vektorelemente durch sie geteilt
-	// werden.
-	fOutW = x * m.m14 + y * m.m24 + z * m.m34 + m.m44;
-	double dInvW = 1.0/fOutW;
-	// Vektor mit Matrix multiplizieren
-	return Vec3(float( dInvW * (x * m.m11 + y * m.m21 + z * m.m31 + m.m41) ),
-		        float( dInvW * (x * m.m12 + y * m.m22 + z * m.m32 + m.m42) ),
-				float( dInvW * (x * m.m13 + y * m.m23 + z * m.m33 + m.m43) ));
-}
-
-Vec3 OrE::Math::Vec3::TransformCoords(const Vec3& v,
-									  const Matrix& m,
-									  float& fOutW)
-{
-	// Vierte Koordinate (w) berechnen. Wenn diese ungleich eins
-	// ist, müssen die anderen Vektorelemente durch sie geteilt
-	// werden.
-	fOutW = v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + m.m44;
-	double dInvW = 1.0/fOutW;
-	// Vektor mit Matrix multiplizieren
-	return Vec3(float( dInvW * (v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41) ),
-		        float( dInvW * (v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42) ),
-				float( dInvW * (v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43) ));
-}
 
 // ******************************************************************************** //
-// 3D-Positionsvektor transformieren
-const Vec3& OrE::Math::Vec3::TransformCoords(const Matrix& m)
-{
-	// Vierte Koordinate (w) berechnen. Wenn diese ungleich eins
-	// ist, müssen die anderen Vektorelemente durch sie geteilt
-	// werden.
-	const double w = 1.0/(x * m.m14 + y * m.m24 + z * m.m34 + m.m44);
-
-	// Vektor mit Matrix multiplizieren
-	x = float( w * (x * m.m11 + y * m.m21 + z * m.m31 + m.m41) );
-	y = float( w * (x * m.m12 + y * m.m22 + z * m.m32 + m.m42) );
-	z = float( w * (x * m.m13 + y * m.m23 + z * m.m33 + m.m43) );
-
-	return *this;
-}
-
-Vec3 OrE::Math::Vec3::TransformCoords(const Vec3& v,
-									  const Matrix& m)
-{
-	// Vierte Koordinate (w) berechnen. Wenn diese ungleich eins
-	// ist, müssen die anderen Vektorelemente durch sie geteilt
-	// werden.
-	const double w = 1.0/(v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + m.m44);
-
-	// Vektor mit Matrix multiplizieren
-	return Vec3(float( w * (v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + m.m41) ),
-		        float( w * (v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + m.m42) ),
-				float( w * (v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + m.m43) ));
-
-	//return vResult / w;
-}*/
-
-// ******************************************************************************** //
-// 3D-Richtungsvektor transformieren
+// Transform a 3D directional vector - faster scince only 3x3 matrix is applied
 Vec3 OrE::Math::Vec3::TransformDirection(const Matrix& m) const
 {
-	// Vektor mit Matrix multiplizieren
-	return Vec3(x * m.m11 + y * m.m21 + z * m.m31,// + m.m41,
-				x * m.m12 + y * m.m22 + z * m.m32,// + m.m42,
-				x * m.m13 + y * m.m23 + z * m.m33);// + m.m43);
+	// multiply 3x3 matrix with vector - no translation
+	return Vec3(x * m.m11 + y * m.m21 + z * m.m31,
+				x * m.m12 + y * m.m22 + z * m.m32,
+				x * m.m13 + y * m.m23 + z * m.m33);
 
-	// Vierte Koordinate (w) berechnen entfällt da es sich um Richtungsvektoren handelt
+	// Calculation of the fourth component not necessary for directional vectors
+	// (vec3,0).
 
 	return *this;
 }
-
-/*Vec3 OrE::Math::Vec3::TransformDirection(const Vec3& v,
-									     const Matrix& m)
-{
-	// Vektor mit Matrix multiplizieren
-	return Vec3(v.x * m.m11 + v.y * m.m21 + v.z * m.m31,// + m.m41,
-				v.x * m.m12 + v.y * m.m22 + v.z * m.m32,// + m.m42,
-				v.x * m.m13 + v.y * m.m23 + v.z * m.m33);// + m.m43);
-
-	// Vierte Koordinate (w) berechnen entfällt da es sich um Richtungsvektoren handelt
-}*/
 
 // ******************************************************************************** //
 // Rotate a vector around some axis. This transformation uses quaternion
@@ -201,5 +129,15 @@ Vec3 OrE::Math::Vec3::Rotate(const Vec3& vAxis, float fAngle) const
 				float(v.y * (a00 - a11 + a22 - a33) + 2.0 * ((a12 + a03) * v.x + (a23 - a01) * v.z)),
 				float(v.z * (a00 - a11 - a22 + a33) + 2.0 * ((a13 - a02) * v.x + (a23 + a01) * v.y)));
 }*/
+
+// ******************************************************************************** //
+// The spherical interpolation applies only to normal vectors
+Vec3 OrE::Math::Slerp(const Vec3& v1, const Vec3& v2, const float t)
+{
+	float fOmega = Arccos( Clamp(v1.Dot(v2), -1.0f, 1.0f) );
+	float f1 = Sin( fOmega * (1.0f-t) );
+	float f2 = Sin( fOmega * t );
+	return Vec3( v1.x*f1+v2.x*f2, v1.y*f1+v2.y*f2, v1.z*f1+v2.z*f2 ).Normalize();
+}
 
 // *************************************EOF**************************************** //

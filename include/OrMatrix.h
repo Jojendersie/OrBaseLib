@@ -44,6 +44,14 @@ public:
 				  m41, m42, m43, m44;
 		};
 
+		struct
+		{
+			float m1[4],					// Zeilenvektoren
+				 m2[4],
+				 m3[4],
+				 m4[4];
+		};
+
 /*		struct
 		{
 			Vec4 v1,					// Zeilenvektoren
@@ -241,7 +249,7 @@ inline Matrix operator / (const Matrix& m,
 
 // ******************************************************************************** //
 // Vergleichsoperatoren
-#define Matrix_EPSILON	0.001f
+#define Matrix_EPSILON	0.00001f
 inline bool operator == (const Matrix& a,
 						 const Matrix& b)
 {
@@ -285,7 +293,7 @@ inline bool operator != (const Matrix& a,
 }
 
 // ******************************************************************************** //
-// Funktionen deklarieren
+// Declaraion of functions for matrix creation
 inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);}				// Identitätsmatrix liefern
 		Matrix	MatrixTranslation(const Vec3& v);																											// Translationsmatrix (Verschiebungsmatrix) berechnen
 		Matrix	MatrixTranslation(const float x, const float y, const float z);																					// Translationsmatrix (Verschiebungsmatrix) berechnen
@@ -490,7 +498,7 @@ inline Matrix2x3 operator / (const Matrix2x3& m,
 
 // ******************************************************************************** //
 // Vergleichsoperatoren
-#define Matrix_EPSILON	0.001f
+//#define Matrix_EPSILON	0.001f
 inline bool operator == (const Matrix2x3& a,
 						 const Matrix2x3& b)
 {
@@ -516,7 +524,8 @@ inline bool operator != (const Matrix2x3& a,
 }
 
 // ******************************************************************************** //
-// Die Funktionen simmulieren alle eine 3x3 matrix
+// Declaraion of functions for matrix creation. All functions simulate a 3x3 matrix
+// with some parts left away.
 inline	Matrix2x3	Matrix2x3Identity() {return Matrix2x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);}																				// Identitätsmatrix liefern
 		Matrix2x3	Matrix2x3Translation(const Vec2& v);																													// Translationsmatrix (Verschiebungsmatrix) berechnen
 		Matrix2x3	Matrix2x3Translation(const float x, const float y);																										// Translationsmatrix (Verschiebungsmatrix) berechnen

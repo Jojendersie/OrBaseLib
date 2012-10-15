@@ -186,6 +186,7 @@
     <ClInclude Include="include\OrRandom.h" />
     <ClInclude Include="include\OrSetBuilder.h" />
     <ClInclude Include="include\OrSplayTree.h" />
+    <ClInclude Include=".\include\OrSRT.h" />
     <ClInclude Include="include\OrTrie.h" />
     <ClInclude Include="include\OrTypeDef.h" />
     <ClInclude Include="include\OrUtils.h" />
@@ -212,6 +213,7 @@
     <ClCompile Include="src\OrRandom.cpp" />
     <ClCompile Include="src\OrSetBuilder.cpp" />
     <ClCompile Include="src\OrSplayTree.cpp" />
+    <ClCompile Include=".\src\OrSRT.cpp" />
     <ClCompile Include="src\OrTrie.cpp" />
     <ClCompile Include="src\OrUtils.cpp" />
     <ClCompile Include="src\OrVector2.cpp" />

@@ -117,11 +117,13 @@ __forceinline float Sqr( float r )		{return r*r;}
 __forceinline float Sqrt( float r )		{return sqrt(r);}
 
 // ******************************************************************************** //
+inline float InvSqrt(float fValue)	{return float(1.0/sqrt(double(fValue)));}
+// DEPRECATED Version below: Is slower on modern hardware
 // Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
 // Accuracy: smaller than 0.1%
-float InvSqrt(float fValue);
+//float InvSqrt(float fValue);
 // Accuracy: worst case error 4%, avg 2.1%
-float _InvSqrt(float fValue);
+//float _InvSqrt(float fValue);
 
 // ******************************************************************************** //
 // Nächst größere 2 er Potenz
