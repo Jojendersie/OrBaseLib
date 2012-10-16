@@ -2,6 +2,7 @@
 #include "..\include\OrFastMath.h"
 #include "..\include\OrComplexNumber.h"
 
+// ******************************************************************************** //
 // A complex number to the power of a complex number.
 // Internal "converts" to the euler form and back.
 OrE::Math::ComplexNumber OrE::Math::Pow(const ComplexNumber& a, const ComplexNumber& b)
@@ -14,7 +15,8 @@ OrE::Math::ComplexNumber OrE::Math::Pow(const ComplexNumber& a, const ComplexNum
 					  float(sin(dAngle)));
 }
 
-// Faster power variant for real exponents
+// ******************************************************************************** //
+// Faster power variant for real numbered exponents
 OrE::Math::ComplexNumber OrE::Math::Pow(const ComplexNumber& a, float b)
 {
 	double dArgA = a.Arg();

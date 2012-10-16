@@ -51,10 +51,12 @@ namespace Math {
 	typedef ComplexNumber* ComplexNumberP;
 
 	// ******************************************************************************** //
-	// Arithmetische Operatoren
+	// Arithmetic operators
 	inline ComplexNumber operator + (const ComplexNumber& a, const ComplexNumber& b)	{return ComplexNumber(a.r + b.r, a.i + b.i);}
 	inline ComplexNumber operator - (const ComplexNumber& a, const ComplexNumber& b)	{return ComplexNumber(a.r - b.r, a.i - b.i);}
 	inline ComplexNumber operator - (const ComplexNumber& n)							{return ComplexNumber(-n.r, -n.i);}
+	// Conjugation
+	inline ComplexNumber operator ~ (const ComplexNumber& n)							{return ComplexNumber(n.r, -n.i);}
 	inline ComplexNumber operator * (const ComplexNumber& a, const ComplexNumber& b)	{return ComplexNumber(a.r*b.r - a.i*b.i, a.r*b.i + a.i*b.r);}
 	inline ComplexNumber operator * (const ComplexNumber& n, const float f)				{return ComplexNumber(n.r * f, n.i * f);}
 	inline ComplexNumber operator * (const float f, const ComplexNumber& n)				{return ComplexNumber(n.r * f, n.i * f);}
@@ -62,7 +64,7 @@ namespace Math {
 	inline ComplexNumber operator / (const ComplexNumber& n, float f)					{f = 1/f; return ComplexNumber(n.r * f, n.i * f);}
 
 	// ******************************************************************************** //
-	// Vergleichsoperatoren
+	// Comparison operators
 	inline bool operator == (const ComplexNumber& a, const ComplexNumber& b) {if(a.r != b.r) return false; return a.i == b.i;}
 	inline bool operator != (const ComplexNumber& a, const ComplexNumber& b) {if(a.r != b.r) return true; return a.i != b.i;}
 
@@ -73,7 +75,7 @@ namespace Math {
 	// Internal "converts" to the euler form and back.
 	ComplexNumber Pow(const ComplexNumber& a, const ComplexNumber& b);
 
-	// Faster power variant for real exponents
+	// Faster power variant for real numbered exponents
 	ComplexNumber Pow(const ComplexNumber& a, float b);
 
 }; // namespace Math
