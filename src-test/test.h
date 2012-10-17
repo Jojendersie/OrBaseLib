@@ -15,5 +15,8 @@ void test_list();
 // Test of OrE::ADT::AVLTree and OrE::ADT::LinkedAVLTree
 void test_avl();
 
+// Benchmark of OrE::ADT::Hashmap
+void test_hashmap();
+
 // Test and benchmark of Math:: functions
 void test_math();

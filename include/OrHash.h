@@ -126,21 +126,38 @@ public:
 	HashMap(dword _dwSize, HashMapMode _Mode);
 	virtual ~HashMap();
 
-	void Clear();												// Remove everything
+	// Remove everything
+	void Clear();
 
-	void Resize(const dword _dwSize);							// Tabelle neu erzeugen und alle Elemente neu hinzufügen
+	// Recreate the table and readd all elements
+	void Resize(const dword _dwSize);
 
-	ADTElementP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert; If already exists the object is NOT overwritten, but referenccounter is increased
-	void Delete(qword _qwKey) override;							// Standard operation delete
-	void Delete(ADTElementP _pElement) override;				// Faster operation delete (no search)
-	ADTElementP Search(qword _qwKey) override;					// Standard search with a key
+	// Standard operation insert; If already existing, the object is NOT overwritten,
+	// but referenccounter is increased.
+	ADTElementP Insert(void* _pObject, qword _qwKey) override;
+
+	// Standard operation delete
+	void Delete(qword _qwKey) override;
+
+	// Faster operation delete (no search)
+	void Delete(ADTElementP _pElement) override;
+
+	// Standard search with a key
+	ADTElementP Search(qword _qwKey) override;
 
 	// String-Mode functions
-	ADTElementP Insert(void* _pObject, const char* _pcKey);		// insert using strings; If already exists the object is NOT overwritten, but referenccounter is increased
-	void Delete(const char* _pcKey);							// Standard operation delete for strings
-	ADTElementP Search(const char* _pcKey);						// search using strings
+	// insert using strings; If already existing, the object is NOT overwritten,
+	// but referenccounter is increased
+	ADTElementP Insert(void* _pObject, const char* _pcKey);
 
-	ADTElementP GetFirst() override;							// Erstes Objekt aus dem ersten nichtleeren Eimer
+	// Standard operation delete for strings
+	void Delete(const char* _pcKey);
+
+	// search using strings
+	ADTElementP Search(const char* _pcKey);
+
+	// The overall first object from the frist non-empty bucket
+	ADTElementP GetFirst() override;
 	ADTElementP GetLast() override;
 	ADTElementP GetNext(ADTElementP _pCurrent) override;
 	ADTElementP GetPrevious(ADTElementP _pCurrent) override;
@@ -148,6 +165,10 @@ public:
 	bool IsEmpty()			{return m_dwNumElements==0;}
 	dword GetNumElements()	{return m_dwNumElements;}
 	dword GetSize()			{return m_dwSize;}
+
+#ifdef _DEBUG
+	dword m_dwCollsionCounter;
+#endif
 };
 typedef HashMap* HashMapP;
 

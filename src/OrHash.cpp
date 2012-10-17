@@ -149,6 +149,10 @@ OrE::ADT::HashMap::HashMap(dword _dwSize, HashMapMode _Mode)
 	m_dwSize = _dwSize;
 	m_dwNumElements = 0;
 	m_Mode = _Mode;
+
+#ifdef _DEBUG
+	m_dwCollsionCounter = 0;
+#endif
 }
 
 // ******************************************************************************** //
@@ -198,6 +202,9 @@ void OrE::ADT::HashMap::Clear()
 			RecursiveRelease(m_apBuckets[i]);
 		m_apBuckets[i] = nullptr;
 	}
+#ifdef _DEBUG
+	m_dwCollsionCounter = 0;
+#endif
 }
 
 // ******************************************************************************** //
@@ -209,7 +216,7 @@ void OrE::ADT::HashMap::Resize(const dword _dwSize)
 	// Einfach nur Speicher bestellen für eine leere Tabelle
 	m_apBuckets = (BucketP*)malloc(sizeof(BucketP)*_dwSize);
 	if(!m_apBuckets) return;	// TODO report error
-	memset(m_apBuckets, 0, sizeof(Bucket)*_dwSize);
+	memset(m_apBuckets, 0, sizeof(BucketP)*_dwSize);
 	// Statische Größen setzen
 	m_dwSize = _dwSize;
 	m_dwNumElements = 0;
@@ -220,7 +227,7 @@ void OrE::ADT::HashMap::Resize(const dword _dwSize)
 	{
 		// Alles erneut einfügen
 		for(dword i=0;i<dwOldSize;++i)
-			RecursiveReAdd(pOldList[i]);
+			if(pOldList[i]) RecursiveReAdd(pOldList[i]);
 
 		// Alte Liste löschen
 		free(pOldList);
@@ -267,7 +274,6 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 {
 #ifdef _DEBUG
 	if(!m_apBuckets) return nullptr;		// TODO report error
-	int iCollision = 0;
 #endif
 
 	TestSize();
@@ -283,7 +289,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 		while(true)
 		{
 #ifdef _DEBUG
-			++iCollision;
+			++m_dwCollsionCounter;
 #endif
 			// Schlüssel vollständig verlgeichen -> Baumsuche
 			if(_qwKey < pBucket->qwKey)
@@ -405,7 +411,6 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
 	#ifdef _DEBUG
 	if(!m_apBuckets) return nullptr;		// TODO report error
-	int iCollision = 0;
 #endif
 
 	TestSize();
@@ -420,7 +425,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 		while(!bAdded)
 		{
 #ifdef _DEBUG
-			++iCollision;
+			++m_dwCollsionCounter;
 #endif
 			// String vollständig verlgeichen -> Baumsuche
 			char* pcBucketString = (char*)(pBucket->qwKey>>32);
@@ -464,10 +469,6 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, const char* _pcKey)
 		++m_dwNumElements;
 		return m_apBuckets[dwHash];
 	}
-
-#ifdef _DEBUG
-	//return iCollision;
-#endif
 }
 
 // ******************************************************************************** //

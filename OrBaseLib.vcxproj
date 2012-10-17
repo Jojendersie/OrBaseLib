@@ -167,6 +167,7 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include=".\include\OrMultimap.h" />
     <ClInclude Include="include\OrAnalyticalGeometry.h" />
     <ClInclude Include="include\OrComplexNumber.h" />
     <ClInclude Include="include\OrADTObjects.h" />
@@ -210,6 +211,7 @@
     <ClCompile Include="src\OrHuffman.cpp" />
     <ClCompile Include="src\OrList.cpp" />
     <ClCompile Include="src\OrMatrix.cpp" />
+    <ClCompile Include="src\OrMultimap.cpp" />
     <ClCompile Include="src\OrRandom.cpp" />
     <ClCompile Include="src\OrSetBuilder.cpp" />
     <ClCompile Include="src\OrSplayTree.cpp" />

@@ -111,6 +111,9 @@
     <ClInclude Include=".\include\OrSRT.h">
       <Filter>Headerdateien\Math</Filter>
     </ClInclude>
+    <ClInclude Include=".\include\OrMultimap.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include=".\src\OrSRT.cpp">
       <Filter>Quelldateien\Math</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrMultimap.cpp">
+      <Filter>Quelldateien\ADT</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

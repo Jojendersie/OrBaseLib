@@ -67,6 +67,7 @@
   <ItemGroup>
     <ClCompile Include="src-test\test_avl.cpp" />
     <ClCompile Include="src-test\program.cpp" />
+    <ClCompile Include="src-test\test_hashmap.cpp" />
     <ClCompile Include="src-test\test_list.cpp" />
     <ClCompile Include="src-test\test_math.cpp" />
   </ItemGroup>
