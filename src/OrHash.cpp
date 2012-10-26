@@ -298,7 +298,13 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 			else if(_qwKey > pBucket->qwKey)
 				if(pBucket->pRight) pBucket = pBucket->pRight;	// traverse
 				else {pBucket->pRight = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pRight;}
-			else {pBucket->AddRef(); --m_dwCollsionCounter; return pBucket;}			// This data already exists. It is obvious that this element collides with itself.
+			else {
+#ifdef _DEBUG
+				--m_dwCollsionCounter;
+#endif
+				pBucket->AddRef();
+				return pBucket;
+			}			// This data already exists. It is obvious that this element collides with itself.
 		}
 	} else
 	{

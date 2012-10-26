@@ -13,6 +13,8 @@
 #include <iostream>
 #include <thread>
 
+#define NUM_THREADS 4
+
 char* TEST_GROUPS[] = { "ABC", "keks", "nomnom", "explosion", "3DModel", "הצü" };
 OrE::ADT::MultiMap* g_pMyMap;
 void test_multimap_thread();
@@ -38,6 +40,7 @@ void test_multimap()
 	// Double add -> object should only be in map once
 	MyMap.Add( (void*)4, "nomnom" );
 	MyMap.Add( (void*)4, "keks" );
+	Assert( MyMap.GetNumElements() == 3 );
 
 	// Iterator test
 	auto It = MyMap.GetIterator( "nomnom" );
@@ -49,29 +52,39 @@ void test_multimap()
 		++iCount;
 	}
 	Assert( iCount == 2 );
-	Assert( MyMap.GetNumElements() == 3 );
 
 	It = MyMap.GetIterator();
 	iCount = 0;
 	while( ++It ) ++iCount;
 	Assert( iCount == 3 );
-	Assert( MyMap.GetNumDeletionMarkedElements() == 0 );
 
 	// This test causes an assertion
 	// auto It2 = MyMap.GetIterator( "nom" );
 
 	std::cout << "\tPassed single threaded test.\n";
 
-	std::thread aThreads[8];
-	for( int i=0; i<8; ++i )
+	OrE::Utils::TimeQuerySlot Slot0;
+	OrE::Utils::TimeQuery( Slot0 );
+	std::thread aThreads[NUM_THREADS];
+	for( int i=0; i<NUM_THREADS; ++i )
 		aThreads[i] = std::thread( test_multimap_thread );
 
-	for( int i=0; i<8; ++i )
+	for( int i=0; i<NUM_THREADS; ++i )
 		aThreads[i].join();
 
 	Assert( MyMap.GetNumElements() < 5000 );
 
 	std::cout << "\tPassed multi threaded test.\n";
+	std::cout << "\tPassed time for multi thread test: " << OrE::Utils::TimeQuery( Slot0 ) << " s\n";
+
+	// Test area for profiling
+	OrE::Utils::TimeQuery( Slot0 );
+	//for( int i=0; i<11000; ++i )
+	//	OrE::Algorithm::Rand(1,5000);
+	//std::cout << "\tPassed time for 11000 rands: " << OrE::Utils::TimeQuery( Slot0 ) << " s\n";
+	OrE::Utils::TimeQuery( Slot0 );
+	test_multimap_thread();
+	std::cout << "\tPassed time for test_multimap_thread: " << OrE::Utils::TimeQuery( Slot0 ) << " s\n";
 
 	std::cout << '\n';
 }

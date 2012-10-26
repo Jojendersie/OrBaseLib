@@ -18,7 +18,7 @@
 // The groups are string identifiers. The Objects are of arbitary types (void*)		//
 // The initial idea was the use as scene graph, but there are probably much more	//
 // use cases.																		//
-// For more than 32 groups it is necessary to use a hierarchical approach. 			//
+// For more than 31 groups it is necessary to use a hierarchical approach. 			//
 // E.g. a multimap with more multimap objects.										//
 // To get very fast timings some object treatments are deferred. Everything is		//
 // implemented in O(1) beside the traversion by the iterator. During iteration		//
@@ -30,6 +30,7 @@
 // space. Furthermore the real object is not deleted from the map. Only its mapping	//
 // is removed. DO DELETE YOUR OBJECTS MANUAL. You can do this the same moment you	//
 // delete it from map. It is not referenced afterwards.								//
+// Do not use too many threads(>4) accessing the map, locking slows down the system!//
 // ******************************************************************************** //
 
 #pragma once
@@ -46,10 +47,11 @@ private:
 	struct GroupEntry
 	{
 		GroupEntry* pNext;			// Next entry in the same group
+		GroupEntry* pPrev;			// Previous entry in the same group
 		ADTElementP pObjectEntry;	// Address of Object in the main map
 		int iRef;					// How many iterators references the object
 
-		GroupEntry( GroupEntry* _pNext, ADTElementP _pObject ) : pNext(_pNext), pObjectEntry(_pObject), iRef(0) {}
+		GroupEntry( GroupEntry* _pNext, ADTElementP _pObject ) : pNext(_pNext), pPrev(nullptr), pObjectEntry(_pObject), iRef(0) {}
 	};
 
 	class Group
@@ -82,25 +84,37 @@ private:
 		}
 
 		// Thread safe insert at front O(1) 
-		void Insert( ADTElementP _pObject );
+		// Returns address of new entry
+		GroupEntry* Insert( ADTElementP _pObject );
 
-		// Delete O(1). This uses no lock - only caller has locked the group before.
-		//void Delete( GroupEntry* _pPredecessor, GroupEntry* _pObject );
+		// Thread safe Delete O(1).
+		void Delete( GroupEntry* _pObject );
 
 		const GroupEntry* GetFirst()	{ return m_pFirst; }
 	};
 
-	// A dynamical map of the objects. Each object is mapped to a reference
-	// counter+GroupFlagWord (dword). The map is resized if two many objects are
-	// in the map and reduced if the map is too empty. In case of a full
-	// map a remapping is necessary.
+	// Structure saved in the object map.
+	struct GroupIndex
+	{
+		// Each pointer can be 0 or the entry in the group with associated
+		// index.
+		// pGroupE[0] is the default-group entry, which is always defined.
+		GroupEntry* pGroupE[32];
+		int iNumInGroups;
+
+		// TODO: speed test
+//		GroupIndex() : iNumInGroups(0)	{ for( int i=0; i<32; ++i) pGroupE[i] = 0; }
+		GroupIndex() : iNumInGroups(0)	{ for( int i=0; i<16; ++i) ((qword*)pGroupE)[i] = 0; }
+	};
+
+	// A dynamical map of the objects. Each object is mapped to an array
+	// of links to the group entries. The map is resized if two many objects are
+	// in the map. In case of a full map a remapping is necessary.
 	// Possible actions are: Is object in map? Should object be deleted?
 	// How many iterators have currently access to the object (ref.)?
 	HashMap m_ObjectMap;
 	HashMap m_GroupMap;
 	Group m_DefaultGroup;
-	// Number of real elements (number of elements in m_ObjectMap includes as deleted marked ones)
-	int m_iNumElements;
 
 	// A mutex to lock whole MultiMap, if changing one of the two hash maps.
 	// TODO: make hash map itself thread safe
@@ -108,7 +122,7 @@ private:
 
 	// Deferred object deletion. This decrements the reference counter
 	// of the object and deletes it if necessary.
-	void UnrefObj( ADTElementP _pObject );
+	//void UnrefObj( ADTElementP _pObject );
 
 
 	// Prevent copy constructor and operator = being generated.
@@ -116,6 +130,7 @@ private:
 	const MultiMap& operator = (const MultiMap&);
 
 	static void _cdecl OrE::ADT::MultiMap::DeleteGroup( void* _pGroup );
+	static void _cdecl OrE::ADT::MultiMap::DeleteObject( void* _pGroup );
 public:
 	// Constructor creates an empty map of a chosen size.
 	// Use a size slightly larger than the expected maximal amount.
@@ -138,7 +153,7 @@ public:
 	void Add( void* _pNewObject, const char* _pcGroup0, const char* _pcGroup1 );
 	void Add( void* _pNewObject, const char* _pcGroup0, const char* _pcGroup1, const char* _pcGroup2 );
 
-	// Remove the object from all groups and from the map O(1). (Deferred)
+	// Remove the object from all groups and from the map O(#groups)=O(1).
 	void Remove( void* _pObject );
 
 	// Maps an object to an existing or new group. If the object is not Added before
@@ -155,8 +170,8 @@ public:
 	// if the object is in the map anyway.
 	bool IsIn( void* _pObject, const char* _pcGroup = nullptr );
 
-	int GetNumElements()				{ return m_iNumElements; }
-	int GetNumDeletionMarkedElements()	{ return m_ObjectMap.GetNumElements() - m_iNumElements; }
+	int GetNumElements()				{ return m_ObjectMap.GetNumElements(); }
+	//int GetNumDeletionMarkedElements()	{ return m_ObjectMap.GetNumElements() - m_iNumElements; }
 
 
 
@@ -166,15 +181,15 @@ public:
 	{
 	private:
 		// The map, whose group is traversed and the group.
-		HashMap*				m_pObjectMap;
+		//HashMap*				m_pObjectMap;
 		MultiMap::Group*		m_pGroup;
 
 		// One element of the data set (current access goes to this element).
 		MultiMap::GroupEntry*	m_pCurrentElement;
 
 		// Creates an Iterator. This can only be done by the Multimap::GetIterator method
-		Iterator( HashMap* _pMap, MultiMap::Group* _pG ) :
-			m_pObjectMap(_pMap), m_pGroup(_pG), m_pCurrentElement(nullptr) {
+		Iterator( /*HashMap* _pMap,*/ MultiMap::Group* _pG ) :
+			/*m_pObjectMap(_pMap),*/ m_pGroup(_pG), m_pCurrentElement(nullptr) {
 		}
 
 		friend class MultiMap;
@@ -203,8 +218,18 @@ public:
 		void* operator&() const {return (void*)m_pCurrentElement->pObjectEntry->qwKey;}
 
 		// Override ++ to navigate (thread safe)
-		// operator-- is not possible - performance issue
-		Iterator& operator++();
+		Iterator& operator++()
+		{
+			std::lock_guard<std::mutex> Guard( m_pGroup->m_Lock );
+
+			// "Unlock" element
+			if( m_pCurrentElement ) --m_pCurrentElement->iRef;
+			m_pCurrentElement = m_pCurrentElement ? m_pCurrentElement->pNext : m_pGroup->m_pFirst;
+			// "Lock" element
+			if( m_pCurrentElement ) ++m_pCurrentElement->iRef;
+
+			return *this;
+		}
 		// Postfix
 		const Iterator operator++(int) { Iterator temp = *this; ++*this; return temp; }
 	};

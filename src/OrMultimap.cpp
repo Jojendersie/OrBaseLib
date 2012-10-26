@@ -14,6 +14,7 @@
 // ******************************************************************************** //
 
 #include <mutex>
+#include <thread>
 
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrADTObjects.h"
@@ -21,32 +22,53 @@
 #include "..\include\OrMultimap.h"
 #include "..\include\OrDebug.h"
 
+
+#define LOCK std::lock_guard<std::mutex> Guard( m_Lock );
+
 // ******************************************************************************** //
 // MULTIMAP::GROUP
 // ******************************************************************************** //
 void OrE::ADT::MultiMap::DeleteGroup( void* _pGroup )	{ delete (OrE::ADT::MultiMap::Group*)( _pGroup ); }
+void OrE::ADT::MultiMap::DeleteObject( void* _pObject )	{ delete (OrE::ADT::MultiMap::GroupIndex*)( _pObject ); }
 
 
 // ******************************************************************************** //
 // Thread safe insert at front O(1)
-void OrE::ADT::MultiMap::Group::Insert( ADTElementP _pObject )
+OrE::ADT::MultiMap::GroupEntry* OrE::ADT::MultiMap::Group::Insert( ADTElementP _pObject )
 {
-	std::lock_guard<std::mutex> Guard( m_Lock );
+	LOCK
 
 	m_iNumEntries++;
 	m_pFirst = new GroupEntry( m_pFirst, _pObject );
+	if( m_pFirst->pNext ) m_pFirst->pNext->pPrev = m_pFirst;
+
+	return m_pFirst;
 }
 
 // ******************************************************************************** //
-/*void OrE::ADT::MultiMap::Group::Delete( GroupEntry* _pPredecessor, GroupEntry* _pObject )
+void OrE::ADT::MultiMap::Group::Delete( GroupEntry* _pObject )
 {
-	if( _pPredecessor ) _pPredecessor->pNext = _pObject->pNext;
-	else m_pFirst = _pObject->pNext;
-	delete _pObject;
+	// Stop if element locked. Do not lock the list until object can be accessed otherwise
+	// the referencing iterator will have a deadlock.
+Begin:
+	while( _pObject->iRef ) std::this_thread::yield();// sleep_for( std::chrono::microseconds( 0 ) );//yield();
 
-	--m_iNumEntries;
-	Assert( m_iNumEntries>=0 );
-}*/
+	{ LOCK
+		// Test if object is really unreferenced - otherwise wait again
+		if( _pObject->iRef )
+			goto Begin;
+
+		// Remove from double linked list
+		if( _pObject->pPrev ) _pObject->pPrev->pNext = _pObject->pNext;
+		else m_pFirst = _pObject->pNext;
+		if( _pObject->pNext ) _pObject->pNext->pPrev = _pObject->pPrev;
+
+		delete _pObject;
+
+		--m_iNumEntries;
+		Assert( m_iNumEntries>=0 );
+	}
+}
 
 // ******************************************************************************** //
 // Helper to check, if a string is nullptr of ""
@@ -59,15 +81,10 @@ inline bool IsDefaultGroup( const char* _pcGroup )	{ return (_pcGroup==nullptr) 
 OrE::ADT::MultiMap::MultiMap( int _iSize ) :
 	m_GroupMap( 16, HashMapMode(HashMapMode::HM_NO_RESIZE | HashMapMode::HM_USE_STRING_MODE) ),
 	m_ObjectMap( _iSize, HashMapMode::HM_PREFER_PERFORMANCE ),
-	m_DefaultGroup( 0 ),
-	m_iNumElements( 0 )
+	m_DefaultGroup( 0 )
 {
-	// Deletion of objects is manual
 	m_GroupMap.SetDeleteCallback( DeleteGroup );
-
-	// Create default group
-	ADTElementP pEl = m_GroupMap.Insert( &m_DefaultGroup, "" );
-	Assert( pEl );
+	m_ObjectMap.SetDeleteCallback( DeleteObject );
 }
 
 // ******************************************************************************** //
@@ -79,61 +96,44 @@ OrE::ADT::MultiMap::~MultiMap()
 }
 
 // ******************************************************************************** //
-// Deferred object deletion. This decrements the reference counter
-// of the object and deletes it if necessary.
-void OrE::ADT::MultiMap::UnrefObj( ADTElementP _pObject )
-{
-	// Last byte == reference counter
-	int iRef = 0xff & (int)_pObject->pObject;
-	if( --iRef <= 0 )
-	{
-		Assert( ((dword)_pObject->pObject)==1 );
-		std::lock_guard<std::mutex> Guard( m_Lock );
-		// Remove object from map.
-		m_ObjectMap.Delete( _pObject );
-	} else
-		// The counter is > 0 -> -1 changes the counter in the least significant bits
-		// but not the flag mask.
-		_pObject->pObject = (byte*)_pObject->pObject - 1;
-}
-
-// ******************************************************************************** //
 // The method to add new objects.
 void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0 )
 {
 	// Break if no group defined
 	if( !_pcGroup0 || _pcGroup0[0]==0 ) return;
 
-	Group* pGroup = nullptr;
+	Group* pGroup0 = nullptr;
 	bool bNew = true;
 	ADTElementP pOE;
 
 	// Since the hash maps are not thread safe lock during insertion
-	{ std::lock_guard<std::mutex> Guard( m_Lock );
-		// Object address = hash, data = flags for all groups (setup later)
-		pOE = m_ObjectMap.Insert( (void*)0, (qword)_pNewObject );
+	{ LOCK
+		// Object address = hash, data = array with pointers to the group entries (setup later)
+		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
 		Assert( pOE );
-		if( pOE->GetRef() == 1 ) ++m_iNumElements;
-		else { pOE->Release(); bNew = false; }		// Reference counter should be as high as the number of referencing groups -> double insertion occured -> ref is 1 too large
+		// Reference counter should be one
+		// -> double insertion occured -> ref is 1 too large
+		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
 		// Register in group
 		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup0 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
 		Assert( pEl );
-		pGroup = (Group*)pEl->pObject;
-	}
+		pGroup0 = (Group*)pEl->pObject;
 
-	// Insert into the group
-	Assert( pGroup );
-	// For each NEW group increase reference counter
-	if( !( (uiptr)pOE->pObject & (1<<pGroup->m_ID) ) )
-	{
-		pOE->AddRef();
-		pGroup->Insert( pOE );
+		// Insert into the group
+		Assert( pGroup0 );
+
+		GroupIndex* pIndex = pOE->pObject ? (GroupIndex*)pOE->pObject : new GroupIndex();
+		pOE->pObject = pIndex;
+		// For each NEW group insert to this group - no double insertion
+		if( !pIndex->pGroupE[pGroup0->m_ID] )
+		{
+			pIndex->pGroupE[pGroup0->m_ID] = pGroup0->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
+		if( bNew ) pIndex->pGroupE[0] = m_DefaultGroup.Insert( pOE );
 	}
-	if( bNew ) m_DefaultGroup.Insert( pOE );
-	// Reset flag word in the object
-	pOE->pObject = (void*)((uiptr)pOE->pObject | (1<<pGroup->m_ID) | 1 );
 }
 
 // ******************************************************************************** //
@@ -148,42 +148,44 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 	ADTElementP pOE;
 
 	// Since the hash maps are not thread safe lock during insertion
-	{ std::lock_guard<std::mutex> Guard( m_Lock );
-		// Object address = hash, data = flags for all groups (setup later)
-		pOE = m_ObjectMap.Insert( (void*)0, (qword)_pNewObject );
+	{ LOCK
+		// Object address = hash, data = array with pointers to the group entries (setup later)
+		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
 		Assert( pOE );
-		if( pOE->GetRef() == 1 ) ++m_iNumElements;
-		else { pOE->Release(); bNew = false; }		// Reference counter should be as high as the number of referencing groups -> double insertion occured -> ref is 1 too large
+		// Reference counter should be one
+		// -> double insertion occured -> ref is 1 too large
+		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
 		// Register in groups
 		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup0 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
 		Assert( pEl );
 		pGroup0 = (Group*)pEl->pObject;
 
 		pEl = m_GroupMap.Search( _pcGroup1 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup1 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup1 );
 		Assert( pEl );
 		pGroup1 = (Group*)pEl->pObject;
-	}
 
-	// Insert into the groups
-	Assert( pGroup0 );
-	Assert( pGroup1 );
-	// For each NEW group increase reference counter
-	if( !( (uiptr)pOE->pObject & (1<<pGroup0->m_ID) ) )
-	{
-		pOE->AddRef();
-		pGroup0->Insert( pOE );
+		// Insert into the groups
+		Assert( pGroup0 );
+		Assert( pGroup1 );
+
+		GroupIndex* pIndex = pOE->pObject ? (GroupIndex*)pOE->pObject : new GroupIndex();
+		pOE->pObject = pIndex;
+		// For each NEW group insert to this group - no double insertion
+		if( !pIndex->pGroupE[pGroup0->m_ID] )
+		{
+			pIndex->pGroupE[pGroup0->m_ID] = pGroup0->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
+		if( !pIndex->pGroupE[pGroup1->m_ID] )
+		{
+			pIndex->pGroupE[pGroup1->m_ID] = pGroup1->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
+		if( bNew ) pIndex->pGroupE[0] = m_DefaultGroup.Insert( pOE );
 	}
-	if( !( (uiptr)pOE->pObject & (1<<pGroup1->m_ID) ) )
-	{
-		pOE->AddRef();
-		pGroup1->Insert( pOE );
-	}
-	if( bNew ) m_DefaultGroup.Insert( pOE );
-	// Reset flag word in the object
-	pOE->pObject = (void*)((uiptr)pOE->pObject | (1<<pGroup0->m_ID) | (1<<pGroup1->m_ID) | 1 );
 }
 
 // ******************************************************************************** //
@@ -199,67 +201,81 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 	ADTElementP pOE;
 
 	// Since the hash maps are not thread safe lock during insertion
-	{ std::lock_guard<std::mutex> Guard( m_Lock );
-		// Object address = hash, data = flags for all groups (setup later)
-		pOE = m_ObjectMap.Insert( (void*)0, (qword)_pNewObject );
+	{ LOCK
+		// Object address = hash, data = array with pointers to the group entries (setup later)
+		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
 		Assert( pOE );
-		if( pOE->GetRef() == 1 ) ++m_iNumElements;
-		else { pOE->Release(); bNew = false; }		// Reference counter should be as high as the number of referencing groups -> double insertion occured -> ref is 1 too large
+		// Reference counter should be one
+		// -> double insertion occured -> ref is 1 too large
+		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
 		// Register in groups
 		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup0 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
 		Assert( pEl );
 		pGroup0 = (Group*)pEl->pObject;
 
 		pEl = m_GroupMap.Search( _pcGroup1 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup1 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup1 );
 		Assert( pEl );
 		pGroup1 = (Group*)pEl->pObject;
 
 		pEl = m_GroupMap.Search( _pcGroup2 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup2 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup2 );
 		Assert( pEl );
 		pGroup2 = (Group*)pEl->pObject;
-	}
 
-	// Insert into the groups
-	Assert( pGroup0 );
-	Assert( pGroup1 );
-	Assert( pGroup2 );
-	// For each NEW group increase reference counter
-	if( !( (uiptr)pOE->pObject & (1<<pGroup0->m_ID) ) )
-	{
-		pOE->AddRef();
-		pGroup0->Insert( pOE );
+		// Insert into the groups
+		Assert( pGroup0 );
+		Assert( pGroup1 );
+		Assert( pGroup2 );
+
+		GroupIndex* pIndex = pOE->pObject ? (GroupIndex*)pOE->pObject : new GroupIndex();
+		pOE->pObject = pIndex;
+		// For each NEW group insert to this group - no double insertion
+		if( !pIndex->pGroupE[pGroup0->m_ID] )
+		{
+			pIndex->pGroupE[pGroup0->m_ID] = pGroup0->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
+		if( !pIndex->pGroupE[pGroup1->m_ID] )
+		{
+			pIndex->pGroupE[pGroup1->m_ID] = pGroup1->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
+		if( !pIndex->pGroupE[pGroup2->m_ID] )
+		{
+			pIndex->pGroupE[pGroup2->m_ID] = pGroup2->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
+		if( bNew ) pIndex->pGroupE[0] = m_DefaultGroup.Insert( pOE );
 	}
-	if( !( (uiptr)pOE->pObject & (1<<pGroup1->m_ID) ) )
-	{
-		pOE->AddRef();
-		pGroup1->Insert( pOE );
-	}
-	if( !( (uiptr)pOE->pObject & (1<<pGroup2->m_ID) ) )
-	{
-		pOE->AddRef();
-		pGroup2->Insert( pOE );
-	}
-	m_DefaultGroup.Insert( pOE );
-	// Reset flag word in the object
-	pOE->pObject = (void*)((uiptr)pOE->pObject | (1<<pGroup0->m_ID) | (1<<pGroup1->m_ID) | (1<<pGroup2->m_ID) | 1 );
 }
 
 // ******************************************************************************** //
-// Remove the object from all groups and from the map O(1). (Deferred)
+// Remove the object from all groups and from the map O(1).
 void OrE::ADT::MultiMap::Remove( void* _pObject )
 {
 	// Test if object is in map and stop if not
-	{ std::lock_guard<std::mutex> Guard( m_Lock );
+	{ LOCK
 		ADTElementP pOE;
 		if( !(pOE=m_ObjectMap.Search( (qword)_pObject )) ) return;
 
-		// Delete all flags == remove from all groups
-		pOE->pObject = 0;
-		--m_iNumElements;
+		// Remove from all groups
+		GroupIndex* pIndex = (GroupIndex*)pOE->pObject;
+		HashMap::Iterator It( &m_GroupMap );
+		while( ++It )
+		{
+			int i = ((Group*)It->pObject)->m_ID;
+			if( pIndex->pGroupE[ i ] )
+			{
+				((Group*)It->pObject)->Delete( pIndex->pGroupE[ i ] );
+				pIndex->pGroupE[ i ] = nullptr;
+			}
+		}
+		// Remove from map
+		m_DefaultGroup.Delete( pIndex->pGroupE[ 0 ] );
+		m_ObjectMap.Delete( pOE );
 	}
 }
 
@@ -273,20 +289,23 @@ void OrE::ADT::MultiMap::Map( void* _pObject, const char* _pcGroup )
 	ADTElementP pOE;
 
 	// Test if object is in map and stop if not
-	{ std::lock_guard<std::mutex> Guard( m_Lock );
+	{ LOCK
 		// Object is not in map
 		if( !(pOE=m_ObjectMap.Search( (qword)_pObject )) ) return;
 
 		ADTElementP pEl = m_GroupMap.Search( _pcGroup );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements() ), _pcGroup );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup );
 		pGroup = (Group*)pEl->pObject;
 	}
 
 	// The object is in map -> apply to new group
 	Assert( pGroup );
-	pGroup->Insert( pOE );
-	// Reset flag word in the object
-	pOE->pObject = (void*)((uiptr)pOE->pObject | (1<<pGroup->m_ID) );
+	GroupIndex* pIndex = (GroupIndex*)(pOE->pObject);
+	if( !pIndex->pGroupE[pGroup->m_ID] )
+	{
+		pIndex->pGroupE[pGroup->m_ID] = pGroup->Insert( pOE );
+		++pIndex->iNumInGroups;
+	}
 }
 
 // ******************************************************************************** //
@@ -295,7 +314,7 @@ void OrE::ADT::MultiMap::Unmap( void* _pObject, const char* _pcGroup )
 {
 	if( IsDefaultGroup( _pcGroup ) ) return;
 
-	{ std::lock_guard<std::mutex> Guard( m_Lock );
+	{ LOCK
 
 		// Search group and element. The group has to be found to get its ID, the
 		// Object to unmap it.
@@ -305,96 +324,47 @@ void OrE::ADT::MultiMap::Unmap( void* _pObject, const char* _pcGroup )
 		ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
 		if( !pOE ) return;
 
-		// Delete flag from Object
-		uiptr uFlags = (uiptr)pOE->pObject & ~(1<<((Group*)pEl->pObject)->m_ID);
-		// If the current group was the last one, remove from default group too
-		if( uFlags == 1 )
+		// Delete from group and from index
+		GroupIndex* pIndex = (GroupIndex*)pOE->pObject;
+		Group* pGroup = (Group*)pEl->pObject;
+		if( pIndex->pGroupE[ pGroup->m_ID ] )
 		{
-			pOE->pObject = (void*)( 0 );
-			--m_iNumElements;
+			pGroup->Delete( pIndex->pGroupE[ pGroup->m_ID ] );
+			pIndex->pGroupE[ pGroup->m_ID ] = nullptr;
+			// If the current group was the last one, remove from default group too
+			if( --pIndex->iNumInGroups == 0 )
+			{
+				// Remove from map
+				m_DefaultGroup.Delete( pIndex->pGroupE[ 0 ] );
+				m_ObjectMap.Delete( pOE );
+			}
 		}
 	}
-
-	// The real unmapping is deferred. It is only done, iff the group iterator passes the
-	// element.
 }
 
 // ******************************************************************************** //
 // Tests if an object is in a group.
 bool OrE::ADT::MultiMap::IsIn( void* _pObject, const char* _pcGroup )
 {
-	std::lock_guard<std::mutex> Guard( m_Lock );
-
+	LOCK
 	// Does object exists?
 	ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
 	// The object could be found if deletion not complete, but requested.
 	// But then the flag word is already 0.
-	if( !pOE || ( (uiptr)pOE->pObject <= 1 ) ) return false;
+	if( !pOE ) return false;
 	// IsIn map general case.
 	if( IsDefaultGroup( _pcGroup ) ) return true;
 
+	int ID;
+	//{ LOCK
 	// Search group to get its ID.
 	ADTElementP pEl = m_GroupMap.Search( _pcGroup );
 	if( !pEl ) return false;
+	ID = ((Group*)pEl->pObject)->m_ID;
+	//}
 
-	// Is the group flag set?
-	uiptr uMask = 1<<((Group*)pEl->pObject)->m_ID;
-	return ((uiptr)pOE->pObject & uMask) == uMask;
-}
-
-
-
-// ******************************************************************************** //
-// Override ++ to navigate
-OrE::ADT::MultiMap::Iterator& OrE::ADT::MultiMap::Iterator::operator++()
-{
-	// ++ sets m_pCurrentElement to the next valid element. If the next element is
-	// not valid it is deleted and the search is repeated. Therefore pNext is temporary
-	// and if 0 it denotes the end of the search.
-	GroupEntry* pNext = nullptr;
-	do
-	{
-		{ std::lock_guard<std::mutex> Guard( m_pGroup->m_Lock );
-		SearchNext:
-			pNext = m_pCurrentElement ? m_pCurrentElement->pNext : m_pGroup->m_pFirst;
-			// Check if the next element has to be removed from the list (deferred deletion)
-			if( !pNext || ((1<<m_pGroup->m_ID) & (uiptr)pNext->pObjectEntry->pObject) )
-			{
-				if( m_pCurrentElement ) --m_pCurrentElement->iRef;
-				m_pCurrentElement = pNext;
-				if( m_pCurrentElement ) ++m_pCurrentElement->iRef;
-				// Leave outer loop
-				pNext = nullptr;
-			} else
-			{
-				// Problem: another iterator could point to that entry before
-				// this one reaches the locked area. -> Look for iRef and jump
-				// deletion - it is done later by an other iterator.
-				if( pNext->iRef )
-				{
-					if( m_pCurrentElement ) --m_pCurrentElement->iRef;
-					m_pCurrentElement = pNext;
-					++m_pCurrentElement->iRef;
-					goto SearchNext;
-				}
-				// Delete now.
-				if( m_pCurrentElement ) m_pCurrentElement->pNext = pNext->pNext;
-				else m_pGroup->m_pFirst = pNext->pNext;
-				// Remove one reference (they were increased for each group)
-				m_pObjectMap->Delete( pNext->pObjectEntry );
-				--m_pGroup->m_iNumEntries;
-				Assert( m_pGroup->m_iNumEntries >= 0 );
-			}
-		}
-
-		// During deletion no lock is necessary, because all links to that entry are
-		// removed. If no deletion is necessary the pNext was set to nullptr.
-		if( pNext ) delete pNext;
-	} while( pNext );
-
-	if( m_pCurrentElement ) Assert( m_pCurrentElement->iRef>0 );
-
-	return *this;
+	// Is the group entry pointer set?
+	return ((GroupIndex*)pOE->pObject)->pGroupE[ ID ] != nullptr;
 }
 
 // ******************************************************************************** //
@@ -403,10 +373,10 @@ OrE::ADT::MultiMap::Iterator& OrE::ADT::MultiMap::Iterator::operator++()
 OrE::ADT::MultiMap::Iterator OrE::ADT::MultiMap::GetIterator( const char* _pcGroup )
 {
 	// nullptr -> default group
-	if( IsDefaultGroup( _pcGroup ) ) return Iterator( &m_ObjectMap, &m_DefaultGroup );
+	if( IsDefaultGroup( _pcGroup ) ) return Iterator( &m_DefaultGroup );
 
 	{ // Lock for group search
-		std::lock_guard<std::mutex> Guard( m_Lock );
+		LOCK
 
 		ADTElementP pEl = m_GroupMap.Search( _pcGroup );
 
@@ -415,6 +385,6 @@ OrE::ADT::MultiMap::Iterator OrE::ADT::MultiMap::GetIterator( const char* _pcGro
 		// handled by the iterator (would slow down iterators, if implemented).
 		Assert( pEl );
 
-		return Iterator( &m_ObjectMap, (Group*)pEl->pObject );
+		return Iterator( (Group*)pEl->pObject );
 	}
 }

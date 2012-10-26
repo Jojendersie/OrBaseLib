@@ -14,7 +14,7 @@
 //																					//
 // ******************************************************************************** //
 // Simple list types to store dynamic datasets.										//
-// The list are double linked.														//
+// The lists are double linked.														//
 //																					//
 //	Insert()					O(1)												//
 //	SetInsert()					O(n)												//
@@ -36,7 +36,7 @@ namespace ADT {
 	// Simple node for all double linked lists
 	class ListNode: public ADTElement
 	{
-		// Make nodes uneditable for all users except the lists. So the lists kann return
+		// Make nodes unchangeable for all users except the lists. So the lists can return
 		// references to non constant nodes without any (large) risk.
 		friend class List;
 
@@ -47,7 +47,7 @@ namespace ADT {
 		ListNode* pLeft;
 		ListNode* pRight;
 
-		ListNode(void* _pObj, const qword& _qwKey):ADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr)	{}
+		ListNode(void* _pObj, const qword& _qwKey) : ADTElement(_pObj, _qwKey), pLeft(nullptr), pRight(nullptr)	{}
 	};
 	typedef ListNode* ListNodeP;
 	typedef ListNode const * ListNodePC;
