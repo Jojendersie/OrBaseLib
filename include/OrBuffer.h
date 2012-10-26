@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -25,9 +25,9 @@
 //	Extend()					O(n)												//
 //																					//
 // Objects with the same key can be added more than one time. You also could set	//
-// the key to zero everytimes.														//
+// the key to zero every times.														//
 //																					//
-// Everything except GetFirst, GetLast, GetNext, GetPrevious are multithread save.	//
+// Everything except GetFirst, GetLast, GetNext, GetPrevious are multi thread save.	//
 // ******************************************************************************** //
 
 #pragma once
@@ -42,7 +42,7 @@ class Buffer
 	int				m_iHeadCursor;			// Pointer to the next "free" element (Head-1==newest instance)
 	int				m_iTailCursor;			// Pointer to the last element (oldest)
 	int				m_iMax;					// Size of the underlying array
-	volatile dword	m_dwSemaphore;			// Locking for multithreads
+	volatile dword	m_dwSemaphore;			// Locking for multi threads
 	void**			m_Buffer;				// The storage array for all elements
 
 	// Prevent copy constructor and operator = being generated.

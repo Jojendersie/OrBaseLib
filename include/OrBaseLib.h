@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -15,6 +15,8 @@
 
 
 #pragma once
+
+#include <mutex>
 
 // Raw Types
 #include "OrTypeDef.h"
@@ -41,6 +43,7 @@
 #include "OrHash.h"
 #include "OrList.h"
 #include "OrSetBuilder.h"
+#include "OrMultiMap.h"
 
 // Algorithms
 #include "OrHuffman.h"

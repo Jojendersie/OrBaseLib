@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -20,7 +20,7 @@
 
 #pragma warning(disable: 4996)
 
-// New callback used by hardware interrupt for access voilation
+// New callback used by hardware interrupt for access violation
 void __AccessVoilationSignalHandler(int signal) { throw "Access Violation!"; }
 
 // Function testing a pointer
@@ -38,7 +38,7 @@ bool IsPointerInvalid(const void* _Pointer)
 	}
 
 	// switch off this exceptions to get the better break, if a
-	// real access voilation occurs.
+	// real access violation occurs.
 	signal( SIGSEGV, nullptr );
 
 	return bRet;
@@ -59,8 +59,8 @@ bool IsPointerInvalid(const void* _Pointer)
 // ******************************************************************************** //
 // PART I the Garbage
 // The garbage objects saves allocation location and the size of the memory.
-// This Object has an design size of 32 bytes (don't realy no if that matters).
-// You can change the acFileName if you want. Per default your filenames (without pathes)
+// This Object has an design size of 32 bytes (don't really no if that matters).
+// You can change the acFileName if you want. Per default your filenames (without paths)
 // should not longer than 23 bytes (truncated). If you change the constant change it
 // in the sprintf as well.
 struct Garbage
@@ -82,7 +82,7 @@ struct Garbage
 	}
 };
 
-// Each memory is identified by its adress (obviously)
+// Each memory is identified by its address (obviously)
 //typedef std::pair<void*, Garbage> PGarbage;
 
 // PART II the collector
@@ -99,7 +99,7 @@ public:
 	// Nothing to do - standard constructor
 	Collector() : Collection(50000, OrE::ADT::HM_PREFER_SIZE) {}
 
-	// Log every unfreed memory
+	// Log every non-freed memory
 	~Collector()
 	{
 		if(!Collection.IsEmpty())
@@ -108,7 +108,7 @@ public:
 			OrE::ADT::Iterator<OrE::ADT::Bucket> It( &Collection );
 			while(++It)
 			{
-				sprintf(acDesc, "Memoryleak detected. Allocation at ['%.23s': %d], %d bytes not freed.\n", ((Garbage*)It->pObject)->acFileName, ((Garbage*)It->pObject)->iLine, ((Garbage*)It->pObject)->iSize);
+				sprintf(acDesc, "Memory leak detected. Allocation at ['%.23s': %d], %d bytes not freed.\n", ((Garbage*)It->pObject)->acFileName, ((Garbage*)It->pObject)->iLine, ((Garbage*)It->pObject)->iSize);
 
 				#ifdef OR_GC_DEBUGOUT
 				OutputDebugString(acDesc);
@@ -116,8 +116,8 @@ public:
 
 
 				// If your program stops here you have a memory leak.
-				// Use your debugger to see which memory is unfreed (content of iterator).
-				// Your program alse breaks because you enabled garbage collection by including
+				// Use your debugger to see which memory is non-freed (content of iterator).
+				// Your program also breaks because you enabled garbage collection by including
 				// the OrDebug.h header. Remove the include if you don't wanna have garbage collection.
 				// If you only wanna have the console or file output uncomment the OR_GC_BREAK in
 				// the header file.
@@ -126,7 +126,7 @@ public:
 				#endif
 			}
 			// The leaks don't matter. We are in the program-dieing-phase were the OS will
-			// remove all remainings.
+			// remove all remaining.
 			Collection.Clear();
 		}
 	}

@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by a comment at	https://github.com/Jojendersie/.	//
@@ -13,7 +13,7 @@
 // For details on this project see: Readme.txt										//
 //																					//
 // ******************************************************************************** //
-// Implmentation of different pseudo-random generators.								//
+// Implementation of different pseudo-random generators.							//
 //																					//
 // ******************************************************************************** //
 
@@ -47,7 +47,7 @@ bool Strneq(const char* p1, const char* p2);
 // Parameter:
 //	_dwFrom - 0-indexed index of first char to copy (inclusive)
 //	_dwTo - 0-indexed index of last char to copy (inclusive)
-//			or 0xffffffff to copy the whole postfix begining in _dwFrom
+//			or 0xffffffff to copy the whole postfix beginning in _dwFrom
 // Returns a 0-terminated string which have to be deleted with free().
 char* Substr(const char* _pcString, const dword _dwFrom, dword _dwTo);
 
@@ -59,6 +59,7 @@ dword Match(const char* _pcStr1, const char* _pcStr2);
 //			0 if str1 equal to str2
 //			1 if str1 lexicographic bigger than str2
 int Strcmpic(const char* _pcStr1, const char* _pcStr2);
+
 
 };
 };

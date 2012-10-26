@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -15,7 +15,7 @@
 // ******************************************************************************** //
 // AVL: balanced binary search tree.												//
 //																					//
-// Type of a binary tree with worstcase costs of O(log n) for each Operation.		//
+// Type of a binary tree with worst case costs of O(log n) for each Operation.		//
 // Idea: The height of the two subtrees of any node differs by at most one.			//
 //																					//
 // Using BinaryTreeNode.iParam to save the height of the subtree.					//
@@ -71,13 +71,15 @@ public:
 	void Clear() override;											// The remove everything method
 
 	int GetHeight()		{return GetHeight( m_pRoot );}
+
+	typedef Iterator<BinaryTreeNode> Iterator;
 };
 
 // ******************************************************************************** //
 // Advanced node for binary trees (containing a double linked list)
 class BinaryTreeLinkedNode: public BinaryTreeNode
 {
-	// Make nodes uneditable for all users except the trees. So the trees kann return
+	// Make nodes non editable for all users except the trees. So the trees can return
 	// references to non constant nodes without any (large) risk.
 	friend class LinkedAVLTree;
 private:
@@ -109,6 +111,8 @@ public:
 
 	BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;			// Fast inorder traverse
 	BinaryTreeLinkedNodeP GetPrevious(ADTElementP _pCurrent) override;		// Fast inorder traverse
+
+	typedef OrE::ADT::Iterator<BinaryTreeLinkedNode> Iterator;
 };
 
 }; // namespace ADT

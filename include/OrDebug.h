@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -13,7 +13,7 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 //									CONTENTS										//
-// Some usefull functions to get debug informations.		 						//
+// Some useful functions to get debug informations.		 							//
 // If you include this header you get an garbage collector for each new in your		//
 // code. This collector does only tests for memory-leaks at program end. You still	//
 // have to write clean code and release your resources. This is just a tool to help	//
@@ -57,7 +57,7 @@ void operator delete[](void* m, const char* pcFile, int iLine);
 // is in the OrDebug.cpp.
 // THIS LINE CAN CAUSES ERRORS IN STDLIB.
 // You have two options: don't use it and write new(__FILE__, __LINE__) manually
-// everywhere or rename the makro.
+// everywhere or rename the macro.
 // OR include this header as the very last one (Or at least after the std-headers).
 #define new new(__FILE__, __LINE__)
 
@@ -75,7 +75,7 @@ void operator delete[](void* m, const char* pcFile, int iLine);
 #define Assert(a) if(!(a)) __debugbreak()
 
 // Complex, slow assertion to check pointer validity.
-// You can use the function to handle bad pointers your own way.
+// You can use the function IsPointerInvalid to handle bad pointers your own way.
 #define AssertPointerValidity(p) if( IsPointerInvalid(p) ) __debugbreak()
 
 // The Assert__ execute A (even in release) and test for non-/equality with Const (debug only)

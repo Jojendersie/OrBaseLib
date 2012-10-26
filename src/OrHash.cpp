@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -281,7 +281,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 	if(m_Mode & HM_USE_STRING_MODE)
 		_qwKey &= 0xffffffff;
 	
-	// Neues Element einsortieren
+	// Sort element into binary tree
 	dword dwHash = _qwKey%m_dwSize;
 	if(m_apBuckets[dwHash])
 	{
@@ -291,14 +291,14 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 #ifdef _DEBUG
 			++m_dwCollsionCounter;
 #endif
-			// Schlüssel vollständig verlgeichen -> Baumsuche
+			// compare key -> tree search
 			if(_qwKey < pBucket->qwKey)
-				if(pBucket->pLeft) pBucket = pBucket->pLeft;	// Traversieren
+				if(pBucket->pLeft) pBucket = pBucket->pLeft;	// traverse
 				else {pBucket->pLeft = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pLeft;}
 			else if(_qwKey > pBucket->qwKey)
-				if(pBucket->pRight) pBucket = pBucket->pRight;	// Traversieren
+				if(pBucket->pRight) pBucket = pBucket->pRight;	// traverse
 				else {pBucket->pRight = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pRight;}
-			else {pBucket->AddRef(); return pBucket;}			// Mehr oder weniger ein Fehler, aber der Datensatz existiert schon (wird überschrieben)
+			else {pBucket->AddRef(); --m_dwCollsionCounter; return pBucket;}			// This data already exists. It is obvious that this element collides with itself.
 		}
 	} else
 	{
@@ -320,6 +320,8 @@ void OrE::ADT::HashMap::Delete(qword _qwKey)
 void OrE::ADT::HashMap::Delete(ADTElementP _pElement)
 {
 	if(!_pElement) return;
+	// Are there more references?
+	if( _pElement->Release() > 0 ) return;
 
 	// Repariere Baum
 	// Wenn _pElement Kinder hat suche nach einer Ersetzung und lösche
@@ -483,7 +485,7 @@ void OrE::ADT::HashMap::Delete(const char* _pcKey)
 // search using strings
 ADTElementP OrE::ADT::HashMap::Search(const char* _pcKey)
 {
-	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
+	if(!(m_Mode & HM_USE_STRING_MODE) || !_pcKey) return nullptr;
 	// Listeneintrag?
 	dword dwHash = OrStringHash(_pcKey)%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];

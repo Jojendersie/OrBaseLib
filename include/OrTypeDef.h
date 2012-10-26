@@ -5,14 +5,14 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
-//	Declaration and predeclarations of all "primitive" types						//
+//	Declarations and predeclarations of all "primitive" types						//
 // ******************************************************************************** //
 
 #pragma once
@@ -43,24 +43,5 @@ class Matrix;
 class Matrix2x3;
 }; // namespace Math
 }; // namespace OrE
-
-// ******************************************************************************** //
-// Atomare Funktion zum Sichern kritischer Bereiche
-/*inline bool OrLock(volatile dword* _pLockVar)
-{
-	__asm mov eax, _pLockVar
-try_enter:
-	__asm
-	{
-        pause							// spin and wait loop: Performance
-		bts     dword ptr[eax], 0		// Bit0 -> CarryFlag, 1 -> Bit0 (Test and Set)
-        jc      try_enter
-	}
-}
-
-__forceinline void OrUnlock(volatile dword* _pLockVar)
-{
-	*_pLockVar = 0;
-}*/
 
 // *************************************EOF**************************************** //

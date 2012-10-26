@@ -70,6 +70,7 @@
     <ClCompile Include="src-test\test_hashmap.cpp" />
     <ClCompile Include="src-test\test_list.cpp" />
     <ClCompile Include="src-test\test_math.cpp" />
+    <ClCompile Include="src-test\test_multimap.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src-test\test.h" />

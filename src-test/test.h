@@ -20,3 +20,6 @@ void test_hashmap();
 
 // Test and benchmark of Math:: functions
 void test_math();
+
+// Test of OrE::ADT::MultiMap
+void test_multimap();

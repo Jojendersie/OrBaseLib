@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -29,7 +29,7 @@ typedef void (*ADTDeleteObjectCallbackP)(void* _pObject);
 class ADTElement
 {
 protected:
-	int iRef;					// Reference counter: how often was this element insertet?
+	int iRef;					// Reference counter: how often was this element inserted?
 
 	// Prevent copy constructor and operator = being generated.
 	ADTElement(const ADTElement&);
@@ -39,12 +39,12 @@ public:
 	void* pObject;				// Stored data
 
 	// Constructor: assure consistent state
-	// Input: _pObj - A reference to the data or the data itself (32 Bit convered to the pointer)
+	// Input: _pObj - A reference to the data or the data itself (32 Bit converted to the pointer)
 	//			This isn't touched by any algorithm.
-	//		_qwKey - 64 Bit key which can be choosen arbitary by the user.
+	//		_qwKey - 64 Bit key which can be chosen arbitrary by the user.
 	//			The key is used to create an ordering and to find data. It can be
 	//			manipulated and sometimes have an other behavior. For details look
-	//			at the specified data structur.
+	//			at the specified data structure.
 	ADTElement(void* _pObj, const qword& _qwKey):pObject(_pObj), iRef(1), qwKey(_qwKey) {}
 
 	virtual ~ADTElement()		{}
@@ -52,6 +52,7 @@ public:
 	// Reference handling to determine correct point of destruction time
 	void AddRef()	{++iRef;}
 	int Release()	{return --iRef;}
+	int GetRef()	{return iRef;}
 };
 typedef ADTElement* ADTElementP;
 
@@ -64,14 +65,14 @@ protected:
 	// Delete and Destroy events.
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
 
-	// Save number of contained elments
+	// Save number of contained elements
 	int m_iNumElements;
 
 	// Prevent copy constructor and operator = being generated.
 	ADT(const ADT&);
 	const ADT& operator = (const ADT&);
 public:
-	ADT():m_pDeleteCallback(nullptr), m_iNumElements(0)	{}							// Creates a consistent ADT object
+	ADT():m_pDeleteCallback(nullptr), m_iNumElements(0)	{}			// Creates a consistent ADT object
 	virtual ~ADT()						{}
 	virtual ADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
 	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
@@ -79,8 +80,8 @@ public:
 	virtual ADTElementP Search(qword _qwKey) = 0;					// Standard search with a key
 	virtual void Clear() = 0;										// The remove everything method
 
-	// Navigation on the structur. The order depends on the specified
-	// structur but there should always be the possibility to access
+	// Navigation on the structure. The order depends on the specified
+	// structure but there should always be the possibility to access
 	// the whole data by traversing.
 	virtual ADTElementP GetFirst() = 0;
 	virtual ADTElementP GetLast() = 0;
@@ -103,30 +104,30 @@ typedef ADT* ADTP;
 //		Iterator<BinaryTreeNode> It(&MyAVLTree);
 //		while(--It) or while(++It)
 //			std::cout << It->qwKey << "\n";
-// The Iterator can be used multiple times in a row. So everytime it returns 0 it
-// will be in the initialisation state afterwards.
+// The Iterator can be used multiple times in a row. So every time it returns 0 it
+// will be in the initialization state afterwards.
 // So:	while(++It) doSth()
 //		while(++It) doSth2()	is possible without creating a new operator.
-// The multithread behavior is undefined. Instances can be shown or not even if they
+// The multi thread behavior is undefined. Instances can be shown or not even if they
 // are created/destroyed during the run of the iterator.
 // So:	while(++It) MyAVLTree.Add(Sth) can run endless or not depending on the underlying
-//		data structur.
+//		data structure.
 template <typename Type> class Iterator
 {
 private:
-	ADTP		m_pADT;					// The initialy set ADT (~data set) where we want to traverse.
-	ADTElementP	m_pCurrentElement;		// One element of the data set (current acces goes to this element)
-//	friend class Iterator;
+	ADTP		m_pADT;					// The initially set ADT (~data set) where we want to traverse.
+	ADTElementP	m_pCurrentElement;		// One element of the data set (current access goes to this element)
+
 public:
-	// Creates an Iterator for an arbitary ADT Object and set it to initial
-	// empty state. An ++, --, SeekTo... is always nessecary to determine the
+	// Creates an Iterator for an arbitrary ADT Object and set it to initial
+	// empty state. An ++, --, SeekTo... is always necessary to determine the
 	// start point of traversation.
 	Iterator(ADTP _pADT) {
 		m_pADT = _pADT;
 		m_pCurrentElement = nullptr;
 	}
 
-	// Jumps to the first or the last element defined by the data structur.
+	// Jumps to the first or the last element defined by the data structure.
 	// Iterator<BinaryTreeNode> It(&MyAVLTree);
 	//	It->...				// access would cause an error
 	//	It.SeekToBegin();	// ++It and It++ would have the same effect here
@@ -137,12 +138,14 @@ public:
 	// Override boolean operator that if(Iterator) can be asked
 	operator bool () const {return m_pCurrentElement != 0;}
 
-	// Override implicit convertion to the element type
+	// Override implicit conversion to the element type
 	operator Type* () const {return (Type*)m_pCurrentElement;}
 
-	// Casting operators
+	// Comparison operators
 	bool operator==(const Iterator& T) const {return m_pCurrentElement == T.m_pCurrentElement;}
 	bool operator!=(const Iterator& T) const {return m_pCurrentElement != T.m_pCurrentElement;}
+
+	// Casting operators
 	Type& operator*() const {return *(Type*)m_pCurrentElement;}
 	Type* operator->() const {return (Type*)m_pCurrentElement;}
 	Type* operator&() const {return (Type*)m_pCurrentElement;}

@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 // Content: Testing of the class OrE::ADT::Hashmap. Tested are all different		//
-//	Modi.
+//	modi.																			//
 //																					//
 // ******************************************************************************** //
 
@@ -62,6 +62,7 @@ char* TEST_STRINGS[] = {"der", "die", "und", "in", "den", "von", "zu", "das", "m
 "amerikanische", "sah", "gesamten", "einst", "verwendet", "vorbei", "Behörden", "helfen", "Folgen", "bezeichnet", "Weil", "Ihnen", "zur Zeit", "voll", "deutscher", "Worten", "plötzlich", "müßte", "Vertrag", "Staatsanwaltschaft",
 "Monat", "Oder", "Herbst", "Israel", "zahlen", "Zeitung", "Grenzen", "Wissenschaftler", "Partner", "Patienten", "nutzen", "Bund", "setzte", "Betrieb"};
 
+// ******************************************************************************** //
 void test_hashmap()
 {
 	// Test all modi. Compare collisions and total time for insertions and searches.
@@ -74,20 +75,20 @@ void test_hashmap()
 	OrE::ADT::HashMap MyHM4( 128, OrE::ADT::HashMapMode::HM_PREFER_PERFORMANCE );
 	
 	std::cout << "******** Start test OrE::ADT::Hashmap ********\n";
-	std::cout << "\tAll test uses hashmaps with the initial size of 128 elments\n";
+	std::cout << "\tAll test uses hash maps with the initial size of 128 elements\n";
 
 	test_hminteger( MyHM1, "NO_RESIZE" );
 	test_hminteger( MyHM2, "PREFER_SIZE" );
 	test_hminteger( MyHM3, "RESIZE_MODERATE" );
 	test_hminteger( MyHM4, "PREFER_PERFORMANCE" );
 
-	// Second test with the 1024 mostly used german words.
+	// Second test with the 1024 mostly used German words.
 	OrE::ADT::HashMap MySHM1( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_NO_RESIZE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
 	OrE::ADT::HashMap MySHM2( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_PREFER_SIZE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
 	OrE::ADT::HashMap MySHM3( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_RESIZE_MODERATE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
 	OrE::ADT::HashMap MySHM4( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_PREFER_PERFORMANCE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
 
-	std::cout << "\tThe following tests use the STRING_MODE.\n\tThe testdata is a list of the 1024 mostly used german words.\n";
+	std::cout << "\tThe following tests use the STRING_MODE.\n\tThe test data is a list of the 1024 mostly used German words.\n";
 	test_hmstring( MySHM1, "NO_RESIZE" );
 	test_hmstring( MySHM2, "PREFER_SIZE" );
 	test_hmstring( MySHM3, "RESIZE_MODERATE" );
@@ -96,18 +97,20 @@ void test_hashmap()
 	std::cout << '\n';
 }
 
+
+// ******************************************************************************** //
 void test_hminteger( OrE::ADT::HashMap& _HM, const char* _pcMode )
 {
 	OrE::Utils::TimeQuerySlot Time0;
 
-	// Add primitive data (intergers) to the map
+	// Add primitive data (integers) to the map
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<10000; ++i )
 		_HM.Insert( (void*)OrE::Algorithm::Rand(0,1000), i );
 
 	std::cout << '\t' << _pcMode << " - 10000 insertions: " << OrE::Utils::TimeQuery( Time0 ) << " s\n";
 #ifdef _DEBUG
-	std::cout << "\t\t- " << (_HM.m_dwCollsionCounter/10000.0f) << " Collsions/Insertion" <<  '\n';
+	std::cout << "\t\t- " << (_HM.m_dwCollsionCounter/10000.0f) << " Collisions/Insertion" <<  '\n';
 #endif
 
 	// Time reset
@@ -137,25 +140,27 @@ void test_hminteger( OrE::ADT::HashMap& _HM, const char* _pcMode )
 	_HM.Clear();
 }
 
+
+// ******************************************************************************** //
 void test_hmstring( OrE::ADT::HashMap& _HM, const char* _pcMode )
 {
 	OrE::Utils::TimeQuerySlot Time0;
 
-	// Add primitive data (intergers) to the map, use string keys
+	// Add primitive data (integers) to the map, use string keys
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<1024; ++i )
 		_HM.Insert( (void*)OrE::Algorithm::Rand(0,1000), TEST_STRINGS[i] );
 
 	std::cout << '\t' << _pcMode << " - 1024 insertions: " << OrE::Utils::TimeQuery( Time0 ) << " s\n";
 #ifdef _DEBUG
-	std::cout << "\t\t- " << (_HM.m_dwCollsionCounter/1024.0f) << " Collsions/Insertion" <<  '\n';
+	std::cout << "\t\t- " << (_HM.m_dwCollsionCounter/1024.0f) << " Collisions/Insertion" <<  '\n';
 #endif
 
 	// Time reset
 	OrE::Utils::TimeQuery( Time0 );
 
 	// Iterate over all 1024 elements and change data
-	OrE::ADT::Iterator<OrE::ADT::ADTElement> It(&_HM);
+	OrE::ADT::HashMap::Iterator It(&_HM);
 	while(++It) {
 		It->pObject = (void*)((int)It->pObject + 500);
 	}

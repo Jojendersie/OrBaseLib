@@ -28,7 +28,7 @@ void test_avl()
 	std::cout << "\tTree height: " << MyAVL.GetHeight() << '\n';
 
 	// Iterate over all 10000 elements and change data
-	OrE::ADT::Iterator<OrE::ADT::BinaryTreeNode> It(&MyAVL);
+	OrE::ADT::AVLTree::Iterator It(&MyAVL);
 	while(++It) {
 		It->pObject = (void*)((int)It->pObject + 500);
 		OrE::ADT::BinaryTreeNode* pNode = It;
@@ -68,7 +68,7 @@ void test_avl()
 	
 	std::cout << "******** Start test OrE::ADT::LinkedAVLTree ********\n";
 
-	// Add primitive data (intergers) to the list
+	// Add primitive data (integers) to the list
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<10000; ++i )
 		MyLAVL.Insert( (void*)OrE::Algorithm::Rand(0,1000), i );
@@ -77,7 +77,7 @@ void test_avl()
 	std::cout << "\tTree height: " << MyLAVL.GetHeight() << '\n';
 
 	// Iterate over all 10000 elements and change data
-	OrE::ADT::Iterator<OrE::ADT::BinaryTreeLinkedNode> It2(&MyLAVL);
+	OrE::ADT::LinkedAVLTree::Iterator It2(&MyLAVL);
 	while(++It2) It2->pObject = (void*)((int)It2->pObject + 500);
 
 	std::cout << "\tTime to iterate over all 10000 elements: " << OrE::Utils::TimeQuery( Time0 ) << '\n';

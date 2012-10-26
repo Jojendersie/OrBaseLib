@@ -18,7 +18,7 @@ void test_list()
 	
 	std::cout << "******** Start test OrE::ADT::List ********\n";
 
-	// Add primitive data (intergers) to the list
+	// Add primitive data (integers) to the list
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<10000; ++i )
 		MyList.Insert( (void*)OrE::Algorithm::Rand(0,1000), i );
@@ -46,12 +46,12 @@ void test_list()
 	MyList.Clear();
 	std::cout << "\tTime to remove everything else with Clear(): " << OrE::Utils::TimeQuery( Time0 ) << '\n';
 
-	// Add primitive data (intergers) to the list
+	// Add primitive data (integers) to the list
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<10000; ++i )
 		MyList.SetInsert( (void*)OrE::Algorithm::Rand(0,1000), i );
 
-	std::cout << "\tTime for 10000 SetInsert (Insertionsort Worst Case) " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 10000 SetInsert (Insertion sort Worst Case) " << OrE::Utils::TimeQuery( Time0 ) << '\n';
 
 	std::cout << '\n';
 }

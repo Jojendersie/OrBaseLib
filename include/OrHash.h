@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -82,7 +82,7 @@ enum HashMapMode
 };
 
 // ******************************************************************************** //
-// The buckets are a very simple binary trees without any optimation.
+// The buckets are a very simple binary trees without any optimization.
 class Bucket: public ADTElement
 {
 	Bucket(void* _pObj, const qword& _qwKey, Bucket* _pParent) :
@@ -104,7 +104,7 @@ private:
 typedef Bucket* BucketP;
 
 // ******************************************************************************** //
-// The hash map is a structur to store and find data in nearly constant time (stochasticly).
+// The hash map is a structure to store and find data in nearly constant time (stochastically).
 class HashMap: public ADT
 {
 private:
@@ -129,11 +129,11 @@ public:
 	// Remove everything
 	void Clear();
 
-	// Recreate the table and readd all elements
+	// Recreate the table and reinsert all elements
 	void Resize(const dword _dwSize);
 
 	// Standard operation insert; If already existing, the object is NOT overwritten,
-	// but referenccounter is increased.
+	// but reference counter is increased.
 	ADTElementP Insert(void* _pObject, qword _qwKey) override;
 
 	// Standard operation delete
@@ -147,7 +147,7 @@ public:
 
 	// String-Mode functions
 	// insert using strings; If already existing, the object is NOT overwritten,
-	// but referenccounter is increased
+	// but reference counter is increased
 	ADTElementP Insert(void* _pObject, const char* _pcKey);
 
 	// Standard operation delete for strings
@@ -156,15 +156,21 @@ public:
 	// search using strings
 	ADTElementP Search(const char* _pcKey);
 
-	// The overall first object from the frist non-empty bucket
+	// The overall first object from the first non-empty bucket
 	ADTElementP GetFirst() override;
 	ADTElementP GetLast() override;
 	ADTElementP GetNext(ADTElementP _pCurrent) override;
 	ADTElementP GetPrevious(ADTElementP _pCurrent) override;
 
 	bool IsEmpty()			{return m_dwNumElements==0;}
+
+	// Objects/elements in the hash map. Not its capacity.
 	dword GetNumElements()	{return m_dwNumElements;}
+
+	// Size of table array. This is not the number of elements (GetNumElements).
 	dword GetSize()			{return m_dwSize;}
+
+	typedef Iterator<ADTElement> Iterator;
 
 #ifdef _DEBUG
 	dword m_dwCollsionCounter;

@@ -5,7 +5,7 @@
 //																					//
 // Author: Johannes Jendersie														//
 //																					//
-// Here is a quiete easy licensing as open source:									//
+// Here is a quite easy licensing as open source:									//
 // http://creativecommons.org/licenses/by/3.0/										//
 // If you use parts of this project, please let me know what the purpose of your	//
 // project is. You can do this by writing a comment at github.com/Jojendersie/.		//
@@ -320,7 +320,7 @@ inline	Matrix	MatrixRotation(const Vec3& v)		{return MatrixRotation(v.x, v.y, v.
 		Matrix	MatrixMirror(const Plane& p);																													// Eine Spiegelmatrix an gegebener Ebene berechnen
 		bool	MatrixSolveEquation(Matrix _A, Vec4* _pV_X);																									// Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
 		Matrix	MatrixOrthonormal(const Vec3& vNormal);
-		Matrix	MatrixTransvection(const Vec3& v);																											// Scherungsmatrix berechnen TODO
+		Matrix	MatrixTransvection(const Vec3& v);																											// TODO: Scherungsmatrix berechnen
 
 
 // ******************************************************************************** //
