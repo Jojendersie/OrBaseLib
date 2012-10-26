@@ -119,6 +119,7 @@ private:
 	// A mutex to lock whole MultiMap, if changing one of the two hash maps.
 	// TODO: make hash map itself thread safe
 	std::mutex m_Lock;
+	std::mutex m_LockGroupMap;
 
 	// Deferred object deletion. This decrements the reference counter
 	// of the object and deletes it if necessary.

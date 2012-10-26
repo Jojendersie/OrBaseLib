@@ -79,7 +79,7 @@ inline bool IsDefaultGroup( const char* _pcGroup )	{ return (_pcGroup==nullptr) 
 // ******************************************************************************** //
 // Constructor creates an empty map of a chosen size.
 OrE::ADT::MultiMap::MultiMap( int _iSize ) :
-	m_GroupMap( 16, HashMapMode(HashMapMode::HM_NO_RESIZE | HashMapMode::HM_USE_STRING_MODE) ),
+	m_GroupMap( 23, HashMapMode(HashMapMode::HM_NO_RESIZE | HashMapMode::HM_USE_STRING_MODE) ),
 	m_ObjectMap( _iSize, HashMapMode::HM_PREFER_PERFORMANCE ),
 	m_DefaultGroup( 0 )
 {
@@ -102,9 +102,19 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0 )
 	// Break if no group defined
 	if( !_pcGroup0 || _pcGroup0[0]==0 ) return;
 
-	Group* pGroup0 = nullptr;
+	Group* pGroup0;
 	bool bNew = true;
 	ADTElementP pOE;
+
+	// Since groups can only be added the reference+ID is persistent
+	{ std::lock_guard<std::mutex> Lock( m_LockGroupMap );
+		// Search group to get its ID.
+		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
+		Assert( pEl );
+		pGroup0 = (Group*)pEl->pObject;
+		Assert( pGroup0 );
+	}
 
 	// Since the hash maps are not thread safe lock during insertion
 	{ LOCK
@@ -115,15 +125,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0 )
 		// -> double insertion occured -> ref is 1 too large
 		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
-		// Register in group
-		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
-		Assert( pEl );
-		pGroup0 = (Group*)pEl->pObject;
-
 		// Insert into the group
-		Assert( pGroup0 );
-
 		GroupIndex* pIndex = pOE->pObject ? (GroupIndex*)pOE->pObject : new GroupIndex();
 		pOE->pObject = pIndex;
 		// For each NEW group insert to this group - no double insertion
@@ -142,10 +144,26 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 	// Break if no group defined
 	if( !_pcGroup0 || _pcGroup0[0]==0 ) return;
 
-	Group* pGroup0 = nullptr;
-	Group* pGroup1 = nullptr;
+	Group* pGroup0;
+	Group* pGroup1;
 	bool bNew = true;
 	ADTElementP pOE;
+
+	// Since groups can only be added the reference+ID is persistent
+	{ std::lock_guard<std::mutex> Lock( m_LockGroupMap );
+		// Search group to get its ID.
+		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
+		Assert( pEl );
+		pGroup0 = (Group*)pEl->pObject;
+		Assert( pGroup0 );
+
+		pEl = m_GroupMap.Search( _pcGroup1 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup1 );
+		Assert( pEl );
+		pGroup1 = (Group*)pEl->pObject;
+		Assert( pGroup1 );
+	}
 
 	// Since the hash maps are not thread safe lock during insertion
 	{ LOCK
@@ -156,21 +174,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 		// -> double insertion occured -> ref is 1 too large
 		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
-		// Register in groups
-		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
-		Assert( pEl );
-		pGroup0 = (Group*)pEl->pObject;
-
-		pEl = m_GroupMap.Search( _pcGroup1 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup1 );
-		Assert( pEl );
-		pGroup1 = (Group*)pEl->pObject;
-
 		// Insert into the groups
-		Assert( pGroup0 );
-		Assert( pGroup1 );
-
 		GroupIndex* pIndex = pOE->pObject ? (GroupIndex*)pOE->pObject : new GroupIndex();
 		pOE->pObject = pIndex;
 		// For each NEW group insert to this group - no double insertion
@@ -194,11 +198,33 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 	// Break if no group defined
 	if( !_pcGroup0 || _pcGroup0[0]==0 ) return;
 
-	Group* pGroup0 = nullptr;
-	Group* pGroup1 = nullptr;
-	Group* pGroup2 = nullptr;
+	Group* pGroup0;
+	Group* pGroup1;
+	Group* pGroup2;
 	bool bNew = true;
 	ADTElementP pOE;
+
+	// Since groups can only be added the reference+ID is persistent
+	{ std::lock_guard<std::mutex> Lock( m_LockGroupMap );
+		// Search group to get its ID.
+		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
+		Assert( pEl );
+		pGroup0 = (Group*)pEl->pObject;
+		Assert( pGroup0 );
+
+		pEl = m_GroupMap.Search( _pcGroup1 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup1 );
+		Assert( pEl );
+		pGroup1 = (Group*)pEl->pObject;
+		Assert( pGroup1 );
+
+		pEl = m_GroupMap.Search( _pcGroup2 );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup2 );
+		Assert( pEl );
+		pGroup2 = (Group*)pEl->pObject;
+		Assert( pGroup2 );
+	}
 
 	// Since the hash maps are not thread safe lock during insertion
 	{ LOCK
@@ -209,27 +235,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 		// -> double insertion occured -> ref is 1 too large
 		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
-		// Register in groups
-		ADTElementP pEl = m_GroupMap.Search( _pcGroup0 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup0 );
-		Assert( pEl );
-		pGroup0 = (Group*)pEl->pObject;
-
-		pEl = m_GroupMap.Search( _pcGroup1 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup1 );
-		Assert( pEl );
-		pGroup1 = (Group*)pEl->pObject;
-
-		pEl = m_GroupMap.Search( _pcGroup2 );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup2 );
-		Assert( pEl );
-		pGroup2 = (Group*)pEl->pObject;
-
 		// Insert into the groups
-		Assert( pGroup0 );
-		Assert( pGroup1 );
-		Assert( pGroup2 );
-
 		GroupIndex* pIndex = pOE->pObject ? (GroupIndex*)pOE->pObject : new GroupIndex();
 		pOE->pObject = pIndex;
 		// For each NEW group insert to this group - no double insertion
@@ -285,26 +291,31 @@ void OrE::ADT::MultiMap::Map( void* _pObject, const char* _pcGroup )
 {
 	if( IsDefaultGroup( _pcGroup ) ) return;
 
-	Group* pGroup = nullptr;
 	ADTElementP pOE;
+
+	// Search group to get its ID and to call insert
+	Group* pGroup;
+	// Since groups can only be added the reference+ID is persistent
+	{ std::lock_guard<std::mutex> Lock( m_LockGroupMap );
+		// Search group to get its ID.
+		ADTElementP pEl = m_GroupMap.Search( _pcGroup );
+		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup );
+		pGroup = (Group*)pEl->pObject;
+	}
+	Assert( pGroup );
 
 	// Test if object is in map and stop if not
 	{ LOCK
 		// Object is not in map
 		if( !(pOE=m_ObjectMap.Search( (qword)_pObject )) ) return;
 
-		ADTElementP pEl = m_GroupMap.Search( _pcGroup );
-		if( !pEl ) pEl = m_GroupMap.Insert( new Group( m_GroupMap.GetNumElements()+1 ), _pcGroup );
-		pGroup = (Group*)pEl->pObject;
-	}
-
-	// The object is in map -> apply to new group
-	Assert( pGroup );
-	GroupIndex* pIndex = (GroupIndex*)(pOE->pObject);
-	if( !pIndex->pGroupE[pGroup->m_ID] )
-	{
-		pIndex->pGroupE[pGroup->m_ID] = pGroup->Insert( pOE );
-		++pIndex->iNumInGroups;
+		// The object is in map -> apply to new group
+		GroupIndex* pIndex = (GroupIndex*)(pOE->pObject);
+		if( !pIndex->pGroupE[pGroup->m_ID] )
+		{
+			pIndex->pGroupE[pGroup->m_ID] = pGroup->Insert( pOE );
+			++pIndex->iNumInGroups;
+		}
 	}
 }
 
@@ -314,19 +325,23 @@ void OrE::ADT::MultiMap::Unmap( void* _pObject, const char* _pcGroup )
 {
 	if( IsDefaultGroup( _pcGroup ) ) return;
 
-	{ LOCK
-
-		// Search group and element. The group has to be found to get its ID, the
-		// Object to unmap it.
+	// Search group to get its ID and to call delete
+	Group* pGroup;
+	// Since groups can only be added the reference+ID is persistent
+	{ std::lock_guard<std::mutex> Lock( m_LockGroupMap );
+		// Search group to get its ID.
 		ADTElementP pEl = m_GroupMap.Search( _pcGroup );
-		if( !pEl ) return;
+		if( !pEl ) return;	// Group does not exist
+		pGroup = (Group*)pEl->pObject;
+	}
 
+	{ LOCK
+		// Search element.
 		ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
 		if( !pOE ) return;
 
 		// Delete from group and from index
 		GroupIndex* pIndex = (GroupIndex*)pOE->pObject;
-		Group* pGroup = (Group*)pEl->pObject;
 		if( pIndex->pGroupE[ pGroup->m_ID ] )
 		{
 			pGroup->Delete( pIndex->pGroupE[ pGroup->m_ID ] );
@@ -346,25 +361,32 @@ void OrE::ADT::MultiMap::Unmap( void* _pObject, const char* _pcGroup )
 // Tests if an object is in a group.
 bool OrE::ADT::MultiMap::IsIn( void* _pObject, const char* _pcGroup )
 {
-	LOCK
-	// Does object exists?
-	ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
-	// The object could be found if deletion not complete, but requested.
-	// But then the flag word is already 0.
-	if( !pOE ) return false;
 	// IsIn map general case.
-	if( IsDefaultGroup( _pcGroup ) ) return true;
+	if( IsDefaultGroup( _pcGroup ) )
+	{
+		LOCK
+		return m_ObjectMap.Search( (qword)_pObject ) != nullptr;
+	} else {
+		int ID;
+		// Since groups can only be added the index is persistent
+		{ std::lock_guard<std::mutex> Lock( m_LockGroupMap );
+			// Search group to get its ID.
+			ADTElementP pEl = m_GroupMap.Search( _pcGroup );
+			if( !pEl ) return false;	// Group does not exist
+			ID = ((Group*)pEl->pObject)->m_ID;
+		}
 
-	int ID;
-	//{ LOCK
-	// Search group to get its ID.
-	ADTElementP pEl = m_GroupMap.Search( _pcGroup );
-	if( !pEl ) return false;
-	ID = ((Group*)pEl->pObject)->m_ID;
-	//}
+		{ LOCK
+			// Does object exists?
+			ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
+			// The object can be found but not in group.
+			// Easy case: not found.
+			if( !pOE ) return false;
 
-	// Is the group entry pointer set?
-	return ((GroupIndex*)pOE->pObject)->pGroupE[ ID ] != nullptr;
+			// Is the group entry pointer set?
+			return ((GroupIndex*)pOE->pObject)->pGroupE[ ID ] != nullptr;
+		}
+	}
 }
 
 // ******************************************************************************** //
