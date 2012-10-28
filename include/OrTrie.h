@@ -24,9 +24,9 @@ struct TrieNode
 private:
 	TrieNode*				pNext;
 	TrieNode*				pChild;
-	char*					pSubString;		// Knotenbeschriftung
+	char*					pSubString;		// Node label
 public:
-	void*					pData;			// Beliebige Daten
+	void*					pData;			// Arbitrary data
 	const char* GetSubString() const {return pSubString;}
 	friend class Trie;
 };
@@ -36,7 +36,7 @@ typedef TrieNode* TrieNodeP;
 class Trie
 {
 private:
-	// Oberster Knoten mit der leeren Zeichenkette
+	// Top node with empty string as label
 	TrieNodeP	m_pFirstNode;
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
 
@@ -44,7 +44,7 @@ private:
 	Trie(const Trie&);
 	const Trie& operator = (const Trie&);
 public:
-	// Konstruktor
+	// Constructor
 	Trie(): m_pDeleteCallback(0),m_pFirstNode(0)	{}
 
 
@@ -107,7 +107,7 @@ public:
 	//	After return the pointer points to the remaining name, which doesn't			//
 	//	match. Then there was only an existing string labeled with the					//
 	//	prefix of the name.																//
-	//	If there is absolutly no match, it would be the original pointer.				//
+	//	If there is absolutely no match, it would be the original pointer.				//
 	// Return: The found node or 0 if there is no such function.						//
 	// Note: Case sensitive!															//
 	// ******************************************************************************** //
@@ -123,7 +123,7 @@ public:
 	// Bemerkung: Groﬂ-/Kleinschreibung wird beachtet!									//
 	//																					//
 	// EN																				//
-	// Object: Delete all nodes which are only created throug add _pcName.				//
+	// Object: Delete all nodes which are only created through add _pcName.				//
 	// Parameter:																		//
 	//	[in] _pcName - A Pointer to the name we are searching for.						//
 	// Note: Case sensitive!															//
@@ -161,7 +161,7 @@ public:
 	// EN																				//
 	// Object: Release all memory. The result is an empty Trie like to					//
 	//	begin.																			//
-	//	It is a recursiv process.														//
+	//	It is a recursive process.														//
 	// Parameter:																		//
 	//	[in] _pNode - The current node to delete. Is set by recursion.					//
 	//	Don't declare this parameter. Correct use: ReleaseTrie();						//
@@ -177,7 +177,7 @@ public:
 // ******************************************************************************** //
 // Binary data string trie.
 
-// String class to reprsent binary strings containing 0 and other chars.
+// String class representing binary strings containing 0 and other chars.
 /*class TrieString
 {
 private:
@@ -192,11 +192,11 @@ public:
 	virtual ~TrieString();
 
 	// ******************************************************************************** //
-	// Auxiliary function to create a copy of a subsrting.
+	// Auxiliary function to create a copy of a substring.
 	// Parameter:
-	//	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
-	//	_dwTo - 0-indexed imdex of last char to copy (inclusive)
-	//			or 0xffffffff to copy the whole postfix begining in _dwFrom
+	//	_dwFrom - 0-indexed index of first char to copy (inclusive)
+	//	_dwTo - 0-indexed index of last char to copy (inclusive)
+	//			or 0xffffffff to copy the whole postfix beginning in _dwFrom
 	TrieString* substr(const dword _dwFrom, dword _dwTo) const;
 
 	// ******************************************************************************** //
@@ -209,9 +209,9 @@ struct TrieNode
 {
 	TrieNode*				pNext;
 	TrieNode*				pChild;
-	TrieString*				pSubString;		// Knotenbeschriftung
+	TrieString*				pSubString;		// Node label
 
-	void*					pData;			// Beliebige Daten
+	void*					pData;			// Arbitrary data
 };
 typedef TrieNode* TrieNodeP;
 
@@ -219,11 +219,11 @@ typedef TrieNode* TrieNodeP;
 class Trie
 {
 private:
-	// Oberster Knoten mit der leeren Zeichenkette
+	// Top node with empty string as label
 	TrieNodeP	m_pFirstNode;
 	ADTDeleteObjectCallbackP m_pDeleteCallback;
 public:
-	// Konstruktor
+	// Constructor
 	Trie(): m_pDeleteCallback(0),m_pFirstNode(0)	{}
 
 
@@ -286,7 +286,7 @@ public:
 	//	After return the pointer points to the remaining name, which doesn't			//
 	//	match. Then there was only an existing string labeled with the					//
 	//	prefix of the name.																//
-	//	If there is absolutly no match, it would be the original pointer.				//
+	//	If there is absolutely no match, it would be the original pointer.				//
 	// Return: The found node or 0 if there is no such function.						//
 	// Note: Case sensitive!															//
 	// ******************************************************************************** //
@@ -340,7 +340,7 @@ public:
 	// EN																				//
 	// Object: Release all memory. The result is an empty Trie like to					//
 	//	begin.																			//
-	//	It is a recursiv process.														//
+	//	It is a recursive process.														//
 	// Parameter:																		//
 	//	[in] _pNode - The current node to delete. Is set by recursion.					//
 	//	Don't declare this parameter. Correct use: ReleaseTrie();						//

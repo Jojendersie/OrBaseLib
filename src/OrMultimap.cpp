@@ -122,7 +122,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0 )
 		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
 		Assert( pOE );
 		// Reference counter should be one
-		// -> double insertion occured -> ref is 1 too large
+		// -> double insertion occurred -> ref is 1 too large
 		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
 		// Insert into the group
@@ -171,7 +171,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
 		Assert( pOE );
 		// Reference counter should be one
-		// -> double insertion occured -> ref is 1 too large
+		// -> double insertion occurred -> ref is 1 too large
 		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
 		// Insert into the groups
@@ -232,7 +232,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
 		Assert( pOE );
 		// Reference counter should be one
-		// -> double insertion occured -> ref is 1 too large
+		// -> double insertion occurred -> ref is 1 too large
 		if( pOE->pObject ) { pOE->Release(); bNew = false; }
 
 		// Insert into the groups

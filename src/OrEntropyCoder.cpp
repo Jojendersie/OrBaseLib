@@ -107,7 +107,7 @@ bool OrE::Algorithm::BitBufferStream::GetBits(dword& _dwBits, int _iNum)
 	iOverfill -= 8;
 	_dwBits |= iOverfill<0?m_pBuffer[m_iBufferPos+3]>>-iOverfill: m_pBuffer[m_iBufferPos+1]<<iOverfill;
 	_dwBits &= ((1<<_iNum) - 1);
-	// Copy 25-32 bits and mask all unnessesary
+	// Copy 25-32 bits and mask all unnecessary
 	//_dwBits = (m_pBuffer[m_iBufferPos]) << m_iBitPos) & ((1<<_iNum) - 1);
 	//_dwBits = (*(dword*)&m_pBuffer[m_iBufferPos] << m_iBitPos) >> (32-_iNum);
 
@@ -142,7 +142,7 @@ int OrE::Algorithm::EntropyCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDes
 	// EOF is given by an return value false from Decode()
 	while(Decode(_pSrc, c) && ++i<_iMaxSize)
 		_pDest[i] = (unsigned char)c;
-	return ++i;	// Do some magic with i, that it is still smaller if all goes korrekt
+	return ++i;	// Do some magic with i, that it is still smaller if all goes correct
 }
 
 

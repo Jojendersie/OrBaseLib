@@ -12,7 +12,7 @@
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
-// Implmentation of different pseudo-random generators.								//
+// Implementation of different pseudo-random generators.							//
 //																					//
 // ******************************************************************************** //
 
@@ -28,12 +28,12 @@ using namespace OrE::Math;
 using namespace OrE::Utils;
 
 // ******************************************************************************** //
-// TimeQuery() returns the number of passed seconds scince the last call.
+// TimeQuery() returns the number of passed seconds since the last call.
 
 #ifdef WINDOWS
 #include "windows.h"
 #endif
-const double CLOCKS_PER_SEC_INV = 1.0/CLOCKS_PER_SEC;	// Precalculated for performance
+const double CLOCKS_PER_SEC_INV = 1.0/CLOCKS_PER_SEC;	// Pre calculated for performance
 
 double OrE::Utils::TimeQuery(TimeQuerySlot& _Slot)
 {
@@ -46,12 +46,12 @@ double OrE::Utils::TimeQuery(TimeQuerySlot& _Slot)
 #else
 	g_QueryCounter[_Slot] = clock();
 #endif
-	// Convergate difference to seconds
+	// Convert difference to seconds
 	return (_Slot - OldTime)/double(qwF);
 }
 
 // ******************************************************************************** //
-// Finds out if TimeQuery() with the current slot was used scince program start.
+// Finds out if TimeQuery() with the current slot was used since program start.
 /*bool OrE::Utils::IsTimeSlotUsed(TimeQuerySlots _Slot)
 {
 	return g_QueryCounter[_Slot]!=0;
@@ -69,23 +69,23 @@ float OrE::Utils::TimeSinceProgramStart()
 bool OrE::Utils::Strneq(const char* p1, const char* p2)
 {
 	if(p1==p2) return false;
-	if(p1==0) return true;	// p2 muss ja !=p1 sein und ist !=0
+	if(p1==0) return true;	// p2 has to be !=p1 and there for is !=0
 	if(p2==0) return true;
 	return strcmp(p1, p2)!=0;
 }
 
 // ******************************************************************************** //
-// Auxiliary function to create a copy of a subsrting.
+// Auxiliary function to create a copy of a substring.
 // Parameter:
 //	_dwFrom - 0-indexed index of first char to copy (inclusive)
 //	_dwTo - 0-indexed index of last char to copy (inclusive)
-//			or 0xffffffff to copy the whole postfix begining in _dwFrom
+//			or 0xffffffff to copy the whole postfix beginning in _dwFrom
 char* OrE::Utils::Substr(const char* _pcString, const dword _dwFrom, dword _dwTo)
 {
-	// Spezialfall: String bis zum Ende
+	// Special case: String until the end
 	if(_dwTo == 0xffffffff) _dwTo = Max(0,int(strlen(_pcString))-1);
 
-	// Definition: von 0 bis 0 bedeutet wir wollen ein Zeichen
+	// Definition: from 0 to 0 means one character (inclusive 0)
 	char* pcRet = (char*)malloc((_dwTo+2-_dwFrom)*sizeof(char));
 	dword i=_dwFrom;
 	for(;i<=_dwTo;++i)

@@ -71,7 +71,7 @@ void operator delete[](void* m, const char* pcFile, int iLine);
 #include <intrin.h>
 
 // Simple assertion like cassert, but stops in the line of source, where the
-// assertion is lokated in not in some other file like the std::assert.
+// assertion is located in not in some other file like the std::assert.
 #define Assert(a) if(!(a)) __debugbreak()
 
 // Complex, slow assertion to check pointer validity.

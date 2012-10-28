@@ -28,7 +28,7 @@
 //	GetPrevious()				O(1)												//
 //																					//
 // It would be no problem to provide Search and key-Delete with O(n) but a key can	//
-// occure multiple times in a heap. Therefore such an operation would be unsecurly.	//
+// occur multiple times in a heap. Therefore such an operation would be insecurely.	//
 // To do some searching you can use the iterator.									//
 // ******************************************************************************** //
 
@@ -38,10 +38,10 @@ namespace OrE {
 namespace ADT {
 
 	// ******************************************************************************** //
-	// One node in the fibonacci heap
+	// One node in the Fibonacci heap
 	class HeapNode: public ADTElement
 	{
-		// Make nodes uneditable for all users except the heap.
+		// Make nodes unchangeable for all users except the heap.
 		friend class Heap;
 
 		// Prevent copy constructor and operator = being generated.
@@ -53,12 +53,12 @@ namespace ADT {
 		HeapNode* pRight;
 		// The parent node in the tree structure
 		HeapNode* pParent;
-		// One arbitary child. (The other children can be reached through the linked list)
+		// One arbitrary child. (The other children can be reached through the linked list)
 		HeapNode* pChild;
 		//int iParam;					// Statistic information to mark nodes (marking = a child of this marked node was cut before)
 		int iDegree;					// Number of children
 
-		// Constructor inserting in the structur
+		// Constructor inserting in the structure
 		HeapNode(HeapNode* _pSibling, void* _pObj, const qword& _qwKey):
 			ADTElement(_pObj, _qwKey), pChild(nullptr), pParent(nullptr), iDegree(0)
 		{
@@ -90,7 +90,7 @@ namespace ADT {
 
 		void CutChildren(HeapNodeP _pPartition);								// Merge of a part of a heap into the root list
 		void Consolidate();														// Ensure that now two roots have the same degree
-		void Cut(HeapNodeP _pElement);											// Cuts one element and insert it to the root list. (Similar to meld, but do not affekt the siblings of the element)
+		void Cut(HeapNodeP _pElement);											// Cuts one element and insert it to the root list. (Similar to meld, but do not affect the siblings of the element)
 	public:
 		Heap():m_pRoot(nullptr) {}
 		~Heap();
@@ -103,7 +103,7 @@ namespace ADT {
 		// general ADT operations
 		HeapNodeP Insert(void* _pObject, qword _qwKey) override;		// Standard operation insert
 		void Delete(qword _qwKey) override;								// Unsupported function (doing nothing)
-		void Delete(ADTElementP _pElement) override;					// The only arbitary delete operation for the heap
+		void Delete(ADTElementP _pElement) override;					// The only arbitrary delete operation for the heap
 		void Clear() override;											// Remove everything
 		HeapNodeP Search(qword _qwKey) override;						// Unsupported function (returning 0)
 		HeapNodeP GetFirst() override;									// First element = min element

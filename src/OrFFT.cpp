@@ -19,7 +19,7 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 #include <cstdlib>
 
 // ******************************************************************************** //
-// Infostruct to combine non changing attributes and lead them throug the recursion
+// Info structure to combine non changing attributes and lead them through the recursion
 struct StaticState
 {
 	bool bInverse;
@@ -384,7 +384,7 @@ OrE::Math::ComplexNumberP OrE::Math::fft2(const OrE::Math::ComplexNumber* _pInpu
 	StaticState State;
 	State.iInitialStride = 1; State.bInverse = false;
 
-	// Exploit seperability: Transformation of X direction
+	// Exploit separability: Transformation of X direction
 	State.iNum = _iNumX;
 	Factorize(_iNumX, State.aiFactors);
 	ComputeFTFactors(&State.pFTFactors, _iNumX, false);

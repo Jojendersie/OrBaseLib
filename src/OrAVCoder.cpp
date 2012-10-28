@@ -12,17 +12,17 @@
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
-// Combiened dictionary+entropy coding (AVC - adaptive vector codec)				//
+// Combined dictionary+entropy coding (AVC - adaptive vector codec)					//
 // Idea: Johannes Jendersie															//
 //	For each character c:															//
 //		* If vector beginning in c matches a part of the dictionary safe a			//
-//		  reference #. Otherwise use adaptive huffman to safe the character.		//
+//		  reference #. Otherwise use adaptive Huffman to safe the character.		//
 //		* Fill dictionary with a 1024 Byte vector beginning at this char.			//
 //		* Remove oldest vector (in next step more than 1024 bytes in past) from		//
 //		  dictionary. (To avoid long references)									//
 //																					//
 //	# vector references:															//
-//		First a meta character is saved with adaptive huffman to mark next value	//
+//		First a meta character is saved with adaptive Huffman to mark next value	//
 //		as vector reference. There are 3 classes of vectors:						//
 //		'256' - short vector (7 Bit Offset; 3 Bit Length)							//
 //			used if distance is in [1,128] and length of vector in [3,10] bytes.	//
@@ -53,7 +53,7 @@ const dword OR_AVC_LENGTH_BITS[]	= {1,3,4,7,8};
 const dword OR_AVC_LENGTH_OFFSETS[]	= {2,3,4,5,5};
 const dword OR_AVC_MAX_OFFSET		= 16384;//(1<<OR_AVC_OFFSET_BITS[OR_AVC_NUMVEC-1]);
 const dword OR_AVC_MAX_LENGTH		= (1<<OR_AVC_LENGTH_BITS[OR_AVC_NUMVEC-1])-1+OR_AVC_LENGTH_OFFSETS[OR_AVC_NUMVEC-1];
-// Testresults:
+// Test results:
 //	test.bmp - 982162/956131/956075/954565/948540/947984/948054/952318/937.../929187/917727
 //	test2.bmp - 
 //	test.txt - 142
@@ -90,7 +90,7 @@ void OrKMPCreatePrefixTable(byte* _pIn, int _iLen, int* _piOut)
 // ******************************************************************************** //
 void OrKMPMatch(byte* _pText, byte* _pPattern, int _iTextLen, int _iPatternLen, int* _piPrefix, int& _iOutL, int& _iOutO)
 {
-	// Create prefixtable for pattern
+	// Create prefix table for pattern
 	OrKMPCreatePrefixTable(_pPattern, _iPatternLen, _piPrefix);
 
 	int i = 0;		// Text position
@@ -115,7 +115,7 @@ void OrKMPMatch(byte* _pText, byte* _pPattern, int _iTextLen, int _iPatternLen, 
 }
 
 // ******************************************************************************** //
-// Constructor: initialisate huffman tree for 256+ characters (OR_AVC_NUMVEC Vector-Meta-Characters)
+// Constructor: initialize Huffman tree for 256+ characters (OR_AVC_NUMVEC Vector-Meta-Characters)
 OrE::Algorithm::AVCoder::AVCoder() : HuffmanTree_Splay(256+OR_AVC_NUMVEC)
 {
 	//m_pDict = new Trie();
@@ -124,7 +124,7 @@ OrE::Algorithm::AVCoder::AVCoder() : HuffmanTree_Splay(256+OR_AVC_NUMVEC)
 // ******************************************************************************** //
 OrE::Algorithm::AVCoder::~AVCoder()
 {
-	// Delete self created rescources
+	// Delete self created resources
 	//delete m_pDict;
 }
 
@@ -138,9 +138,9 @@ struct OrDictCharEntry
 // Implements description at the beginning of the file
 bool OrE::Algorithm::AVCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest)
 {
-	// Create freelist dict for the first chars
+	// Create free list dictionary for the first chars
 	OrDictCharEntry* pDict[256];						// The Dictionary of vectors
-	OrDictCharEntry  pFreeList[OR_AVC_MAX_OFFSET+1];	// Memory managment
+	OrDictCharEntry  pFreeList[OR_AVC_MAX_OFFSET+1];	// Memory management
 	OrDictCharEntry* pNextFree = pFreeList;
 	// Initialize free list
 	memset(pDict, 0, sizeof(pDict));
@@ -179,7 +179,7 @@ bool OrE::Algorithm::AVCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStrea
 			TrieNodeP pMatchV = m_pDict->Match(Cursor);
 			dword dwLength = dwMaxVSize-Cursor.m_dwLen; //(dword)Cursor.m_pcString - (dword)&_pSrc[i];
 			dword dwOffset = pMatchV?(i + 1 - (dword)pMatchV->pData):1000000;*/
-			// There is the possibility, that the vector has even an longer match than in dict (could be used for 1024-1029 bytes (gaining 5 extrabytes)
+			// There is the possibility, that the vector has even an longer match than in dict (could be used for 1024-1029 bytes (gaining 5 extra bytes)
 
 			// 2. Classify match and safe character/vector
 			for(int j=0; j<OR_AVC_NUMVEC; ++j)
@@ -223,7 +223,7 @@ SkipSingleChar:;
 		}
 
 		// 3. Add new vector
-		// Remenber next free entry
+		// Remember next free entry
 		OrDictCharEntry* pNext = pNextFree->pNext;
 		// Append vector in the list
 		pNextFree->pFile = &_pSrc[i];
@@ -238,7 +238,7 @@ SkipSingleChar:;
 			// The last reference in the char list is that char of this position
 			OrDictCharEntry* pTemp = pDict[_pSrc[i-OR_AVC_MAX_OFFSET]];
 			OrDictCharEntry* pPrev = nullptr;
-			// Remove from dict
+			// Remove from dictionary
 			while(pTemp->pNext) {pPrev = pTemp; pTemp = pTemp->pNext;}
 			if(!pPrev) pDict[_pSrc[i-OR_AVC_MAX_OFFSET]] = nullptr;
 			else pPrev->pNext = nullptr;
@@ -271,7 +271,7 @@ int OrE::Algorithm::AVCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, in
 	// EOF is given by an return value false from Decode()
 	while(Decode(_pSrc, c) && ++i<_iMaxSize)
 	{
-		// Distingish between vector and pure character
+		// Distinguish between vector and pure character
 		if(c>255)
 		{
 			// How long is the vector code?
@@ -283,7 +283,7 @@ int OrE::Algorithm::AVCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, in
 			if(!_pSrc->GetBits(dwLength, OR_AVC_LENGTH_BITS[c])) return false;
 			dwLength += OR_AVC_LENGTH_OFFSETS[c]; ++dwOffset;
 
-			// Read vector (byte by byte scince offset could be one -> copy of the last copied char)
+			// Read vector (byte by byte since offset could be one -> copy of the last copied char)
 			for(dword k=0; k<dwLength; ++k)
 			{
 				if(i+(int)k >= _iMaxSize)
@@ -294,7 +294,7 @@ int OrE::Algorithm::AVCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, in
 		} else
 			_pDest[i] = (unsigned char)c;
 	}
-	return ++i;	// Do some magic with i, that it is still smaller if all goes korrekt
+	return ++i;	// Do some magic with i, that it is still smaller if all goes correct
 }
 
 // *************************************EOF**************************************** //

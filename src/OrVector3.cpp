@@ -23,6 +23,8 @@
 using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
+// The most operators and functions are implemented inline in the header
+
 // ******************************************************************************** //
 // Create random direction vectors.
 // No inline because of Rand-dependency (-> more includes)
@@ -39,7 +41,7 @@ IVec3 OrE::Math::IVec3::Random()
 
 
 // ******************************************************************************** //
-// Transform a 3D directional vector - faster scince only 3x3 matrix is applied
+// Transform a 3D directional vector - faster since only 3x3 matrix is applied
 Vec3 OrE::Math::Vec3::TransformDirection(const Matrix& m) const
 {
 	// multiply 3x3 matrix with vector - no translation
@@ -55,7 +57,7 @@ Vec3 OrE::Math::Vec3::TransformDirection(const Matrix& m) const
 
 // ******************************************************************************** //
 // Rotate a vector around some axis. This transformation uses quaternion
-// math. Use this if you want to rotate onle one vector. For the rotation
+// math. Use this if you want to rotate only one vector. For the rotation
 // of multiple vectors a matrix is more efficient!
 Vec3 OrE::Math::Vec3::Rotate(const Vec3& vAxis, float fAngle) const
 {

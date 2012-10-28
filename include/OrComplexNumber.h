@@ -72,7 +72,7 @@ namespace Math {
 	// Functions
 
 	// A complex number to the power of a complex number.
-	// Internal "converts" to the euler form and back.
+	// Internal "converts" to the Euler form and back.
 	ComplexNumber Pow(const ComplexNumber& a, const ComplexNumber& b);
 
 	// Faster power variant for real numbered exponents

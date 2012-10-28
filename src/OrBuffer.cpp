@@ -24,7 +24,7 @@
 OrE::ADT::Buffer::Buffer(int _iSize)
 {
 	m_Buffer = (void**)malloc(sizeof(void*)*_iSize);
-	// Make buffer unuseable if out of memory (IsFull() == IsEmpty() == false);
+	// Make buffer unusable if out of memory (IsFull() == IsEmpty() == false);
 	m_iMax = m_Buffer ? _iSize: 1;
 	m_iHeadCursor = 0;
 	m_iTailCursor = 0;
@@ -33,7 +33,7 @@ OrE::ADT::Buffer::Buffer(int _iSize)
 OrE::ADT::Buffer::~Buffer()
 {
 	// Delete without warning even if there are still elements in buffer
-	// TODO warn (Logsystem)
+	// TODO warn (Log system)
 	free(m_Buffer);
 }
 
@@ -92,7 +92,7 @@ void* OrE::ADT::Buffer::Dequeue()
 }
 
 // ******************************************************************************** //
-// Speicher vergrößern
+// Enlarge memory
 void OrE::ADT::Buffer::Extend(int iAdditionalSize)
 {
 	//OrLock(&m_dwSemaphore);

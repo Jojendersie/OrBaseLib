@@ -25,7 +25,7 @@
 
 bool OrE::Math::HitTest( Sphere s1, Sphere s2 )
 {
-	// The distance between the middlepoints has to be bigger than the sum of the radii.
+	// The distance between the middle points has to be bigger than the sum of the radii.
 	return (s1.vMiddlePoint-s2.vMiddlePoint).LengthSq() <= Sqr(s1.fRadius+s2.fRadius);
 }
 
@@ -51,8 +51,8 @@ bool OrE::Math::HitDetection( Ellipsoid e1, Ellipsoid e2, Vec3& _vFeedbackLocati
 	Vec3 vDist = e1.vMiddlePoint - e2.vMiddlePoint;
 	Vec3 vDistSq = vDist * vDist;
 	// Determine the point in the middle between both surfaces.
-	// Point on surface from e1, which is nerest to the center of e2 is p1 = r1 * -vDist + e1.m.
-	// Point on surface from e2, which is nerest to the center of e1 is p2 = r2 * vDist + e2.m.
+	// Point on surface from e1, which is nearest to the center of e2 is p1 = r1 * -vDist + e1.m.
+	// Point on surface from e2, which is nearest to the center of e1 is p2 = r2 * vDist + e2.m.
 	// The point between them is (p1+p2)/2 = ((r2-r1) * vDist + e1.m+e2.m)/2
 	float r1 = InvSqrt( vDistSq.Dot( e1.vRadiiInvSq ) );
 	float r2 = InvSqrt( vDistSq.Dot( e2.vRadiiInvSq ) );

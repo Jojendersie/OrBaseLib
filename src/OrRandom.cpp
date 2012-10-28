@@ -12,7 +12,7 @@
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
-// Implmentation of different pseudo-random generators.								//
+// Implementation of different pseudo-random generators.								//
 //																					//
 // ******************************************************************************** //
 
@@ -26,7 +26,7 @@ using namespace OrE::Math;
 using namespace OrE::Algorithm;
 
 // ******************************************************************************** //
-// Interne Zufallsgeneratorzahlen - Mersenne Twister
+// Internal numbers of the random number generator - Mersenne Twister
 const int       OR_MT_W		=	34;
 const int       OR_MT_N		=	624;
 const int       OR_MT_M		=	397;
@@ -45,7 +45,7 @@ dword g_adwMT[OR_MT_N];
 dword g_dwMTIndex = 0;
 
 // ******************************************************************************** //
-// der eigentliche Generator: erzeugt die Tabelle neu
+// The intrinsic generator: refills the table with new numbers
 void OrMTReCreate()
 {
 	dword y;
@@ -66,7 +66,7 @@ void OrMTReCreate()
 }
 
 // ******************************************************************************** //
-// Initialisate Mersenne Twister
+// Initialize Mersenne Twister
 void OrE::Algorithm::SRand(dword _dwSeed)
 {
 	// fill table
@@ -80,7 +80,7 @@ void OrE::Algorithm::SRand(dword _dwSeed)
 }
 
 // ******************************************************************************** //
-// Creates an unsinged random Number
+// Creates an unsigned random Number
 dword OrE::Algorithm::RandU()
 {
 	dword y;
@@ -114,7 +114,7 @@ int	OrE::Algorithm::Rand(int _iMin, int _iMax)
 	y ^=y << OR_MT_T & OR_MT_C;
 	y ^=y >> OR_MT_L;
 
-	// Bereichseinschränkung
+	// stint scope
 	return (y % (_iMax + 1 - _iMin)) + _iMin;
 }
 
@@ -133,7 +133,7 @@ float OrE::Algorithm::Rand()
 	y ^=y << OR_MT_T & OR_MT_C;
 	y ^=y >> OR_MT_L;
 
-	// Bereichseinschränkung
+	// stint scope
 	return (float)(y*(2.328306437e-10));
 }
 
@@ -166,7 +166,7 @@ OrE::Algorithm::PerlinNoise::PerlinNoise(dword _dwSeed, float _fPeriodicity)
 {
 	m_dwSeed = _dwSeed*1987;
 	m_fPeriodicity = OrE::Math::Max(1.0f, _fPeriodicity);
-	// Use mersenne twister to seed a table for later random samplings
+	// Use Mersenne twister to seed a table for later random samplings
 //	SRand(_dwSeed);
 //	for(int i=0; i<1024; ++i)
 		//m_dwWhiteNoiseTable[i] = RandU();
@@ -181,18 +181,13 @@ double OrE::Algorithm::PerlinNoise::Sample1D(__int64 _i)
 }
 
 // ******************************************************************** //
-// Funktion zur Interpolation (zwischen zwei Punkten des Rauschens)
-// Varianten: Cosinus und C2-stetige Polynomfunktion
-// Die Varianten unterscheiden sich kaum bis gar nicht
-//
-// Zweck:
-// Die Funktion erhält als Eingabe drei float Werte _dA und _dB sowie _dR.
-// Für _dR aus dem Intervall [0,1] gibt Interpolate eine Cosinus-Interpolation
-// mit _dA und _dB als Maximmum- bzw. Minimumwert.
-// Für _dR = 0 ergibt Interpolate = _dA. Für _dR = 1 ergibt Interpolate = _dB.
+// PERLIN NOISE
+// ******************************************************************** //
+
+// Function for interpolation between two points of the noise
 inline float InterpolationPolynom(float _dR)
 {
-	// Polynomfunktion für Details sehe "Burger-GradientNoiseGerman-2008".
+	// Polynomial function to get detailed information see "Burger-GradientNoiseGerman-2008".
 	return _dR*_dR*_dR*(_dR*(_dR*6.0f-15.0f)+10.0f);
 }
 

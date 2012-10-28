@@ -13,10 +13,10 @@
 // For details on this project see: Readme.txt										//
 //																					//
 // ******************************************************************************** //
-// Huffman-Codec with different trees (Entropie coding)								//
+// Huffman-Codec with different trees (Entropy coding)								//
 //																					//
-// Two adaptive approaches with self organisating search trees. Do not need an		//
-// initialisation header.															//
+// Two adaptive approaches with self organizing search trees. Do not need an		//
+// initialization header.															//
 // ******************************************************************************** //
 
 #pragma once
@@ -25,32 +25,32 @@ namespace OrE {
 namespace Algorithm {
 
 // ******************************************************************************** //
-// A littel Streamer buffer to make bitoperations easyer
+// A little Streamer buffer to make bit operations easier
 class BitBufferStream
 {
 private:
-	int m_iBufferPos;			// Position in full bytes
-	int m_iBitPos;				// i€[0..7] -th bit of the current byte
-	int m_iSize;				// Number of bytes in the buffer
+	int m_iBufferPos;							// Position in full bytes
+	int m_iBitPos;								// i€[0..7] -th bit of the current byte
+	int m_iSize;								// Number of bytes in the buffer
 	unsigned char* m_pBuffer;
 public:
 	BitBufferStream(int _iSize);
 	BitBufferStream(void* _pBuffer, int _iSize);
 	virtual ~BitBufferStream();
 
-	inline void SetBit(int _iBit)			// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
+	inline void SetBit(int _iBit)				// Writes one bit an moves to the next one. Returns false if buffer overflow. _iBit in [0,1]
 	{
 		m_pBuffer[m_iBufferPos] |= _iBit<<(7-m_iBitPos++);
-		m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
-		m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
+		m_iBufferPos += (m_iBitPos>>3);			// Adds 1 if m_iBitPos==8
+		m_iBitPos &= 7;							// Sets _iBit to 0 if m_iBitPos=8
 	}
 
-	inline int GetBit()						// Returns the parity of the next bit and moves the cursors.
+	inline int GetBit()							// Returns the parity of the next bit and moves the cursors.
 	{
 		if(m_iBufferPos>=m_iSize) return -1;
 		int iRet = (m_pBuffer[m_iBufferPos] >> (7-m_iBitPos++)) & 1;
-		m_iBufferPos += (m_iBitPos>>3);		// Adds 1 if m_iBitPos==8
-		m_iBitPos &= 7;						// Sets _iBit to 0 if m_iBitPos=8
+		m_iBufferPos += (m_iBitPos>>3);			// Adds 1 if m_iBitPos==8
+		m_iBitPos &= 7;							// Sets _iBit to 0 if m_iBitPos=8
 		return iRet;
 	}
 
@@ -84,7 +84,7 @@ public:
 };
 
 // ******************************************************************************** //
-// Adaptive variante 1: using splay trees
+// Adaptive variant 1: using splay trees
 class HuffmanTree_Splay : public OrE::ADT::SplayTree, public EntropyCoder
 {
 private:
@@ -101,7 +101,7 @@ public:
 typedef HuffmanTree_Splay* HuffmanTree_SplayP;
 
 // ******************************************************************************** //
-// Adaptive variante 2: using semi-splay trees
+// Adaptive variant 2: using semi-splay trees
 class HuffmanTree_SemiSplay : public HuffmanTree_Splay
 {
 protected:
@@ -114,7 +114,7 @@ typedef HuffmanTree_SemiSplay* HuffmanTree_SemiSplayP;
 
 
 // ******************************************************************************** //
-// Combiened dictionary+entropy coding (AVC - adaptive vector codec)
+// Combined dictionary+entropy coding (AVC - adaptive vector codec)
 class Trie;
 class AVCoder : public HuffmanTree_Splay
 {

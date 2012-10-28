@@ -24,13 +24,13 @@ namespace Utils {
 
 // ******************************************************************************** //
 // Time measurement
-// TimeQuery() returns the number of passed seconds scince the last call.
+// TimeQuery() returns the number of passed seconds since the last call.
 // Use can use arbitrary independent time slots.
 typedef unsigned long long TimeQuerySlot;
 double TimeQuery(TimeQuerySlot& _Slot);
 
 // ******************************************************************************** //
-// Finds out if TimeQuery() with the current slot was used scince program start.
+// Finds out if TimeQuery() with the current slot was used since program start.
 // bool IsTimeSlotUsed(TimeQuerySlots _Slot);
 
 // ******************************************************************************** //
@@ -43,7 +43,7 @@ float TimeSinceProgramStart();
 // Returns true if both pointers are equal
 bool Strneq(const char* p1, const char* p2);
 
-// Auxiliary function to create a copy of a subsrting.
+// Auxiliary function to create a copy of a substring.
 // Parameter:
 //	_dwFrom - 0-indexed index of first char to copy (inclusive)
 //	_dwTo - 0-indexed index of last char to copy (inclusive)

@@ -1,5 +1,5 @@
 // ******************************************************************************** //
-// OrVec4.cpp																	//
+// OrVec4.cpp																		//
 // =============																	//
 // This file is part of the OrBaseLib.												//
 //																					//
@@ -24,7 +24,7 @@
 using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
-// Die Operatoren und Funktionen sind direkt per Inline-Funktion implementiert.
+// The most operators and functions are implemented inline in the header
 
 // ******************************************************************************** //
 Vec4 OrE::Math::Vec4::Random()
@@ -33,27 +33,8 @@ Vec4 OrE::Math::Vec4::Random()
 }
 
 // ******************************************************************************** //
-// 4D-Vektor mit Matrix multiplizieren
-/*const Vec4& OrE::Math::Vec4::Transform(const Matrix& m)
-{
-	x = x * m.m11 + y * m.m21 + z * m.m31 + w * m.m41;
-	y = x * m.m12 + y * m.m22 + z * m.m32 + w * m.m42;
-	z = x * m.m13 + y * m.m23 + z * m.m33 + w * m.m43;
-	w = x * m.m14 + y * m.m24 + z * m.m34 + w * m.m44;
-	return *this;
-}
-
-Vec4 OrE::Math::Vec4::Transform(const Vec4& v,
-								const Matrix& m)
-{
-	return Vec4(v.x * m.m11 + v.y * m.m21 + v.z * m.m31 + v.w * m.m41,
-				v.x * m.m12 + v.y * m.m22 + v.z * m.m32 + v.w * m.m42,
-				v.x * m.m13 + v.y * m.m23 + v.z * m.m33 + v.w * m.m43,
-				v.x * m.m14 + v.y * m.m24 + v.z * m.m34 + v.w * m.m44);
-}*/
-
-// ******************************************************************************** //
-// Kreuzprodukt 3 4D - vektoren
+// Crossproduct of 3 4D - vectors.
+// This should be the same as the determinant with a fourth unit vector.
 const Vec4& OrE::Math::Vec4::Cross(const Vec4& v2, const Vec4& v3)
 {
     x = y * (v2.z * v3.w - v2.w * v3.z) -
@@ -159,7 +140,7 @@ OrE::Math::Quaternion::Quaternion(const Matrix& _m)
 }
 
 // ******************************************************************************** //
-// From euler angles
+// From Euler angles
 OrE::Math::Quaternion::Quaternion( float _fYaw, float _fPitch, float _fRoll )
 {
 	Quaternion q( MatrixRotation( _fYaw, _fPitch, _fRoll ) );

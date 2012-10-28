@@ -65,7 +65,7 @@ void OrE::ADT::Heap::CutChildren(HeapNodeP _pPartition)
 		pPartR->pLeft = m_pRoot;				// Root <- E
 	} else m_pRoot = _pPartition;
 
-	// Min update can only occure if the partition is of an other heap
+	// Min update can only occur if the partition is of an other heap
 	//if(_pPartition->qwKey < m_pRoot->qwKey) m_pRoot = _pPartition;
 }
 
@@ -73,10 +73,10 @@ void OrE::ADT::Heap::CutChildren(HeapNodeP _pPartition)
 // Ensure that now two roots have the same degree
 void OrE::ADT::Heap::Consolidate()
 {
-	// Array to save trees with respect to there degree. This staticaly form only
-	// allows a certain number of elments in the heap. (TODO: could be dynamic)
-	// Maximum degree is O(log n) (Theorem - can be prooven).
-	// -> O(exp(maxdegree)) nodes -> maxdegree=64 is heigh enough for everything
+	// Array to save trees with respect to there degree. This static form only
+	// allows a certain number of elements in the heap. (TODO: could be dynamic)
+	// Maximum degree is O(log n) (Theorem - can be proven).
+	// -> O(exp(maxdegree)) nodes -> maxdegree=64 is high enough for everything
 	// (constant factor is < 2)
 	HeapNodeP aDegrees[64] = {nullptr};
 	// Traverse root list
@@ -111,7 +111,7 @@ void OrE::ADT::Heap::Consolidate()
 						pCurrent->pLeft = pCurrent->pRight = pCurrent;
 					}
 
-					pCurrent = pRef;	// Skip back in traversation (degree of the smaller one will be updated after this if-else statement)
+					pCurrent = pRef;	// Skip back in traversing (degree of the smaller one will be updated after this if-else statement)
 				} else {
 					// Assert that the root element is always in the root list
 					if(m_pRoot == pRef) m_pRoot = pRef->pRight;
@@ -163,7 +163,7 @@ void* OrE::ADT::Heap::DeleteMin()
 	// Remember data
 	void* pData = m_pRoot->pObject;
 	HeapNodeP pNode = m_pRoot;
-	// Set the root pointer to an arbitary other node
+	// Set the root pointer to an arbitrary other node
 	if(m_pRoot->pLeft != m_pRoot)
 	{
 		m_pRoot->pLeft->pRight = m_pRoot->pRight;
@@ -176,7 +176,7 @@ void* OrE::ADT::Heap::DeleteMin()
 
 	if(m_pRoot)
 	{
-		// Restructur the heap
+		// Restructure the heap
 		Consolidate();
 
 		// Find new minimum
@@ -204,7 +204,7 @@ HeapNodeP OrE::ADT::Heap::Min()
 
 // ******************************************************************************** //
 // Cuts one element and insert it to the root list. (Similar to meld, but
-// do not affekt the siblings of the element.)
+// do not affect the siblings of the element.)
 void OrE::ADT::Heap::Cut(HeapNodeP _pElement)
 {
 	// Remove from sibling list
@@ -214,7 +214,7 @@ void OrE::ADT::Heap::Cut(HeapNodeP _pElement)
 	// Remove from parent
 	--_pElement->pParent->iDegree;
 	if(_pElement->pParent->pChild == _pElement) _pElement->pParent->pChild = _pElement->pLeft;
-	// Scince we safe ring buffers the left sibling could also be the node itself ->
+	// Since we safe ring buffers the left sibling could also be the node itself ->
 	// check again -> this is/was the only child.
 	if(_pElement->pParent->pChild == _pElement) _pElement->pParent->pChild = nullptr;
 	_pElement->pParent = nullptr;
@@ -234,7 +234,7 @@ void OrE::ADT::Heap::ChangeKey(HeapNodeP _pElement, qword _qwNewKey)
 	bool bIncrease = _pElement->qwKey<_qwNewKey;
 	_pElement->qwKey = _qwNewKey;
 
-	// Check if heap violated (decresed key)
+	// Check if heap violated (decreased key)
 	if(_pElement->pParent && (_pElement->qwKey < _pElement->pParent->qwKey))
 	{
 		// Cut simple (cascading in original tree, but I don't understand the advantage of the cascading)
@@ -268,7 +268,7 @@ void OrE::ADT::Heap::ChangeKey(HeapNodeP _pElement, qword _qwNewKey)
 void OrE::ADT::Heap::Delete(qword _qwKey) {}
 
 // ******************************************************************************** //
-// The only arbitary delete operation for the heap
+// The only arbitrary delete operation for the heap
 void OrE::ADT::Heap::Delete(ADTElementP _pElement)
 {
 	if(_pElement->Release() <= 0)
@@ -335,14 +335,14 @@ HeapNodeP OrE::ADT::Heap::GetNext(ADTElementP _pCurrent)
 	HeapNodeP pNode = HeapNodeP(_pCurrent);
 	// Go to each child before traversing this level complete
 	if(pNode->pChild) return pNode->pChild;
-	// End of traversion in a ring: reached first element
+	// End of traversing in a ring: reached first element
 	if(pNode->pParent && (pNode->pRight == pNode->pParent->pChild))
 		// Parent was seen before going to the children.
 		// We need the pNode->pParent->pRight. Changing pNode
 		// results in pRight, because this is the only case after
 		// this line. Advantage: we have not to check the end of recursion here.
 		pNode = pNode->pParent;
-	// End of traversion we reached the root (start)
+	// End of traversing we reached the root (start)
 	if(pNode->pRight == m_pRoot) return nullptr;
 	// Default in a simple list - next one
 	return pNode->pRight;
@@ -355,14 +355,14 @@ HeapNodeP OrE::ADT::Heap::GetPrevious(ADTElementP _pCurrent)
 	HeapNodeP pNode = HeapNodeP(_pCurrent);
 	// Go to each child before traversing this level complete
 	if(pNode->pChild) return pNode->pChild;
-	// End of traversion in a ring: reached first element
+	// End of traversing in a ring: reached first element
 	if(pNode->pParent && (pNode->pLeft == pNode->pParent->pChild))
 		// Parent was seen before going to the children.
 		// We need the pNode->pParent->pLeft. Changing pNode
 		// results in pLeft, because this is the only case after
 		// this line. Advantage: we have not to check the end of recursion here.
 		pNode = pNode->pParent;
-	// End of traversion we reached the root (start)
+	// End of traversing we reached the root (start)
 	if(pNode->pLeft == m_pRoot) return nullptr;
 	// Default in a simple list - next one
 	return pNode->pLeft;

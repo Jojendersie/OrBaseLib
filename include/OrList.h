@@ -70,7 +70,7 @@ namespace ADT {
 		virtual ~List();
 
 		ListNodeP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert
-		ListNodeP SetInsert(void* _pObject, qword _qwKey);			// Insert and allow each key only to occure one time (insert sorted as well)
+		ListNodeP SetInsert(void* _pObject, qword _qwKey);			// Insert and allow each key only to occur one time (insert sorted as well)
 		void Delete(qword _qwKey) override;							// Slow delete with search
 		void Delete(ADTElementP _pElement) override;				// Fast delete
 		void Clear() override;										// Remove everything

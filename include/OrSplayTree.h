@@ -16,7 +16,7 @@
 // Splay Tree: self organizing search tree.											//
 //																					//
 // Type of a binary tree with average costs of O(log n) for each Operation.			//
-// Idea: Splay the last seen node to the root. Where splay is a speciall			//
+// Idea: Splay the last seen node to the root. Where splay is a special				//
 //	rotation case.																	//
 //																					//
 // Implementation: Bottom-Up-Splaying												//

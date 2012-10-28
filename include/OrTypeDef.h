@@ -12,7 +12,7 @@
 //																					//
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
-//	Declarations and predeclarations of all "primitive" types						//
+//	Declarations of all "primitive" types											//
 // ******************************************************************************** //
 
 #pragma once

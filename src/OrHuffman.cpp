@@ -73,7 +73,7 @@ bool OrE::Algorithm::HuffmanTree_Splay::Encode(dword _c, BitBufferStreamP _pDest
 	qword qwKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=qwKey)
 	{
-		// It should be impossible, that there is missing one character (initialisation)
+		// It should be impossible, that there is missing one character (initialization)
 		if(pCurrent->qwKey<qwKey)				// Search in the right tree
 		{
 			_pDest->SetBit(1);					// report buffer overflow
@@ -84,8 +84,8 @@ bool OrE::Algorithm::HuffmanTree_Splay::Encode(dword _c, BitBufferStreamP _pDest
 		}
 	}
 
-	// Adaptive reorganisation
-	// The node itself can't be splayed scince it never can be parent of an other node.
+	// Adaptive reorganization
+	// The node itself can't be splayed since it never can be parent of an other node.
 	Splay(pCurrent->pParent);
 	return true;
 }
@@ -127,7 +127,7 @@ bool OrE::Algorithm::HuffmanTree_SemiSplay::Encode(dword _c, BitBufferStreamP _p
 	unsigned __int64 uiKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=uiKey)
 	{
-		// It should be impossible, that there is missing one character (initialisation)
+		// It should be impossible, that there is missing one character ()
 		if(pCurrent->qwKey<uiKey)			// Search in the right tree
 		{
 			_pDest->SetBit(1);				// report buffer overflow
@@ -138,7 +138,7 @@ bool OrE::Algorithm::HuffmanTree_SemiSplay::Encode(dword _c, BitBufferStreamP _p
 		}
 	}
 
-	// Adaptive reorganisation
+	// Adaptive reorganization
 	SemiSplay(pCurrent);
 	return true;
 }

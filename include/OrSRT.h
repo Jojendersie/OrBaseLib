@@ -36,8 +36,8 @@ public:
 	SRT( const Vec3& _vScale, const Vec3& _vAxis, float _a, const Vec3& _vTr ) : m_vScale(_vScale), m_vTranslation(_vTr)	{ SetRotation( _vAxis, _a ); }
 
 	// ******************************************************************************** //
-	// The following functions all reset / axchange a part of the current transformation.
-	// Set a uniform scaling or a diffenrent scaling along the coordinate-axis.
+	// The following functions all reset / exchange a part of the current transformation.
+	// Set a uniform scaling or a different scaling along the coordinate-axis.
 	void SetScale( float _s )							{ m_vScale.x = m_vScale.y = m_vScale.z = _s; }
 	void SetScale( const Vec3& _s )						{ m_vScale = _s; }
 
@@ -71,10 +71,10 @@ public:
 	const Vec3& GetScale()								{ return m_vScale; }
 	const Vec3& GetPosition()							{ return m_vTranslation; }
 
-	// The matrizes are expensivly computed by the call. Safe if needed more than one
+	// The matrices are expensively computed by the call. Safe if needed more than one
 	// time.
 	Matrix GetTransformation();
-	// The inverse is deriverd from analytical inersa of all transformations.
+	// The inverse is derived from analytical inverse of all transformations.
 	// This should be more accurate than inverting the matrix.
 	Matrix GetInverseTransformation();
 
@@ -83,7 +83,7 @@ public:
 };
 
 // ******************************************************************************** //
-// Lerp and Slerp both do the same for sqt transformations
+// Lerp and Slerp both do the same for SRT transformations
 SRT Lerp( const SRT& T1, const SRT& T2, const float t );//TODO
 SRT Slerp( const SRT& T1, const SRT& T2, const float t );//TODO
 
@@ -92,7 +92,7 @@ SRT Slerp( const SRT& T1, const SRT& T2, const float t );//TODO
 // This is slower than matrix transformation -> for multiple transformations convert
 // to matrix.
 Vec3 operator * (const SRT& m, const Vec3& v);
-// Transformation equal to (Vec3,1)*Matrix -> applies the srt transformation to the
+// Transformation equal to (Vec3,1)*Matrix -> applies the SRT transformation to the
 // vector.
 Vec3 operator * (const Vec3& v, const SRT& m);
 

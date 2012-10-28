@@ -60,7 +60,7 @@ public:
 
 	void Extend(int iAdditionalSize);		// Increase the size of the memory
 
-	int	 GetNumInstance()	{return (m_iHeadCursor>=m_iTailCursor)?(m_iHeadCursor-m_iTailCursor):(m_iMax+m_iHeadCursor-m_iTailCursor);}	// Gibt die aktuelle Instanzenzahl an
+	int	 GetNumInstance()	{return (m_iHeadCursor>=m_iTailCursor)?(m_iHeadCursor-m_iTailCursor):(m_iMax+m_iHeadCursor-m_iTailCursor);}	// Current number of instances occupying buffer space
 	bool IsEmpty()			{return m_iHeadCursor==m_iTailCursor;}
 	bool IsFull()			{return (m_iHeadCursor+1)%m_iMax == m_iTailCursor%m_iMax;}
 

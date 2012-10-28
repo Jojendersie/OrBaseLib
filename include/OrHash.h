@@ -42,31 +42,31 @@ namespace Algorithm {
 
 // ******************************************************************************** //
 // Standard hash for any data. Should result in nice uniform distributions mostly.
-dword CreateHash32(const void* pData, const int iSize);	// create a 32 bit hash value of a data set
-qword CreateHash64(const void* pData, const int iSize);	// create a 64 bit hash value of a data set
-dword CreateHash32(const void* pData);					// create a 32 bit hash value of a 0-terminated data set (e.g. strings)
-qword CreateHash64(const void* pData);					// create a 64 bit hash value of a 0-terminated data set (e.g. strings)
+dword CreateHash32(const void* pData, const int iSize);	// Create a 32 bit hash value of a data set
+qword CreateHash64(const void* pData, const int iSize);	// Create a 64 bit hash value of a data set
+dword CreateHash32(const void* pData);					// Create a 32 bit hash value of a 0-terminated data set (e.g. strings)
+qword CreateHash64(const void* pData);					// Create a 64 bit hash value of a 0-terminated data set (e.g. strings)
 
 // ******************************************************************************** //
 // CRC - Error proving hash (cyclic redundancy check)
-// Die Funktionen ermitteln den Rest bei der Polynomdivision. Dieser
-// muss zur Erzeugung den Daten angehängt werden. Beim Überprüfen
-// muss nochmalige Anwendung der Funktion den Rest 0 liefern, ansonsten
-// wurden die Daten beschädigt.
-// Erzeugt einen CRC Hash mit beliebigen Polynom bis zum Grad 31
+// The CRC functions determine the remaining of polynomial division.
+// This value can be appended to the data. To prove correctness of the data repeat
+// the CRC function with the same polynomial. A result of 0 denotes, that no checkable
+// error occurred.
+// Creates the hash with a arbitrary polynomial with a degree less than 32
 dword CreateCRCHash(dword dwPolynom, void* pData, dword dwSize);
 
-// Verwendung des Defaultpolynoms: x32? + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1
-inline dword CreateCRC32IEEEHash(void* pData, dword dwSize)	{return CreateCRCHash(0x04C11DB7, pData, dwSize);}
+// Using of polynomial: x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1
+inline dword CreateCRC32IEEEHash(void* pData, dword dwSize)		{return CreateCRCHash(0x04C11DB7, pData, dwSize);}
 
-// Verwendung des Defaultpolynoms: x24 + x23 + x18 + x17 + x14 + x11 + x10 + x7 + x6 + x5 + x4 + x3 + x + 1
+// Using of polynomial: x24 + x23 + x18 + x17 + x14 + x11 + x10 + x7 + x6 + x5 + x4 + x3 + x + 1
 inline dword CreateCRC24RadixHash(void* pData, dword dwSize)	{return CreateCRCHash(0x864CFB, pData, dwSize);}
 
-// Verwendung des Defaultpolynoms: x16+x12+x5+1
+// Using of polynomial: x16+x12+x5+1
 inline dword CreateCRCCCITT16Hash(void* pData, dword dwSize)	{return CreateCRCHash(0x00011022, pData, dwSize);}
 
-// Verwendung des Defaultpolynoms: x16+x15+x2+1
-inline dword CreateCRC16Hash(void* pData, dword dwSize)	{return CreateCRCHash(0x00018006, pData, dwSize);}
+// Using of polynomial: x16+x15+x2+1
+inline dword CreateCRC16Hash(void* pData, dword dwSize)			{return CreateCRCHash(0x00018006, pData, dwSize);}
 
 }; // namespace Algorithm
 namespace ADT {
@@ -74,11 +74,11 @@ namespace ADT {
 // ******************************************************************************** //
 enum HashMapMode
 {
-	HM_NO_RESIZE = 0,			// Konstante Größe (keine Autoresize beim Hinzufügen); Hohe Kollisionszahl
-	HM_PREFER_SIZE = 1,			// Langsames Wachstum (sqrt); Mittlere Kollisionszahl; Häufiges Resize
-	HM_RESIZE_MODERATE = 2,		// Mittleres Wachstum (sqrt/linear); Mittlere Kollisionszahl; Häufiges Resize
-	HM_PREFER_PERFORMANCE = 3,	// Schnelles Wachstum (exponentiell); Geringe Kollisionszahl; Seltenes Resize
-	HM_USE_STRING_MODE = 8		// Special mode for strings as keys
+	HM_NO_RESIZE = 0,			// Constant size (no reszie during insertion); high collision count; could be verry fast for some purposes
+	HM_PREFER_SIZE = 1,			// Resize if {#E>=3*Size} to {Size+3*sqrt(Size)}
+	HM_RESIZE_MODERATE = 2,		// Resize if {#E>=1.5*Size} to {Size+Max(128,6*sqrt(Size))}
+	HM_PREFER_PERFORMANCE = 3,	// Resize if {#E>=Size} to {(Size+100)*1.5}
+	HM_USE_STRING_MODE = 8		// Special mode using strings as keys
 };
 
 // ******************************************************************************** //
@@ -108,10 +108,10 @@ typedef Bucket* BucketP;
 class HashMap: public ADT
 {
 private:
-	BucketP*		m_apBuckets;				// Ein Array mit Eimern (Bin-Trees)
-	dword			m_dwSize;					// Größe des Arrays
-	dword			m_dwNumElements;			// Anzahl Elemente in der Hashmap (kann größer als Arraygröße sein)
-	HashMapMode		m_Mode;						// Resizemodus und optinal String Modus
+	BucketP*		m_apBuckets;				// An array with buckets (binary trees)
+	dword			m_dwSize;					// Size of the array and therewith of hash map
+	dword			m_dwNumElements;			// Number of elements currently in map (can be larger than array size)
+	HashMapMode		m_Mode;						// Modes set in initialization (String mode?, Resize mode?)
 
 	void RemoveData(BucketP _pBucket);
 	void RecursiveReAdd(BucketP _pBucket);

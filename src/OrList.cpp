@@ -69,7 +69,7 @@ ListNodeP OrE::ADT::List::Insert(void* _pObject, qword _qwKey)
 }
 
 // ******************************************************************************** //
-// Insert and allow each key only to occure one time (insert sorted as well)
+// Insert and allow each key only to occur one time (insert sorted as well)
 ListNodeP OrE::ADT::List::SetInsert(void* _pObject, qword _qwKey)
 {
 	// Search
@@ -82,7 +82,7 @@ ListNodeP OrE::ADT::List::SetInsert(void* _pObject, qword _qwKey)
 	// If the current element has the same key do nothing (set property)
 	if(pCurrent->qwKey != _qwKey)
 	{
-		// Insert left of the current elmenent (which has a larger key value)
+		// Insert left of the current element (which has a larger key value)
 		// Create Node
 		++m_iNumElements;
 		ListNodeP pNew = new ListNode(_pObject, _qwKey);

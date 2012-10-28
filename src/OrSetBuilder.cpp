@@ -18,7 +18,7 @@
 #include <cstdlib>
 
 // ******************************************************************************** //
-// Create one set per item (all items are there own set representants).
+// Create one set per item (all items are there own set representatives).
 OrE::ADT::SetBuilder::SetBuilder(dword _dwMaxNumElements):
 	m_dwNumElements(_dwMaxNumElements)
 {
@@ -37,8 +37,8 @@ OrE::ADT::SetBuilder::~SetBuilder()
 
 // ******************************************************************************** //
 // Union to of the subsets
-// Input: two representants/set-IDs, do not use other elements
-// Output: the new set representant (one of the two from input)
+// Input: two representatives/set-IDs, do not use other elements
+// Output: the new set representative (one of the two from input)
 dword OrE::ADT::SetBuilder::Union(dword _dwRep1, dword _dwRep2)
 {
 	if(_dwRep1==_dwRep2) return _dwRep1;
@@ -69,17 +69,17 @@ dword OrE::ADT::SetBuilder::Union(dword _dwRep1, dword _dwRep2)
 }
 
 // ******************************************************************************** //
-// Finds the representant of the set, which contains the given element. 
+// Finds the representative of the set, which contains the given element. 
 dword OrE::ADT::SetBuilder::GetSet(dword _dwElementIndex) const
 {
-	// The Element can be the representant
+	// The Element can be the representative
 	if(m_pInfos[_dwElementIndex].bRepresentant) return _dwElementIndex;
 	
 	// Already compressed path?
 	dword dwParent = m_pInfos[_dwElementIndex].dwParentIdx;
 	if(m_pInfos[dwParent].bRepresentant) return dwParent;
 
-	// Otherwise do path compression rekursive
+	// Otherwise do path compression recursive
 	return m_pInfos[_dwElementIndex].dwParentIdx = GetSet(dwParent);
 }
 

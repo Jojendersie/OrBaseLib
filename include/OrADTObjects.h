@@ -121,7 +121,7 @@ private:
 public:
 	// Creates an Iterator for an arbitrary ADT Object and set it to initial
 	// empty state. An ++, --, SeekTo... is always necessary to determine the
-	// start point of traversation.
+	// start point of traversing.
 	Iterator(ADTP _pADT) {
 		m_pADT = _pADT;
 		m_pCurrentElement = nullptr;

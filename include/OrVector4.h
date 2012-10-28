@@ -20,16 +20,16 @@ namespace OrE {
 namespace Math {
 
 	// ******************************************************************************** //
-	// Die 4D-Vektor-Klasse
+	// The 4D-Vector-Class
 	class Vec4
 	{
 	public:
-		// Variablen
+		// Variables
 		union
 		{
 			struct
 			{
-				float x;	// coordinates
+				float x;		// coordinates
 				float y;
 				float z;
 				float w;
@@ -37,7 +37,7 @@ namespace Math {
 
 			struct
 			{
-				float left;   // 2D rectangle
+				float left;		// 2D rectangle
 				float top;
 				float right;
 				float bottom;
@@ -45,7 +45,7 @@ namespace Math {
 
 			struct
 			{
-				Vec2 xy;	// vector swizzel
+				Vec2 xy;		// vector swizzle
 				Vec2 zw;
 			};
 
@@ -102,7 +102,7 @@ namespace Math {
 		inline Vec4 operator / (float f) const			{f = 1/f; return Vec4(x * f, y * f, z * f, w * f);}
 
 		// ******************************************************************************** //
-		// Comparision operators
+		// Comparison operators
 		inline bool operator == (const Vec4& b) {if(x != b.x) return false; if(y != b.y) return false; if(z != b.z) return false; return w == b.w;}
 		inline bool operator != (const Vec4& b) {if(x != b.x) return true; if(y != b.y) return true; if(z != b.z) return true; return w != b.w;}
 		inline bool operator == (const Vec3& b) {if(x != b.x) return false; if(y != b.y) return false; if(z != b.z) return false; return w == 1.0f;}
@@ -181,7 +181,7 @@ namespace Math {
 		// From Matrix
 		Quaternion(const Matrix& _m);
 
-		// From euler angles
+		// From Euler angles
 		Quaternion( float _fYaw, float _fPitch, float _fRoll );
 		// C++11 variant:  Quaternion( float _fYaw, float _fPitch, float _fRoll ) : Quaternion( MatrixRotation( _fYaw, _fPitch, _fRoll ) ) {}
 
@@ -206,7 +206,7 @@ namespace Math {
 		Quaternion& operator -= (const Quaternion& b) { i-=b.i; j-=b.j; k-=b.k; r-=b.r; Normalize(); return *this; }
 		Quaternion& operator *= (const Quaternion& b)
 		{
-			// Quaternion multiplikation - non commutative (a*b != a*b)
+			// Quaternion multiplication - non commutative (a*b != a*b)
 			float nr = r*b.r - i*b.i - j*b.j - k*b.k;
 			float ni = r*b.i + i*b.r + j*b.k - k*b.j;
 			float nj = r*b.j + j*b.r + k*b.i - i*b.k;
@@ -240,10 +240,10 @@ namespace Math {
 	inline Quaternion operator - (const Quaternion& a)							{Quaternion b; b.r=-a.r; b.i=-a.i; b.j=-a.j; b.k=-a.k; return b;}	// Avoiding the normalize - no use of component constructor
 	// Conjugation / inversion of a
 	inline Quaternion operator ~ (const Quaternion& a)							{Quaternion b; b.r=a.r; b.i=-a.i; b.j=-a.j; b.k=-a.k; return b;}	// Avoiding the normalize - no use of component constructor
-	// Quaternion multiplikation - non commutative (a*b != a*b)
+	// Quaternion multiplication - non commutative (a*b != a*b)
 	inline Quaternion operator * (const Quaternion& a, const Quaternion& b)
 	{
-		// Return with impliciet normalization
+		// Return with implicit normalization
 		return Quaternion(
 			a.r*b.r - a.i*b.i - a.j*b.j - a.k*b.k,
 			a.r*b.i + a.i*b.r + a.j*b.k - a.k*b.j,
@@ -255,7 +255,7 @@ namespace Math {
 	// a/b  <=>  a/(b^-1)  <=>  a/~b (~b = b conjugated)
 	inline Quaternion operator / (const Quaternion& a, const Quaternion& b)
 	{
-		// Return with impliciet normalization
+		// Return with implicit normalization
 		return Quaternion(
 			  a.r*b.r + a.i*b.i + a.j*b.j + a.k*b.k,
 			- a.r*b.i + a.i*b.r - a.j*b.k + a.k*b.j,

@@ -23,7 +23,7 @@ namespace Math {
 class Vec3
 {
 public:
-	// Variablen
+	// Variables
 	union
 	{
 		struct
@@ -80,7 +80,7 @@ public:
 	inline Vec3 operator / (float f) const			{f = 1/f; return Vec3(x * f, y * f, z * f);}
 
 	// ******************************************************************************** //
-	// Comparision operators
+	// Comparison operators
 	#define Vector_EPSILON	0.00001f
 	inline bool operator == (const Vec3& b) const	{if(Abs(x - b.x) > Vector_EPSILON) return false; if(Abs(y - b.y) > Vector_EPSILON) return false; return Abs(z - b.z) < Vector_EPSILON;}
 	inline bool operator != (const Vec3& b) const	{if(Abs(x - b.x) > Vector_EPSILON) return true; if(Abs(y - b.y) > Vector_EPSILON) return true; return Abs(z - b.z) > Vector_EPSILON;}
@@ -104,11 +104,11 @@ public:
 	// Multiply a directional vector (left) with the matrix (from right).
 	// The w component is ignored (9mul + 9add).
 	// Use a transposed inverse to transform directions correct
-	// (if transformation is affine and not riged)!
+	// (if transformation is affine and not rigged)!
 	Vec3			TransformDirection(const Matrix& m) const;
 
 	// Rotate a vector around some axis. This transformation uses quaternion
-	// math. Use this if you want to rotate onle one vector. For the rotation
+	// math. Use this if you want to rotate only one vector. For the rotation
 	// of multiple vectors a matrix is more efficient!
 	// Speed: Debug 480, Release 176
 	Vec3			Rotate(const Vec3& vAxis, float fAngle) const;
@@ -135,7 +135,7 @@ Vec3 Slerp(const Vec3& v1, const Vec3& v2, const float t);
 class IVec3
 {
 public:
-	// Variablen
+	// Variables
 	union
 	{
 		struct
@@ -191,7 +191,7 @@ public:
 	inline IVec3 operator / (int i) const			{return IVec3(x * i, y * i, z * i);}
 
 	// ******************************************************************************** //
-	// Comparision operators
+	// Comparison operators
 	inline bool operator == (const IVec3& b) const	{if(x != b.x) return false; if(y != b.y) return false; return z == b.z;}
 	inline bool operator != (const IVec3& b) const	{if(x != b.x) return true; if(y != b.y) return true; return z != b.z;}
 

@@ -29,7 +29,7 @@
 
 
 namespace OrE {
-	// Predeclarations need to assure safe access
+	// Declarations need to assure safe access
 	namespace Algorithm {
 		class HuffmanTree_Splay;
 		class HuffmanTree_SemiSplay;
@@ -40,7 +40,7 @@ namespace ADT {
 // Simple node for all binary trees
 class BinaryTreeNode: public ADTElement
 {
-	// Make nodes uneditable for all users except the trees. So the trees kann return
+	// Make nodes unchangeable for all users except the trees. So the trees can return
 	// references to non constant nodes without any (large) risk.
 	friend class BinaryTree;
 	friend class SplayTree;
@@ -52,7 +52,7 @@ protected:
 	BinaryTreeNode* pLeft;
 	BinaryTreeNode* pRight;
 	BinaryTreeNode* pParent;
-	int iParam;					// Statistic information to mark nodes (usecase differs on application)
+	int iParam;					// Statistic information to mark nodes (use case differs on application)
 
 	BinaryTreeNode(BinaryTreeNode* _pParent, void* _pObj, const qword& _qwKey):ADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr),pParent(_pParent)	{}
 
@@ -83,8 +83,8 @@ protected:
 	BinaryTreeNodeP m_pRoot;
 	virtual BinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
 
-	// Exchange two nodes by changing there 3 conections.
-	// The node will keep its adress and its data.
+	// Exchange two nodes by changing there 3 connections.
+	// The node will keep its address and its data.
 	void Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2);
 
 	// Replaces the current node by its left child. Does nothing

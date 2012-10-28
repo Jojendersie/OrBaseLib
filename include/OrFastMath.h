@@ -55,7 +55,7 @@ const float fE = 2.71828182845904f;
 const double dE  = 2.71828182845904523536028747135266249;
 
 // ******************************************************************************** //
-// Min und Max - Funktionen, damit nicht irgendwelche Dinge importiert werden.
+// Min and Max - Functions, the standard functions are bad to find
 template <class T> const T Min(const T a, const T b)		{return a < b ? a : b;}
 template <class T> const T Max(const T a, const T b)		{return a > b ? a : b;}
 template <class T> const T Clamp(const T a, const T min, const T max)	{return a < min ? min : (a > max ? max : a);}
@@ -85,51 +85,50 @@ inline int Int(float _fVal)
 }*/
 
 // ******************************************************************************** //
-// Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
+// Arcuscosine: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
 __forceinline float Arccos( float r )	{return acos(r);}
 
 // ******************************************************************************** //
-// Berechnet den Arcussinus: arctan( r / -sqr( 1.0f - r * r ) )
+// Arcussine: arctan( r / -sqr( 1.0f - r * r ) )
 __forceinline float Arcsin( float r )	{return asin(r);}
 
 // ******************************************************************************** //
-// Berechnet den Arcustangens: arctan( r )
+// Arctangent: arctan( r )
 __forceinline float Arctan( float r )	{return atan(r);}
 
 // ******************************************************************************** //
-// Berechnet den Sinus (Bogenmaß)
+// Sine (Radian measure)
 __forceinline float Sin( float r )		{return sin(r);}
 
 // ******************************************************************************** //
-// Berechnet den Kosinus (Bogenmaß)
+// Cosine (Radian measure)
 __forceinline float Cos( float r )		{return cos(r);}
 
 // ******************************************************************************** //
-// Berechnet den Tangens (Bogenmaß)
+// Tangent (Radian measure)
 __forceinline float Tan( float r )		{return tan(r);}
 
 // ******************************************************************************** //
-// quadriert eine Zahl
+// Square a number
 __forceinline float Sqr( float r )		{return r*r;}
 
 // ******************************************************************************** //
-// Zieht die Wurzel eines Floatwertes
+// The square root; standard function is faster than the ones below on modern hardware
 __forceinline float Sqrt( float r )		{return sqrt(r);}
 
 // ******************************************************************************** //
 inline float InvSqrt(float fValue)	{return float(1.0/sqrt(double(fValue)));}
 // DEPRECATED Version below: Is slower on modern hardware
-// Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
+// Square root (fast on old hardware)
 // Accuracy: smaller than 0.1%
 //float InvSqrt(float fValue);
 // Accuracy: worst case error 4%, avg 2.1%
 //float _InvSqrt(float fValue);
 
 // ******************************************************************************** //
-// Nächst größere 2 er Potenz
 
 // ******************************************************************************** //
-// Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück (sehr schnell)
+// 1/square root of a number
 /*inline __declspec(naked) float __fastcall InvSqrt(float fValue)
 {
 	__asm
@@ -168,16 +167,13 @@ inline float InvSqrt(float fValue)	{return float(1.0/sqrt(double(fValue)));}
 	}
 }
 */
-// ******************************************************************************** //
-// Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
-// etwas sicherer, aber auch ungenauer und langsamer
-//float InvSqrtEx( float r );
+
 
 // ******************************************************************************** //
-// Logarithmus naturalis
-// Accuracy: avg. error 0.5%. Do not use between 0 and 1! maxerror from 400%
+// Logarithm naturalism
+// Accuracy: avg. error 0.5%. Do not use between 0 and 1! max error from 400%
 float Ln( float r );
-// Logarithmus dualis
+// Logarithm dualism
 int _Ld( float r );
 float Ld( float r );
 int Ld( int r );
@@ -191,7 +187,7 @@ int Ld( int r );
 __forceinline float Pow(float fBase, float fExponent)	{return pow(fBase, fExponent);}
 
 // ******************************************************************************** //
-// Gray Code convertions
+// Gray Code conversions
 unsigned int GrayCodeToNum(unsigned int _uiGrayCode);
 unsigned int NumToGrayCode(unsigned int _uiNum);
 

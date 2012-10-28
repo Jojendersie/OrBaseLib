@@ -15,17 +15,17 @@
 // ******************************************************************************** //
 //									CONTENTS										//
 // The multimap maps a set of objects to one or more groups/properties.				//
-// The groups are string identifiers. The Objects are of arbitary types (void*)		//
+// The groups are string identifiers. The Objects are of arbitrary types (void*)	//
 // The initial idea was the use as scene graph, but there are probably much more	//
 // use cases.																		//
 // For more than 31 groups it is necessary to use a hierarchical approach. 			//
 // E.g. a multimap with more multimap objects.										//
 // To get very fast timings some object treatments are deferred. Everything is		//
-// implemented in O(1) beside the traversion by the iterator. During iteration		//
+// implemented in O(1) beside the traversing by the iterator. During iteration		//
 // objects are removed from the groups and deleted if Remove() or Unmap() was called//
 // for the object before. So for the iteration of n existing elements a total		//
 // time of O(n+k) is necessary. Or calling ++It once needs O(1+k/n) time, where k	//
-// is the number of objects removed since last traversion.							//
+// is the number of objects removed since last traversing.							//
 // If you don't traverse all groups the object is never really deleted and occupies	//
 // space. Furthermore the real object is not deleted from the map. Only its mapping	//
 // is removed. DO DELETE YOUR OBJECTS MANUAL. You can do this the same moment you	//

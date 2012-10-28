@@ -17,7 +17,7 @@
 // Create()		O(n)																//
 // Union()		O(1)																//
 // GetSet()		~O(a)	- proportional to the inverse ackermann function ->			//
-//						praktikaly constant.										//	
+//						practically constant.										//	
 // ******************************************************************************** //
 
 #pragma once
@@ -27,19 +27,19 @@ namespace ADT {
 	// ******************************************************************************** //
 	// Each set is represented by an arbitrary element from the set. This is a kind
 	// of set-ID. The set-IDs can change due to Union, but GetSet() returns the same
-	// representant for all items in one set.
+	// representative for all items in one set.
 	class SetBuilder
 	{
 #pragma pack(push, 1)
 		struct ElementInfo {
-			bool bRepresentant;		// Is this element an representant?
+			bool bRepresentant;		// Is this element an representative?
 			union {
-				dword dwParentIdx;	// All non representants know a maybe repr.
+				dword dwParentIdx;	// All non representatives know a maybe repr.
 				dword dwNextSet;	// Double linked list of sets (together with dwPreviousSet)
 			};
-			dword dwPreviousSet;	// Undifined if not the representant
-			dword dwSetSize:24;		// Undifined if not the representant
-			dword dwRank:8;			// Rank statistik for path compression
+			dword dwPreviousSet;	// Undefined if not the representative
+			dword dwSetSize:24;		// Undefined if not the representative
+			dword dwRank:8;			// Rank statistic for path compression
 
 			ElementInfo(dword _dwIdx, dword _dwNum):bRepresentant(true),dwParentIdx((_dwIdx+1)%_dwNum),dwPreviousSet((_dwIdx+_dwNum-1)%_dwNum),dwRank(0),dwSetSize(1)	{}
 		};
@@ -53,16 +53,16 @@ namespace ADT {
 		SetBuilder(const SetBuilder&);
 		const SetBuilder& operator = (const SetBuilder&);
 	public:
-		// Create one set per item (all items are there own set representants).
+		// Create one set per item (all items are there own set representatives).
 		SetBuilder(dword _dwMaxNumElements);
 		~SetBuilder();
 
 		// Union to of the subsets
-		// Input: two representants/set-IDs, do not use other elements
-		// Output: the new set representant (one of the two from input)
+		// Input: two representatives/set-IDs, do not use other elements
+		// Output: the new set representative (one of the two from input)
 		dword Union(dword _dwRep1, dword _dwRep2);
 
-		// Finds the representant of the set, which contains the given element. 
+		// Finds the representative of the set, which contains the given element. 
 		dword GetSet(dword _dwElementIndex) const;
 
 		// Replace the first element with the last one, i.e. the first element is deleted

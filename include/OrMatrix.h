@@ -20,25 +20,24 @@
 namespace OrE {
 namespace Math {
 
-// Verwendete Symbole vordefinieren
+// Define used symbols
 class Matrix;
 class Matrix2x3;
 class Plane;
 Matrix MatrixInvert(const Matrix& m);
 Matrix2x3 Matrix2x3Invert(const Matrix2x3& m);
-//inline Matrix operator * (const Matrix& a, const Matrix& b);
 
 // ******************************************************************************** //
-// Die 4D - Matrixklasse (Für 3D Transformationen)
+// Die 4D - Matrix class (for 3D Transformations)
 class Matrix
 {
 public:
-	// Variablen
+	// Variables
 	union
 	{
 		struct
 		{
-			float m11, m12, m13, m14,	// Elemente der Matrix
+			float m11, m12, m13, m14,	// Elements of the matrix
 				  m21, m22, m23, m24,
 				  m31, m32, m33, m34,
 				  m41, m42, m43, m44;
@@ -46,7 +45,7 @@ public:
 
 		struct
 		{
-			float m1[4],					// Zeilenvektoren
+			float m1[4],				// Row vectors
 				 m2[4],
 				 m3[4],
 				 m4[4];
@@ -54,19 +53,18 @@ public:
 
 /*		struct
 		{
-			Vec4 v1,					// Zeilenvektoren
+			Vec4 v1,					// Row vectors
 				 v2,
 				 v3,
 				 v4;
 		};*/
 
-		float		m[4][4];			// Zweidimensionales Array der Elemente
-		float		n[16];				// Eindimensionales Array der Elemente
+		float		m[4][4];			// 2 dimensional array acces
+		float		n[16];				// 1 dimensional array acces
 	};
 
-//	dword dwMatrixID;
 
-	// Konstruktoren
+	// Constructors
 	Matrix() {/*dwMatrixID = Or_MatrixIDCounter++;*/}
 
 	Matrix(const Matrix& m) : m11(m.m11), m12(m.m12), m13(m.m13), m14(m.m14),
@@ -84,15 +82,15 @@ public:
 
 	Matrix(const float* pfValue);
 
-	// Casting-Opeatoren
+	// Casting-operators
 	operator float* ()					{return (float*)(n);}
 	operator const float* () const		{return (float*)(n);}
 
-	// Zugriffsoperatoren
+	// Access operators
 	float& operator () (int iRow, int iColumn) {return m[iRow][iColumn];}
 	float operator () (int iRow, int iColumn) const {return m[iRow][iColumn];}
 
-	// Zuweisungsoperatoren
+	// Assignment operators
 	Matrix& operator = (const Matrix& m);
 	
 	Matrix& operator += (const Matrix& m)
@@ -162,7 +160,7 @@ public:
 		return *this;
 	}
 
-	// Unäre Operatoren
+	// Unary operators
 	Matrix operator + () const
 	{
 		return *this;
@@ -179,7 +177,7 @@ public:
 
 typedef Matrix* MatrixP;
 
-// Arithmetische Operatoren
+// Arithmetical operators
 inline Matrix operator + (const Matrix& a, const Matrix& b)	{return Matrix(a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13, a.m14 + b.m14, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23, a.m24 + b.m24, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33, a.m34 + b.m34, a.m41 + b.m41, a.m42 + b.m42, a.m43 + b.m43, a.m44 + b.m44);}
 inline Matrix operator - (const Matrix& a, const Matrix& b)	{return Matrix(a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13, a.m14 - b.m14, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23, a.m24 - b.m24, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33, a.m34 - b.m34, a.m41 - b.m41, a.m42 - b.m42, a.m43 - b.m43, a.m44 - b.m44);}
 inline Matrix operator - (const Matrix& m)					{return Matrix(-m.m11, -m.m12, -m.m13, -m.m14, -m.m21, -m.m22, -m.m23, -m.m24, -m.m31, -m.m32, -m.m33, -m.m34, -m.m41, -m.m42, -m.m43, -m.m44);}
@@ -248,7 +246,7 @@ inline Matrix operator / (const Matrix& m,
 }
 
 // ******************************************************************************** //
-// Vergleichsoperatoren
+// Comparison operators
 #define Matrix_EPSILON	0.00001f
 inline bool operator == (const Matrix& a,
 						 const Matrix& b)
@@ -293,62 +291,89 @@ inline bool operator != (const Matrix& a,
 }
 
 // ******************************************************************************** //
-// Declaraion of functions for matrix creation
-inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);}				// Identitätsmatrix liefern
-		Matrix	MatrixTranslation(const Vec3& v);																											// Translationsmatrix (Verschiebungsmatrix) berechnen
-		Matrix	MatrixTranslation(const float x, const float y, const float z);																					// Translationsmatrix (Verschiebungsmatrix) berechnen
-		Matrix	MatrixRotationX(const float f);																													// Rotationsmatrix um die X-Achse berechnen
-		Matrix	MatrixRotationY(const float f);																													// Rotationsmatrix um die Y-Achse berechnen
-		Matrix	MatrixRotationZ(const float f);																													// Rotationsmatrix um die Z-Achse berechnen
-		Matrix	MatrixRotation(const float x, const float y, const float z);																					// Rotiert um alle drei Achsen
+// Declaration of functions for matrix creation
+
+		// Returns the identity matrix
+inline	Matrix	MatrixIdentity() {return Matrix(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);}
+		// Setup translation matrix for (vector * matrix) transformations
+		Matrix	MatrixTranslation(const Vec3& v);
+		// Setup translation matrix for (vector * matrix) transformations
+		Matrix	MatrixTranslation(const float x, const float y, const float z);
+		// Calculate rotation around the x axis
+		Matrix	MatrixRotationX(const float f);
+		// Calculate rotation around the y axis
+		Matrix	MatrixRotationY(const float f);
+		// Calculate rotation around the z axis
+		Matrix	MatrixRotationZ(const float f);
+		// Rotate around all three axis. This is the same as
+		Matrix	MatrixRotation(const float x, const float y, const float z);
 inline	Matrix	MatrixRotation(const Vec3& v)		{return MatrixRotation(v.x, v.y, v.z);}
-		Matrix	MatrixRotation_Translatation(const Vec3& vR, const Vec3& vP);																				// Direkte Berechnung von MatrixRotation*MatrixTranslation
-		Matrix	MatrixRotationAxis(const Vec3& v, const float f);																							// Rotationsmatrix um eine beliebige Achse berechnen
-		Matrix	MatrixScaling(const Vec3& v);																												// Skalierungsmatrix berechnen
-		Matrix	MatrixScaling(const float f);																													// Skalierungsmatrix berechnen
-		Matrix	MatrixAxis(const Vec3& vXAxis, const Vec3& vYAxis, const Vec3& vZAxis);																// Liefert eine Achsenmatrix
-		float	MatrixDet3(const Matrix& m);																													// Determinante berechnen (Obere linke 3x3 Matrix)
-		float	MatrixDet(const Matrix& m);																														// Determinante berechnen (Laplaceches Entwicklungsschema)
-		Matrix	MatrixInvert(const Matrix& m);																													// Invertierte (umgekehrte) Matrix berechnen
-		Matrix	MatrixTranspose(const Matrix& m);																												// Transponierte Matrix berechnen
-		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);											// Projektionsmatrix berechnen
-		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);								// Projektionsmatrix berechnen
-		Matrix	MatrixParallelProjection(const float fLeft, const float fRight, const float fBottom, const float fTop, const float fNear, const float fFar);	// Projektionsmatrix berechnen
-		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vLookAt, const Vec3& vUp = Vec3(0.0f, 1.0f, 0.0f));										// Kameramatrix erzeugen
-		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& vUp, const Vec3& vBidir);												// Kameramatrix erzeugen
-		Matrix	MatrixToTex2DMatrix(const Matrix& m);																											// In Texturmatrix umwandeln
-		Matrix	MatrixMirror(const Plane& p);																													// Eine Spiegelmatrix an gegebener Ebene berechnen
-		bool	MatrixSolveEquation(Matrix _A, Vec4* _pV_X);																									// Löst das Gleichungssystem Ax=v mit dem Gauß-Jordan verfahren
+		// Direct computation of MatrixRotation(x,y,z)*MatrixTranslation
+		Matrix	MatrixRotation_Translatation(const Vec3& vR, const Vec3& vP);
+		// Rotate around an arbitrary axis
+		Matrix	MatrixRotationAxis(const Vec3& v, const float f);
+		// Setup scaling matrix
+		Matrix	MatrixScaling(const Vec3& v);
+		// Setup proportional scaling matrix
+		Matrix	MatrixScaling(const float f);
+		// Setup an axis matrix - a vector base
+		Matrix	MatrixAxis(const Vec3& vXAxis, const Vec3& vYAxis, const Vec3& vZAxis);
+		// Calculate determinant of the upper left 3x3 sub matrix
+		float	MatrixDet3(const Matrix& m);
+		// Calculate the determinant of the whole 4x4 matrix with Laplace's formula
+		float	MatrixDet(const Matrix& m);
+		// Invert matrix
+		Matrix	MatrixInvert(const Matrix& m);
+		// Transpose matrix
+		Matrix	MatrixTranspose(const Matrix& m);
+		// OpenGL perspective projection matrix
+		Matrix	MatrixProjection(const float fFOV, const float fAspect, const float fNearPlane, const float fFarPlane);
+		// OpenGL orthogonal projection matrix
+		Matrix	MatrixParallelProjection(const float fWidth, const float fHeigh, const float fNearPlane, const float fFarPlane);
+		// OpenGL orthogonal projection matrix
+		Matrix	MatrixParallelProjection(const float fLeft, const float fRight, const float fBottom, const float fTop, const float fNear, const float fFar);
+		// Calculate camera matrix
+		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vLookAt, const Vec3& vUp = Vec3(0.0f, 1.0f, 0.0f));
+		// Calculate camera matrix
+		Matrix	MatrixCamera(const Vec3& vPos, const Vec3& vDir, const Vec3& vUp, const Vec3& vBidir);
+		// Transform to texture matrix
+		Matrix	MatrixToTex2DMatrix(const Matrix& m);
+		// Calculate a mirror matrix for given plane
+		Matrix	MatrixMirror(const Plane& p);
+		// Solve the equation system Ax=v with Gauss-Jordan method.
+		bool	MatrixSolveEquation(Matrix _A, Vec4* _pV_X);
+		// Creates an orthogonal base for a direction vector
 		Matrix	MatrixOrthonormal(const Vec3& vNormal);
-		Matrix	MatrixTransvection(const Vec3& v);																											// TODO: Scherungsmatrix berechnen
+		// TODO: Setup shearing matrix
+		Matrix	MatrixTransvection(const Vec3& v);
 
 
 // ******************************************************************************** //
-// 2x3 Matrixklasse für 2D Transformationen
-// Die Transfornation erfolgt durch Matrix*(u,v,1)' (2x3 * 3x1 = 2x1)
+// 2x3 Matrix class for 2D Transformations
+// The transformation is applyed as follows: Matrix*(u,v,1)' (2x3 * 3x1 = 2x1)
 class Matrix2x3
 {
 public:
-	// Variablen
+	// Variables
 	union
 	{
 		struct
 		{
-			float m11, m12, m13,		// Elemente der Matrix
+			float m11, m12, m13,		// Elements of the matrix
 				  m21, m22, m23;
 		};
 
 		struct
 		{
-			Vec3 v1;					// Zeilenvektoren
+			Vec3 v1;					// Row vectors
 			Vec3 v2;
 		};
 
-		float		m[2][3];			// Zweidimensionales Array der Elemente
-		float		n[6];				// Eindimensionales Array der Elemente
+		float		m[2][3];			// 2 dimensional array of elements
+		float		n[6];				// 1 dimensional access
 	};
 
-	// Konstruktoren
+	// Constructors
 	Matrix2x3() {}
 
 	Matrix2x3(const Matrix2x3& m) : m11(m.m11), m12(m.m12), m13(m.m13),
@@ -361,15 +386,15 @@ public:
 	Matrix2x3(const float* pfValue) : m11(pfValue[0]), m12(pfValue[1]), m13(pfValue[2]),
 									    m21(pfValue[3]), m22(pfValue[4]), m23(pfValue[5])	{}
 
-	// Casting-Opeatoren
+	// Casting-operators
 	operator float* ()					{return (float*)(n);}
 	operator const float* () const		{return (float*)(n);}
 
-	// Zugriffsoperatoren
+	// Access operators
 	float& operator () (int iRow, int iColumn) {return m[iRow][iColumn];}
 	float operator () (int iRow, int iColumn) const {return m[iRow][iColumn];}
 
-	// Zuweisungsoperatoren
+	// Assignment operators
 	Matrix2x3& operator = (const Matrix2x3& m)
 	{
 		m11 = m.m11; m12 = m.m12; m13 = m.m13;
@@ -424,7 +449,7 @@ public:
 		return *this;
 	}
 
-	// Unäre Operatoren
+	// Unary operators
 	Matrix2x3 operator + () const
 	{
 		return *this;
@@ -441,7 +466,7 @@ typedef Matrix2x3* Matrix2x3P;
 
 
 // ******************************************************************************** //
-// Arithmetische Operatoren
+// Arithmetical operators
 inline Matrix2x3 operator + (const Matrix2x3& a, const Matrix2x3& b)	{return Matrix2x3(a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23);}
 inline Matrix2x3 operator - (const Matrix2x3& a, const Matrix2x3& b)	{return Matrix2x3(a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23);}
 inline Matrix2x3 operator - (const Matrix2x3& m)						{return Matrix2x3(-m.m11, -m.m12, -m.m13, -m.m21, -m.m22, -m.m23);}
@@ -497,8 +522,7 @@ inline Matrix2x3 operator / (const Matrix2x3& m,
 }
 
 // ******************************************************************************** //
-// Vergleichsoperatoren
-//#define Matrix_EPSILON	0.001f
+// Comparison operators
 inline bool operator == (const Matrix2x3& a,
 						 const Matrix2x3& b)
 {
@@ -524,20 +548,32 @@ inline bool operator != (const Matrix2x3& a,
 }
 
 // ******************************************************************************** //
-// Declaraion of functions for matrix creation. All functions simulate a 3x3 matrix
+// Declaration of functions for matrix creation. All functions simulate a 3x3 matrix
 // with some parts left away.
-inline	Matrix2x3	Matrix2x3Identity() {return Matrix2x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);}																				// Identitätsmatrix liefern
-		Matrix2x3	Matrix2x3Translation(const Vec2& v);																													// Translationsmatrix (Verschiebungsmatrix) berechnen
-		Matrix2x3	Matrix2x3Translation(const float x, const float y);																										// Translationsmatrix (Verschiebungsmatrix) berechnen
-		Matrix2x3	Matrix2x3Rotation(const float f);																															// Rotationsmatrix um die "Z-Achse" berechnen
-		Matrix2x3	Matrix2x3Scaling(const Vec2& v);																														// Skalierungsmatrix berechnen
-		Matrix2x3	Matrix2x3Scaling(const float x, const float y);																											// Skalierungsmatrix berechnen
-		Matrix2x3	Matrix2x3Scaling(const float f);																															// Skalierungsmatrix berechnen
-		Matrix2x3	Matrix2x3Axis(const Vec2& vXAxis, const Vec2& vYAxis);																							// Liefert eine Achsenmatrix
-		Matrix2x3	Matrix2x3Invert(const Matrix2x3& m);																													// Invertierte (umgekehrte) Matrix berechnen
-		Matrix2x3	Matrix2x3Transvection(const Vec2& v);																												// Scherungs Matrix berechnen
-		Matrix2x3	Matrix2x3Transvection(const float x, const float y);																										// Scherungs Matrix berechnen
-		float		Matrix2x3Det(const Matrix2x3& m);																														// Determinante berechnen (Laplaceches Entwicklungsschema)
+		// Return identity matrix
+inline	Matrix2x3	Matrix2x3Identity() {return Matrix2x3(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);}
+		// Setup translation matrix for (matrix * vector) transformations
+		Matrix2x3	Matrix2x3Translation(const Vec2& v);
+		// Setup translation matrix for (matrix * vector) transformations
+		Matrix2x3	Matrix2x3Translation(const float x, const float y);
+		// Calculate rotation around the "z" axis
+		Matrix2x3	Matrix2x3Rotation(const float f);
+		// Setup scaling matrix
+		Matrix2x3	Matrix2x3Scaling(const Vec2& v);
+		// Setup scaling matrix
+		Matrix2x3	Matrix2x3Scaling(const float x, const float y);
+		// Setup proportional scaling matrix
+		Matrix2x3	Matrix2x3Scaling(const float f);
+		// Create a base in R^2 from two vectors
+		Matrix2x3	Matrix2x3Axis(const Vec2& vXAxis, const Vec2& vYAxis);
+		// Invert matrix
+		Matrix2x3	Matrix2x3Invert(const Matrix2x3& m);
+		// Setup shearing matrix
+		Matrix2x3	Matrix2x3Transvection(const Vec2& v);
+		// Setup shearing matrix
+		Matrix2x3	Matrix2x3Transvection(const float x, const float y);
+		// Compute determinant
+		float		Matrix2x3Det(const Matrix2x3& m);
 
 
 }; // namespace Math

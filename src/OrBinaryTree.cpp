@@ -135,7 +135,7 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::RotateRight(BinaryTreeNodeP _pNode)
 		BinaryTreeNodeP pO = _pNode->pLeft;
 		_pNode->pLeft = pO->pRight;
 		pO->pRight = _pNode;
-		// change parents of all changed childs
+		// change parents of all changed children
 		pO->pParent = _pNode->pParent;
 		_pNode->pParent = pO;
 		if(_pNode->pLeft) _pNode->pLeft->pParent = _pNode;
@@ -168,7 +168,7 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::RotateLeft(BinaryTreeNodeP _pNode)
 		BinaryTreeNodeP pO = _pNode->pRight;
 		_pNode->pRight = pO->pLeft;
 		pO->pLeft = _pNode;
-		// change parents of all changed childs
+		// change parents of all changed children
 		pO->pParent = _pNode->pParent;
 		_pNode->pParent = pO;
 		if(_pNode->pRight) _pNode->pRight->pParent = _pNode;

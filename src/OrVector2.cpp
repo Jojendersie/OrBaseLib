@@ -23,6 +23,8 @@
 using namespace OrE::Algorithm;
 using namespace OrE::Math;
 
+// The most operators and functions are implemented inline in the header
+
 // ******************************************************************************** //
 Vec2 OrE::Math::Vec2::Random()
 {
@@ -30,7 +32,7 @@ Vec2 OrE::Math::Vec2::Random()
 }
 
 // ******************************************************************************** //
-// Rotieren eines Punktes  in 2D-Raum
+// Rotate a point in 2D space (Cartesian coordinates)
 Vec2 OrE::Math::Vec2::Rotate(const float _fAlpha) const
 {
 	float fCos = Cos(_fAlpha);
@@ -38,31 +40,6 @@ Vec2 OrE::Math::Vec2::Rotate(const float _fAlpha) const
 	return Vec2(x*fCos - y*fSin,
 				x*fSin + y*fCos);
 }
-
-/*Vec2 OrE::Math::Vec2::Rotate(const Vec2& _v,
-							 const float _fAlpha)
-{
-	float fCos = Cos(_fAlpha);
-	float fSin = Sin(_fAlpha);
-	return Vec2(_v.x*fCos-_v.y*fSin, _v.x*fSin+_v.y*fCos);
-}*/
-
-// ******************************************************************************** //
-// 2D-Vektor mit Matrix multiplizieren
-/*const Vec2& OrE::Math::Vec2::Transform(const Matrix2x3& m)
-{
-	// Multiply matrix from left: 2x3 * (2+1)x1 = 2x1
-	x = m.m11*x + m.m12*y + m.m13;
-	y = m.m21*x + m.m22*y + m.m23;
-	return *this;
-}
-
-Vec2 OrE::Math::Vec2::Transform(const Vec2& v, const Matrix2x3& m)
-{
-	// Multiply matrix from left: 2x3 * (2+1)x1 = 2x1
-	return Vec2(m.m11*v.x + m.m12*v.y + m.m13,
-				m.m21*v.x + m.m22*v.y + m.m23);
-}*/
 
 // ******************************************************************************** //
 // The spherical interpolation applies only to normal vectors

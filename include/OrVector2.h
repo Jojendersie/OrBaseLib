@@ -20,40 +20,40 @@ namespace OrE {
 namespace Math {
 
 // ******************************************************************************** //
-// Die 2D-Vektor-Klasse
+// The 2D-Vector-Class
 class Vec2
 {
 public:
-	// Variablen
+	// Variables
 	union
 	{
 		struct
 		{
-			float x;	// Koordinaten
+			float x;	// coordinates
 			float y;
 		};
 
 		struct
 		{
-			float u;	// Texturkoordinaten
+			float u;	// nomenclature as texture coordinates
 			float v;
 		};
 
-		float c[2];		// Array der Koordinaten
+		float c[2];		// Array pf coordinates
 	};
 
-	// Konstruktoren
+	// Constructors
 	Vec2()																	{}
 	Vec2(const Vec2& v) : x(v.x), y(v.y)									{}
 	Vec2(const float f) : x(f), y(f)										{}
 	Vec2(const float _x, const float _y) : x(_x), y(_y)						{}
 	Vec2(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1])	{}
 
-	// Casting-Operatoren
+	// Casting-operators
 	operator float* () {return (float*)(c);}
 	operator const float* () const {return (const float*)(c);}
 
-	// Zuweisungsoperatoren
+	// Assignment operators
 	Vec2& operator = (const Vec2& v)	{x = v.x; y = v.y; return *this;}
 	Vec2& operator = (const float f)	{x = f; y = f; return *this;}
 	Vec2& operator += (const Vec2& v)	{x += v.x; y += v.y; return *this;}
@@ -64,17 +64,17 @@ public:
 	Vec2& operator /= (float f)			{f = 1/f; x *= f; y *= f; return *this;}
 
 	// ******************************************************************************** //
-	// Arithmetische Operatoren
+	// Arithmetical operators
 	inline Vec2 operator + (const Vec2& b) const	{return Vec2(x + b.x, y + b.y);}
 	inline Vec2 operator - (const Vec2& b) const	{return Vec2(x - b.x, y - b.y);}
 	inline Vec2 operator - () const					{return Vec2(-x, -y);}
 	inline Vec2 operator * (const Vec2& b) const	{return Vec2(x * b.x, y * b.y);}
 	inline Vec2 operator * (const float f) const	{return Vec2(x * f, y * f);}
 	inline Vec2 operator / (const Vec2& b) const	{return Vec2(x / b.x, y / b.y);}
-	inline Vec2 operator / (float f) const			{f = 1/f; return Vec2(x * f, y * f);}	// Multiplikation schneller
+	inline Vec2 operator / (float f) const			{f = 1/f; return Vec2(x * f, y * f);}	// Multiplication is faster
 
 	// ******************************************************************************** //
-	// Vergleichsoperatoren
+	// Comparison operators
 	inline bool operator == (const Vec2& b) const	{if(x != b.x) return false; return y == b.y;}
 	inline bool operator != (const Vec2& b) const	{if(x != b.x) return true; return y != b.y;}
 
@@ -92,13 +92,13 @@ public:
 //	inline static float	Dot(const Vec2& v1, const Vec2& v2)							{return v1.x * v2.x + v1.y * v2.y;}
 	inline float		Cross(const Vec2& v) const									{return x * v.y - y * v.x;}
 	inline static float Cross(const Vec2& v1, const Vec2& v2)						{return v1.x * v2.y - v1.y * v2.x;}
-	inline Vec2			Perpendicular() const										{return Vec2(-y, x);}		// Senkrechter Vektor
-//	inline static Vec2	Perpendicular(const Vec2& v)								{return Vec2(-v.y, v.x);}		// Senkrechter Vektor
+	inline Vec2			Perpendicular() const										{return Vec2(-y, x);}			// Orthogonal vector
+//	inline static Vec2	Perpendicular(const Vec2& v)								{return Vec2(-v.y, v.x);}		// Orthogonal vector
 	inline float		Angle(const Vec2& v) const									{return Cos((x * v.x + y * v.y) * InvSqrt((x * x + y * y) * (v.x * v.x + v.y * v.y)));}
 //	inline static float	Angle(const Vec2& v1, const Vec2& v2)						{return Cos((v1.x * v2.x + v1.y * v2.y) * InvSqrt((v1.x * v1.x + v1.y * v1.y) * (v2.x * v2.x + v2.y * v2.y)));}
 	static Vec2			Random();
-	Vec2				Rotate(const float _fAlpha) const;								// Rotieren eines Punktes im 2D-Raum
-	//static Vec2			Rotate(const Vec2& _v, const float _fAlpha);				// Rotieren eines Punktes im 2D-Raum
+	Vec2				Rotate(const float _fAlpha) const;								// Rotate a point in 2D space
+	//static Vec2			Rotate(const Vec2& _v, const float _fAlpha);				// Rotate a point in 2D space
 };
 
 // ******************************************************************************** //

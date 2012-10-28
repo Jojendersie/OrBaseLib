@@ -17,7 +17,6 @@
 #include <cstdio>
 // include for malloc
 #include <cstdlib>
-#include <cassert>
 
 #include "..\Include\OrTypeDef.h"
 #include "..\Include\OrADTObjects.h"
@@ -26,44 +25,44 @@
 #include "..\Include\OrBuffer.h"
 #include "..\Include\OrUtils.h"
 
+#include "..\Include\OrDebug.h"
+
 using namespace OrE::ADT;
 using namespace OrE::Math;
 
 
 // ******************************************************************************** //
-int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
+int OrE::ADT::Trie::Add( const char* _pcName, void* _pData, bool _bOverrideData )
 {
-	// Name merken, falls Fehler
+	// Remember names in case of error
 	//TrieString* pName = _pName;
-	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
+	// The search starts at the root
 	TrieNodeP pCurrent = m_pFirstNode;
 	while(pCurrent)
 	{
-		// Strings vergleichen
+		// Compare strings
 		dword dwEqual = OrE::Utils::Match(pCurrent->pSubString, _pcName);
 
-		// Wenn min. ein Zeichen gleich, dann Unterbaum besuchen
+		// If at least one character is equal go to subtree
 		if(dwEqual)
 		{
-			// Index auf letzte gültige Stelle setzen
+			// Set index to the last valid location
 			dword dwI = dwEqual-1;
-			// Fall 1: _pcName ist zu ende -> Daten an diesen Knoten
-			// anhängen. Überladen/Überschreiben wenn bereits Endknoten.
+			// Case 1: _pcName ends -> Attach data to this node.
+			// Overwrites data if already leave node.
 			if(!_pcName[dwEqual])
 			{
-				// 1.1 Der Knoten hat hier noch einen längeren String, das
-				// ist jetzt ungültig und wird abgetrennt.
+				// 1.1 The current node has a longer label. Cut the end.
 				if(pCurrent->pSubString[dwEqual])
 				{
-					// Neuen zwischenknoten erstellen.
+					// Create new node on between.
 					TrieNodeP pNew = new TrieNode;
-					// String zerteilen und alten löschen
+					// Cut string and delete old one
 					char* pcTemp = pCurrent->pSubString;
 					pNew->pSubString = OrE::Utils::Substr(pcTemp, dwEqual, 0xffffffff);
 					pCurrent->pSubString = OrE::Utils::Substr(pcTemp, 0, dwI);
 					free(pcTemp);
-					// Neues Kind unter aktuellem Knoten, da so die
-					// Parentobjekte gültig bleiben.
+					// Append new child to current node. The remaining tree needs no changes.
 					pNew->pChild = pCurrent->pChild;
 					pCurrent->pChild = pNew;
 					pNew->pNext = 0;
@@ -72,7 +71,7 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 					return 0;
 				} else
 				{
-					// Knoten identisch mit Restnamen -> Knoten beibehalten, Daten Neu/Überschreiben
+					// Node label identical with searched one -> overwrite
 					if(!pCurrent->pData
 						|| _bOverrideData) // Do not notify the override (in return) if _bOverrideData==true
 					{
@@ -86,8 +85,8 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 				}	// if(pCurrent->pcSubString[dwEqual])
 			}	// if(dwEqual)
 
-			// Fall 2: Gleichheit Knoten mit Anfang des Namens ->
-			// Restnamen in Unterbaum suchen (rekursiv)
+			// Case 2: Node label is equal to the beginning of the searched string.
+			// Search recursive.
 			if(!pCurrent->pSubString[dwEqual])
 			{
 				if(_bOverrideData) pCurrent->pData = _pData;
@@ -95,7 +94,7 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 					pCurrent = pCurrent->pChild;
 					_pcName = &_pcName[dwEqual];
 				} else {
-					// Fall 3: Baum zu Ende -> neues Kind mit Restnamen.
+					// Case 3: End of tree -> new leave.
 					pCurrent->pChild = new TrieNode;
 					pCurrent->pChild->pSubString = OrE::Utils::Substr(_pcName, dwEqual, 0xffffffff);
 					pCurrent->pChild->pChild = 0;
@@ -104,11 +103,10 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 					return 0;
 				}
 			} else {
-				// Fall 4: Teilsequenz < als Länge der beiden -> 2 neue
-				// Knoten (einen mit Rest des alten Knoten + Subbaum und
-				// den anderen mit Rest des Namens.
+				// Case 4: equally sequence length < length of node and searched string -> 2 new
+				// nodes (one with the equally sequence + 2 Subtree with the both remaining parts.
 
-				// Neue Kindsknoten erstellem
+				// Create new nodes
 				TrieNodeP pNew_Name = new TrieNode;
 				TrieNodeP pNew_Old = new TrieNode;
 				pNew_Name->pSubString = OrE::Utils::Substr(_pcName, dwEqual, 0xffffffff);
@@ -116,7 +114,7 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 				pNew_Name->pNext = pNew_Old;
 				pNew_Name->pData = _pData;
 
-				// String zerteilen und alten löschen
+				// Split string and delete old one.
 				char* pcTemp = pCurrent->pSubString;
 				pNew_Old->pChild = pCurrent->pChild;
 				pNew_Old->pSubString = OrE::Utils::Substr(pcTemp, dwEqual, 0xffffffff);
@@ -131,11 +129,11 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 				return 0;
 			}
 		} else {
-			// keine Gleichheit -> im nächsten Teilbaum suchen.
+			// no equality - search in other subtree on same level
 			if(pCurrent->pNext)
 				pCurrent = pCurrent->pNext;
 			else {
-				// Baum zu Ende -> neuer Unterknoten.
+				// End of Tree -> new leave.
 				pCurrent->pNext = new TrieNode;
 				pCurrent->pNext->pSubString = OrE::Utils::Substr(_pcName, 0, 0xffffffff);
 				pCurrent->pNext->pChild = 0;
@@ -148,7 +146,7 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 
 	if(!m_pFirstNode)
 	{
-		// Baum noch leer -> ersten Kindsknoten anlegen
+		// Tree is empty -> Create first node
 		m_pFirstNode = new TrieNode;
 		m_pFirstNode->pSubString = OrE::Utils::Substr(_pcName, 0, 0xffffffff);
 		m_pFirstNode->pChild = 0;
@@ -161,44 +159,42 @@ int OrE::ADT::Trie::Add(const char* _pcName, void* _pData, bool _bOverrideData)
 }
 
 // ******************************************************************************** //
-TrieNodeP OrE::ADT::Trie::Match(const char** _ppcName)
+TrieNodeP OrE::ADT::Trie::Match( const char** _ppcName )
 {
-	// Da größtmögliche Teilfunktion gesucht einen Merker einführen.
+	// Introduce a marker to remember biggest matching subsequence
 	TrieNodeP pLastPossibleData = 0;
 	const char* pcLastPossibleName = *_ppcName;
 //	dword dwLastPossibleLen = _Name.m_dwLen;
-	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
+	// Search from root
 	TrieNodeP pCurrent = m_pFirstNode;
 	while(pCurrent)
 	{
-		// Strings vergleichen
+		// Compare strings
 		dword dwEqual = OrE::Utils::Match(pCurrent->pSubString, *_ppcName);
 
 		if(dwEqual)
 		{
 			*_ppcName = *_ppcName+dwEqual;
 
-			// Baumknoten länger als Name, aber gleichen Anfangsteil
+			// The current node has a longer label.
 			if(pCurrent->pSubString[dwEqual])
 			{
 				*_ppcName = pcLastPossibleName;
 				return nullptr;
 			}
 
-			// 1.Fall: Name zu Ende und Fund.
+			// 1. Case: End of name and complete match
 			if(!(*_ppcName)[dwEqual]) 
 			{
 				if(pCurrent->pData) return pCurrent;
 				else{
 					(*_ppcName) = pcLastPossibleName;
-					// Fehler: aktueller Knoten enthält keine Daten
-					//OrSE_Error("Funktionsname enthält keine Daten.");
 					return pLastPossibleData;
 				}
 			}
 
-			// 2.Fall: Name geht weiter -> Subbaum durchsuchen.
-			// Wenn der aktuelle Knoten daten enthält merken.
+			// 2. Case: Name continues -> Search subtree.
+			// If the current node contains data set the marker.
 			if(pCurrent->pData)
 			{
 				pLastPossibleData = pCurrent;
@@ -206,72 +202,62 @@ TrieNodeP OrE::ADT::Trie::Match(const char** _ppcName)
 			}
 			pCurrent = pCurrent->pChild;
 		} else
-			// Auf dieser Ebene Suche Fortführen
+			// Search on the same level
 			pCurrent = pCurrent->pNext;
 	}
-	// kein Fund
+	// No complete match
 	//assert(*_ppcName == pcLastPossibleName);
 	(*_ppcName) = pcLastPossibleName;
 	return pLastPossibleData;
 }
 
 // ******************************************************************************** //
-void OrE::ADT::Trie::Remove(const char* _pcName, void* _pData)
+void OrE::ADT::Trie::Remove( const char* _pcName, void* _pData )
 {
-	// Daten freigeben egal was passiert. Die Speicheradresse benötigen wir
-	// aber noch zum vergleichen.
-	if(_pData && m_pDeleteCallback) m_pDeleteCallback(_pData);
+	// Remove data independent of the rest, even if tree conflicted.
+	// Don't set _pData to 0 - address is used to find the node
+	if( _pData && m_pDeleteCallback ) m_pDeleteCallback( _pData );
 
-	// Ähnlich dem Suchen oder einfügen den Baum durchgehen.
-	// Jeden Knoten, der auf die Daten zeigt markieren (Datenpointer löschen,
-	// Zeiger auf Knoten auf den Stack packen.
-	// Immer wenn eine Abhängigkeit eines Knotens zu anderen Namen/Daten
-	// detektiert wird den Stack leeren.
-	//int iNumStacked = 0;
-	// Am Ende alle auf dem Stack befindlichen Knoten löschen.
-	OrE::ADT::Buffer Stack(60);	// Hopely enough
+	// Go through the tree similar to insertion and search.
+	// Delete whole path to the node if the removed data was the last one in that
+	// path. Collect path on stack and clear if other data is found.
+	// Delete all nodes on the stack at the end of search.
+	OrE::ADT::Buffer Stack(60);	// Hopefully enough
 
-	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
+	// Search and iterate over tree
 	TrieNodeP pCurrent = m_pFirstNode;
 	TrieNodeP pPrevious = nullptr;
 	while(pCurrent)
 	{
-		// Strings vergleichen
+		// Compare strings
 		dword dwEqual = OrE::Utils::Match(pCurrent->pSubString, _pcName);
 
 		if(dwEqual)
 		{
-			// Fehler, wenn Baumknoten länger als Name, aber gleichen Anfangsteil
+			// Error if label in tree node bigger than remaining name
 			if(pCurrent->pSubString[dwEqual])
 			{
-				assert(pCurrent->pData != _pData);
-				//OrSE_Error("Funktionsname zu kurz (unbekannter Teilname einer Funktion).");
+				Assert(pCurrent->pData != _pData);
 				break;
 			}
 
-			// 1.Fall: Name zu Ende und Fund.
+			// 1. Case: Name found
 			if(!_pcName[dwEqual])
 			{
 				if(pCurrent->pData == _pData || !pCurrent->pData)
 				{
-					// Aktuellen Knoten auch noch auf den Stack packen (zur einheitlichen Verarbeitung)
+					// Current node to stack for uniform handling
 					pCurrent->pData = nullptr;
 					Stack.Push(pPrevious);
-					Stack.Push(pCurrent);
-//					__asm push pPrevious;
-//					__asm push pCurrent;
-//					++iNumStacked;		// Ein potentiell zu löschender Knoten mehr
-					// Wenn nichts mehr von diesem Knoten abhängt diesen und alle auf dem Stack löschen
+					Stack.Push(pCurrent);	// A potential deleted node
+					// If nothing depends on the node delete it and all others from the stack.
 					if(!pCurrent->pChild)
 					{
 						while(!Stack.IsEmpty())
-						//for(int i=0;i<iNumStacked;++i)
 						{
-							// Hole Knoten und Elternelement vom Stack
+							// Look up element + parent node
 							pCurrent = (TrieNodeP)Stack.Pop();
 							pPrevious = (TrieNodeP)Stack.Pop();
-//							__asm pop pCurrent;
-//							__asm pop pPrevious;
 							// Repair tree structure
 							if(!pPrevious) m_pFirstNode = pCurrent->pNext;
 							else if(pPrevious->pChild == pCurrent)
@@ -283,18 +269,18 @@ void OrE::ADT::Trie::Remove(const char* _pcName, void* _pData)
 							free(pCurrent->pSubString);
 							delete pCurrent;
 						}
-						//iNumStacked = 0;
 					}
 					break;
 				} else {
-					// Aktueller Knoten enthält falsche Daten
+					// Wrong data in current node
 					break;
 				}
 			}
 
-			// 2.Fall: Name geht weiter -> Subbaum durchsuchen.
-			// Wenn der aktuelle Knoten gleiche oder nulldaten hat merken.
-			// Wenn Knoten unabhängig auf den Stack, sonst Stack leeren
+			// 2. Case: Name continues -> Search subtree.
+			// If node has so correct data or no data remember for deletion.
+			// If node has some other data the path up to know is independent of
+			// the current node. Do not delete the path -> clear stack.
 			if(pCurrent->pData == _pData || !pCurrent->pData)
 			{
 				pCurrent->pData = nullptr;
@@ -302,27 +288,27 @@ void OrE::ADT::Trie::Remove(const char* _pcName, void* _pData)
 				Stack.Push(pCurrent);
 			} else
 			{
-				// Daten in den Skat drücken
+				// Forgot data
 				Stack.Clear();
 			}
 			pPrevious = pCurrent;
 			_pcName = &_pcName[dwEqual];
 			pCurrent = pCurrent->pChild;
 		} else {
-			assert(pCurrent->pData != _pData);
-			// Auf dieser Ebene Suche Fortführen
+			Assert(pCurrent->pData != _pData);
+			// Search on the same level
 			pPrevious = pCurrent;
 			pCurrent = pCurrent->pNext;
 		}
 	}
-	// kein Fund -> Stack aufräumen
+	// No match -> straighten up the stack
 	Stack.Clear();
 }
 
 // ******************************************************************************** //
 void OrE::ADT::Trie::ReleaseTrie(TrieNodeP _pNode)
 {
-	// Rekursionsstart im obersten Knoten
+	// Start recursion in root node
 	if(!_pNode)
 	{
 		if(!m_pFirstNode) return;
@@ -330,15 +316,15 @@ void OrE::ADT::Trie::ReleaseTrie(TrieNodeP _pNode)
 		m_pFirstNode = 0;
 	}
 
-	// Informationen über weitere Knoten verwenden.
-	if(_pNode->pChild) ReleaseTrie(_pNode->pChild);
-	if(_pNode->pNext) ReleaseTrie(_pNode->pNext);
+	// Subtrees or other node on the same level
+	if( _pNode->pChild ) ReleaseTrie( _pNode->pChild );
+	if( _pNode->pNext ) ReleaseTrie( _pNode->pNext );
 
 	if(_pNode->pData && m_pDeleteCallback)
 		m_pDeleteCallback(_pNode->pData);
 
-	// jetzt brauchen wir den Knoten nicht mehr
-	free(_pNode->pSubString);
+	// delete the node
+	free( _pNode->pSubString );
 	delete _pNode;
 }
 

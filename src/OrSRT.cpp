@@ -25,8 +25,8 @@
 
 // ******************************************************************************** //
 // Resets the quaternion for new rotation
-// Inperformant - but grants that the rotation is the same as for matrices and it is
-// the easyest implementation.
+// Nonperformant - but grants that the rotation is the same as for matrices and it is
+// the easiest implementation.
 void OrE::Math::SRT::SetRotation( float _fYaw, float _fPitch, float _fRoll )
 {
 	// Build matrix and do transformation to quaternion
@@ -37,7 +37,7 @@ void OrE::Math::SRT::SetRotation( float _fYaw, float _fPitch, float _fRoll )
 	Vec3 vTranslation = m_vTranslation;
 
 	// Create quaternion from rotation matrix.
-	// This resets scale to one and translation to 0 -> safed values.
+	// This resets scale to one and translation to 0 -> saved values.
 	SetTransformation( MatrixRotation( _fYaw, _fPitch, _fRoll ) );
 
 	m_vScale = vScale;
@@ -130,7 +130,7 @@ OrE::Math::Matrix OrE::Math::SRT::GetTransformation()
 }
 
 // ******************************************************************************** //
-// The inverse is deriverd from analytical inersa of all transformations.
+// The inverse is derived from analytical inverse of all transformations.
 // This should be more accurate than inverting the matrix.
 OrE::Math::Matrix OrE::Math::SRT::GetInverseTransformation()
 {
@@ -190,7 +190,7 @@ OrE::Math::Vec3 OrE::Math::operator * (const OrE::Math::SRT& m, const OrE::Math:
 }
 
 // ******************************************************************************** //
-// Transformation equal to (Vec3,1)*Matrix -> applies the srt transformation to the
+// Transformation equal to (Vec3,1)*Matrix -> applies the SRT transformation to the
 // vector.
 OrE::Math::Vec3 OrE::Math::operator * (const OrE::Math::Vec3& v, const OrE::Math::SRT& m)
 {

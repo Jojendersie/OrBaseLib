@@ -21,7 +21,7 @@ const float asm_one = 1.0f;
 //using namespace OrE::Math;
 
 // ******************************************************************************** //
-// Berechnet den Arcuscosinus: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
+// Arccosine: pi/2 + arctan( r / -sqr( 1.0f - r * r ) )
 /*float OrE::Math::Arccos( float r )
 {
 	//float asm_half_pi = half_pi;
@@ -40,7 +40,7 @@ const float asm_one = 1.0f;
 }
 
 // ******************************************************************************** //
-// Berechnet den Arcussinus: arctan( r / -sqr( 1.0f - r * r ) )
+// Arcsine: arctan( r / -sqr( 1.0f - r * r ) )
 float OrE::Math::Arcsin( float r )
 {
 	__asm {
@@ -56,7 +56,7 @@ float OrE::Math::Arcsin( float r )
 }
 
 // ******************************************************************************** //
-// Berechnet den Arcustangens: arctan( r )
+// Arctangent: arctan( r )
 float OrE::Math::Arctan( float r )
 {
 	__asm {
@@ -67,7 +67,7 @@ float OrE::Math::Arctan( float r )
 }
 
 // ******************************************************************************** //
-// Berechnet den Sinus (Bogenmaß)
+// Sine (radian measure)
 float OrE::Math::Sin( float r )
 {
 	__asm {
@@ -77,7 +77,7 @@ float OrE::Math::Sin( float r )
 }
 
 // ******************************************************************************** //
-// Berechnet den Kosinus (Bogenmaß)
+// Cosine (radian measure)
 float OrE::Math::Cos( float r )
 {
 	__asm {
@@ -87,7 +87,7 @@ float OrE::Math::Cos( float r )
 }
 
 // ******************************************************************************** //
-// Berechnet den Tangens (Bogenmaß)
+// Tangent (radian measure)
 float OrE::Math::Tan( float r )
 {
 	// return sin( r ) / cos( r );
@@ -101,7 +101,7 @@ float OrE::Math::Tan( float r )
 }
 
 // ******************************************************************************** //
-// Zieht die Wurzel eines Floatwertes
+// Square root of a float value
 float OrE::Math::Sqrt( float r )
 {
 	__asm {
@@ -111,7 +111,7 @@ float OrE::Math::Sqrt( float r )
 }*/
 
 // ******************************************************************************** //
-// Zieht die Wurzel eines Floatwertes und gibt den Kehrwert zurück
+// Calculates 1/sqrt( fValue )
 /*float OrE::Math::InvSqrt(float fValue)
 {
 	float fValueHalf = fValue*0.5f;
@@ -120,13 +120,13 @@ float OrE::Math::Sqrt( float r )
 	fValue = *(float*)&i;
 	// Error reducing
 	//fValue -= 0.00025f;
-	// Newtonstep
+	// Newton step
 	//fValue *= (1.5f-fValueHalf*fValue*fValue);
 	fValue *= (1.5f-fValueHalf*fValue*fValue);
 	return fValue * (1.5f-fValueHalf*fValue*fValue);//+0.000013f;
 }
 
-// Schnellere Variante ohne Fehlerkorrektur
+// Faster variant without error correction
 float OrE::Math::_InvSqrt(float fValue)
 {
 	float fValueHalf = fValue*0.5f;
@@ -157,7 +157,7 @@ float OrE::Math::_InvSqrt(float fValue)
 }*/
 
 // ******************************************************************************** //
-// Logarithmus dualis
+// Logarithm dualitm
 int OrE::Math::_Ld( float r )
 {
 	// Rounded log2 from exponent
@@ -169,7 +169,7 @@ float OrE::Math::Ld( float r )
 	// Rounded log2 from exponent
 	int i = *(int*)&r;
 	i = (i>>23)-127;
-	// Find fractinal from linear interpolation
+	// Find fractional from linear interpolation
 	// (1<<i) is the power of 2 <= r
 	// the next heigher power would be (1<<(i+1)) == (1<<i)*2
 	// what we want to know, where between is r: (1<<i) <= r < (1<<i)+(1<<i)
@@ -184,7 +184,7 @@ int OrE::Math::Ld( int r )
 	return (r>>23)-127;
 }
 
-// natürlicher Logarithmus
+// Logarithm naturalism
 float OrE::Math::Ln( float r )
 {
 	// Doing the same as for Ld
@@ -227,7 +227,7 @@ float OrE::Math::Ln( float r )
 }
 
 // ******************************************************************************** //
-// Funktion für den gerundeten 2er Logarithmus (ganzzahl)
+// Function for a rounded logarithm dualism (integer number)
 /*int OrE::Math::Log2(int iValue)
 {
 	__asm bsf eax, iValue
@@ -236,7 +236,7 @@ float OrE::Math::Ln( float r )
 }*/
 
 // ******************************************************************************** //
-// Exponentialfunktion
+// exponential function to arbitrary base
 /*float __fastcall OrE::Math::Pow(float fBase, float fExponent)
 {
 	const float asm_1 = 1.0f;
@@ -263,7 +263,7 @@ float OrE::Math::Ln( float r )
 }*/
 
 // ******************************************************************************** //
-// Gray Code convertions
+// Gray Code conversions
 unsigned int OrE::Math::GrayCodeToNum(unsigned int _uiGrayCode)
 {
         _uiGrayCode ^= (_uiGrayCode >> 16);
