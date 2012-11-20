@@ -50,55 +50,54 @@ public:
 	Vec2(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1])	{}
 
 	// Casting-operators
-	operator float* () {return (float*)(c);}
-	operator const float* () const {return (const float*)(c);}
+	operator float* ()											{return (float*)(c);}
+	operator const float* () const								{return (const float*)(c);}
 
 	// Assignment operators
-	Vec2& operator = (const Vec2& v)	{x = v.x; y = v.y; return *this;}
-	Vec2& operator = (const float f)	{x = f; y = f; return *this;}
-	Vec2& operator += (const Vec2& v)	{x += v.x; y += v.y; return *this;}
-	Vec2& operator -= (const Vec2& v)	{x -= v.x; y -= v.y; return *this;}
-	Vec2& operator *= (const Vec2& v)	{x *= v.x; y *= v.y; return *this;}
-	Vec2& operator *= (const float f)	{x *= f; y *= f; return *this;}
-	Vec2& operator /= (const Vec2& v)	{x /= v.x; y /= v.y; return *this;}
-	Vec2& operator /= (float f)			{f = 1/f; x *= f; y *= f; return *this;}
+	Vec2& operator = (const Vec2& v)							{x = v.x; y = v.y; return *this;}
+	Vec2& operator = (const float f)							{x = f; y = f; return *this;}
+	Vec2& operator += (const Vec2& v)							{x += v.x; y += v.y; return *this;}
+	Vec2& operator -= (const Vec2& v)							{x -= v.x; y -= v.y; return *this;}
+	Vec2& operator *= (const Vec2& v)							{x *= v.x; y *= v.y; return *this;}
+	Vec2& operator *= (const float f)							{x *= f; y *= f; return *this;}
+	Vec2& operator /= (const Vec2& v)							{x /= v.x; y /= v.y; return *this;}
+	Vec2& operator /= (float f)									{f = 1/f; x *= f; y *= f; return *this;}
 
 	// ******************************************************************************** //
 	// Arithmetical operators
-	inline Vec2 operator + (const Vec2& b) const	{return Vec2(x + b.x, y + b.y);}
-	inline Vec2 operator - (const Vec2& b) const	{return Vec2(x - b.x, y - b.y);}
-	inline Vec2 operator - () const					{return Vec2(-x, -y);}
-	inline Vec2 operator * (const Vec2& b) const	{return Vec2(x * b.x, y * b.y);}
-	inline Vec2 operator * (const float f) const	{return Vec2(x * f, y * f);}
-	inline Vec2 operator / (const Vec2& b) const	{return Vec2(x / b.x, y / b.y);}
-	inline Vec2 operator / (float f) const			{f = 1/f; return Vec2(x * f, y * f);}	// Multiplication is faster
+	inline Vec2 operator + (const Vec2& b) const				{return Vec2(x + b.x, y + b.y);}
+	inline Vec2 operator - (const Vec2& b) const				{return Vec2(x - b.x, y - b.y);}
+	inline Vec2 operator - () const								{return Vec2(-x, -y);}
+	inline Vec2 operator * (const Vec2& b) const				{return Vec2(x * b.x, y * b.y);}
+	inline Vec2 operator * (const float f) const				{return Vec2(x * f, y * f);}
+	inline Vec2 operator / (const Vec2& b) const				{return Vec2(x / b.x, y / b.y);}
+	inline Vec2 operator / (float f) const						{f = 1/f; return Vec2(x * f, y * f);}	// Multiplication is faster
 
 	// ******************************************************************************** //
 	// Comparison operators
-	inline bool operator == (const Vec2& b) const	{if(x != b.x) return false; return y == b.y;}
-	inline bool operator != (const Vec2& b) const	{if(x != b.x) return true; return y != b.y;}
+	inline bool operator == (const Vec2& b) const				{if(x != b.x) return false; return y == b.y;}
+	inline bool operator != (const Vec2& b) const				{if(x != b.x) return true; return y != b.y;}
 
 	// ******************************************************************************** //
 	// Vector2 functions
 	// The non-static and non-const functions always change the calling object
-	inline float		Length() const												{return Sqrt(x * x + y * y);}
-	inline float		LengthSq() const											{return x * x + y * y;}
-	inline float		LengthInv() const											{return InvSqrt(x * x + y * y);}
-	inline const Vec2&	Normalize()													{*this *= InvSqrt(x * x + y * y); return *this;}
-	inline static Vec2	Normalize(const Vec2& v)									{return v * InvSqrt(v.x * v.x + v.y * v.y);}
-	inline const Vec2&	NormalizeEx()												{float fL = Sqrt(x * x + y * y); *this /= OrE::Math::Max(fL, 0.0000000000000000001f); return *this;}
-	inline static Vec2	NormalizeEx(const Vec2& v)									{float fL = Sqrt(v.x * v.x + v.y * v.y); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
-	inline float		Dot(const Vec2& v) const									{return x * v.x + y * v.y;}
-//	inline static float	Dot(const Vec2& v1, const Vec2& v2)							{return v1.x * v2.x + v1.y * v2.y;}
-	inline float		Cross(const Vec2& v) const									{return x * v.y - y * v.x;}
-	inline static float Cross(const Vec2& v1, const Vec2& v2)						{return v1.x * v2.y - v1.y * v2.x;}
-	inline Vec2			Perpendicular() const										{return Vec2(-y, x);}			// Orthogonal vector
-//	inline static Vec2	Perpendicular(const Vec2& v)								{return Vec2(-v.y, v.x);}		// Orthogonal vector
-	inline float		Angle(const Vec2& v) const									{return Cos((x * v.x + y * v.y) * InvSqrt((x * x + y * y) * (v.x * v.x + v.y * v.y)));}
-//	inline static float	Angle(const Vec2& v1, const Vec2& v2)						{return Cos((v1.x * v2.x + v1.y * v2.y) * InvSqrt((v1.x * v1.x + v1.y * v1.y) * (v2.x * v2.x + v2.y * v2.y)));}
+	inline float		Length() const							{return Sqrt(x * x + y * y);}
+	inline float		LengthSq() const						{return x * x + y * y;}
+	inline float		LengthInv() const						{return InvSqrt(x * x + y * y);}
+	inline const Vec2&	Normalize()								{*this *= InvSqrt(x * x + y * y); return *this;}
+	inline static Vec2	Normalize(const Vec2& v)				{return v * InvSqrt(v.x * v.x + v.y * v.y);}
+	inline const Vec2&	NormalizeEx()							{float fL = Sqrt(x * x + y * y); *this /= OrE::Math::Max(fL, 0.0000000000000000001f); return *this;}
+	inline static Vec2	NormalizeEx(const Vec2& v)				{float fL = Sqrt(v.x * v.x + v.y * v.y); return v / OrE::Math::Max(fL, 0.0000000000000000001f);}
+	inline float		Dot(const Vec2& v) const				{return x * v.x + y * v.y;}
+//	inline static float	Dot(const Vec2& v1, const Vec2& v2)		{return v1.x * v2.x + v1.y * v2.y;}
+	inline float		Cross(const Vec2& v) const				{return x * v.y - y * v.x;}
+	inline static float Cross(const Vec2& v1, const Vec2& v2)	{return v1.x * v2.y - v1.y * v2.x;}
+	inline Vec2			Perpendicular() const					{return Vec2(-y, x);}			// Orthogonal vector
+//	inline static Vec2	Perpendicular(const Vec2& v)			{return Vec2(-v.y, v.x);}		// Orthogonal vector
+	inline float		Angle(const Vec2& v) const				{return Cos((x * v.x + y * v.y) * InvSqrt((x * x + y * y) * (v.x * v.x + v.y * v.y)));}
+//	inline static float	Angle(const Vec2& v1, const Vec2& v2)	{return Cos((v1.x * v2.x + v1.y * v2.y) * InvSqrt((v1.x * v1.x + v1.y * v1.y) * (v2.x * v2.x + v2.y * v2.y)));}
 	static Vec2			Random();
-	Vec2				Rotate(const float _fAlpha) const;								// Rotate a point in 2D space
-	//static Vec2			Rotate(const Vec2& _v, const float _fAlpha);				// Rotate a point in 2D space
+	Vec2				Rotate(const float _fAlpha) const;		// Rotate a point in 2D space
 };
 
 // ******************************************************************************** //

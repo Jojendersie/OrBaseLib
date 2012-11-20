@@ -53,52 +53,53 @@ public:
 	Vec3(const float* pfComponent) : x(pfComponent[0]), y(pfComponent[1]), z(pfComponent[2])	{}
 
 	// Casting-operators
-	operator float* ()					{return (float*)(c);}
-	operator const float* () const		{return (const float*)(c);}
+	operator float* ()												{return (float*)(c);}
+	operator const float* () const									{return (const float*)(c);}
 
 	// Casting to "color" with alpha channel==255
-	operator dword () const				{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | 255;}
+	operator dword () const											{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | 255;}
 
 	// Assignment operators
-	Vec3& operator = (const Vec3& v)	{x = v.x; y = v.y; z = v.z; return *this;}
-	Vec3& operator = (const float f)	{x = f; y = f; z = f; return *this;}
-	Vec3& operator += (const Vec3& v)	{x += v.x; y += v.y; z += v.z; return *this;}
-	Vec3& operator -= (const Vec3& v)	{x -= v.x; y -= v.y; z -= v.z; return *this;}
-	Vec3& operator *= (const Vec3& v)	{x *= v.x; y *= v.y; z *= v.z; return *this;}
-	Vec3& operator *= (const float f)	{x *= f; y *= f; z *= f; return *this;}
-	Vec3& operator /= (const Vec3& v)	{x /= v.x; y /= v.y; z /= v.z; return *this;}
-	Vec3& operator /= (float f)			{f = 1/f; x *= f; y *= f; z *= f; return *this;}
+	Vec3& operator = (const Vec3& v)								{x = v.x; y = v.y; z = v.z; return *this;}
+	Vec3& operator = (const float f)								{x = f; y = f; z = f; return *this;}
+	Vec3& operator += (const Vec3& v)								{x += v.x; y += v.y; z += v.z; return *this;}
+	Vec3& operator -= (const Vec3& v)								{x -= v.x; y -= v.y; z -= v.z; return *this;}
+	Vec3& operator *= (const Vec3& v)								{x *= v.x; y *= v.y; z *= v.z; return *this;}
+	Vec3& operator *= (const float f)								{x *= f; y *= f; z *= f; return *this;}
+	Vec3& operator /= (const Vec3& v)								{x /= v.x; y /= v.y; z /= v.z; return *this;}
+	Vec3& operator /= (float f)										{f = 1/f; x *= f; y *= f; z *= f; return *this;}
 
 	// ******************************************************************************** //
 	// Arithmetic operators
-	inline Vec3 operator + (const Vec3& b) const	{return Vec3(x + b.x, y + b.y, z + b.z);}
-	inline Vec3 operator - (const Vec3& b) const	{return Vec3(x - b.x, y - b.y, z - b.z);}
-	inline Vec3 operator - () const					{return Vec3(-x, -y, -z);}
-	inline Vec3 operator * (const Vec3& b) const	{return Vec3(x*b.x, y*b.y, z*b.z);}
-	inline Vec3 operator * (const float f) const	{return Vec3(x * f, y * f, z * f);}
-	inline Vec3 operator / (const Vec3& b) const	{return Vec3(x / b.x, y / b.y, z / b.z);}
-	inline Vec3 operator / (float f) const			{f = 1/f; return Vec3(x * f, y * f, z * f);}
+	inline Vec3 operator + (const Vec3& b) const					{return Vec3(x + b.x, y + b.y, z + b.z);}
+	inline Vec3 operator - (const Vec3& b) const					{return Vec3(x - b.x, y - b.y, z - b.z);}
+	inline Vec3 operator - () const									{return Vec3(-x, -y, -z);}
+	inline Vec3 operator * (const Vec3& b) const					{return Vec3(x*b.x, y*b.y, z*b.z);}
+	inline Vec3 operator * (const float f) const					{return Vec3(x * f, y * f, z * f);}
+	inline Vec3 operator / (const Vec3& b) const					{return Vec3(x / b.x, y / b.y, z / b.z);}
+	inline Vec3 operator / (float f) const							{f = 1/f; return Vec3(x * f, y * f, z * f);}
 
 	// ******************************************************************************** //
 	// Comparison operators
 	#define Vector_EPSILON	0.00001f
-	inline bool operator == (const Vec3& b) const	{if(Abs(x - b.x) > Vector_EPSILON) return false; if(Abs(y - b.y) > Vector_EPSILON) return false; return Abs(z - b.z) < Vector_EPSILON;}
-	inline bool operator != (const Vec3& b) const	{if(Abs(x - b.x) > Vector_EPSILON) return true; if(Abs(y - b.y) > Vector_EPSILON) return true; return Abs(z - b.z) > Vector_EPSILON;}
+	inline bool operator == (const Vec3& b) const					{if(Abs(x - b.x) > Vector_EPSILON) return false; if(Abs(y - b.y) > Vector_EPSILON) return false; return Abs(z - b.z) < Vector_EPSILON;}
+	inline bool operator != (const Vec3& b) const					{if(Abs(x - b.x) > Vector_EPSILON) return true; if(Abs(y - b.y) > Vector_EPSILON) return true; return Abs(z - b.z) > Vector_EPSILON;}
 
 	// ******************************************************************************** //
 	// Vector3 functions
 	// The non-static and non-const functions always change the calling object
-	inline float		Length() const																{return Sqrt(x * x + y * y + z * z);}
-	inline float		LengthSq() const															{return x * x + y * y + z * z;}
-	inline float		LengthInv() const															{return InvSqrt(x * x + y * y + z * z);}
-	inline const Vec3&	Normalize()																	{*this *= InvSqrt(x * x + y * y + z * z); return *this;}
-	inline static Vec3	Normalize(const Vec3& v)													{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
-	inline const Vec3&	NormalizeEx()																{float fL = InvSqrt(x * x + y * y + z * z); *this *= OrE::Math::Min(fL, 100000000000000000.0f); return *this;}
-	inline static Vec3	NormalizeEx(const Vec3& v)													{float fL = InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z); return v * OrE::Math::Min(fL, 100000000000000000.0f);}
-	inline Vec3			Cross(const Vec3& v) const													{return Vec3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);}
-	inline static Vec3	Cross(const Vec3& v1, const Vec3& v2)										{return Vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);}
-	inline float		Dot(const Vec3& v) const													{return x * v.x + y * v.y + z * v.z;}
-	inline float		Angle(const Vec3& v) const													{return Arccos((x * v.x + y * v.y + z * v.z) * InvSqrt((x * x + y * y + z * z) * (v.x * v.x + v.y * v.y + v.z * v.z)));}
+	inline float		Length() const								{return Sqrt(x * x + y * y + z * z);}
+	inline float		LengthSq() const							{return x * x + y * y + z * z;}
+	inline float		LengthInv() const							{return InvSqrt(x * x + y * y + z * z);}
+	inline const Vec3&	Normalize()									{*this *= InvSqrt(x * x + y * y + z * z); return *this;}
+	inline static Vec3	Normalize(const Vec3& v)					{return v * InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z);}
+	inline const Vec3&	NormalizeEx()								{float fL = InvSqrt(x * x + y * y + z * z); *this *= OrE::Math::Min(fL, 100000000000000000.0f); return *this;}
+	inline static Vec3	NormalizeEx(const Vec3& v)					{float fL = InvSqrt(v.x * v.x + v.y * v.y + v.z * v.z); return v * OrE::Math::Min(fL, 100000000000000000.0f);}
+	inline Vec3			Cross(const Vec3& v) const					{return Vec3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);}
+	inline static Vec3	Cross(const Vec3& v1, const Vec3& v2)		{return Vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);}
+	inline float		Dot(const Vec3& v) const					{return x * v.x + y * v.y + z * v.z;}
+	inline float		Angle(const Vec3& v) const					{return Arccos((x * v.x + y * v.y + z * v.z) * InvSqrt((x * x + y * y + z * z) * (v.x * v.x + v.y * v.y + v.z * v.z)));}
+	// Create a random direction vector ( length == 1 ).
 	static Vec3			Random();
 
 	// Multiply a directional vector (left) with the matrix (from right).
@@ -164,36 +165,36 @@ public:
 	IVec3(const int* piComponent) : x(piComponent[0]), y(piComponent[1]), z(piComponent[2])		{}
 
 	// Casting-Operators
-	operator int* ()					{return (int*)(c);}
-	operator const int* () const		{return (const int*)(c);}
+	operator int* ()												{return (int*)(c);}
+	operator const int* () const									{return (const int*)(c);}
 
 	// Casting to "color" with alpha channel==255
-	operator dword () const				{return (Clamp(x, 0, 255)<<24) | (Clamp(y, 0, 255)<<16) | (Clamp(z, 0, 255)<<8) | 255;}
+	operator dword () const											{return (Clamp(x, 0, 255)<<24) | (Clamp(y, 0, 255)<<16) | (Clamp(z, 0, 255)<<8) | 255;}
 
 	// Assignment operators
-	IVec3& operator = (const IVec3& v)	{x = v.x; y = v.y; z = v.z; return *this;}
-	IVec3& operator = (const int i)		{x = i; y = i; z = i; return *this;}
-	IVec3& operator += (const IVec3& v)	{x += v.x; y += v.y; z += v.z; return *this;}
-	IVec3& operator -= (const IVec3& v)	{x -= v.x; y -= v.y; z -= v.z; return *this;}
-	IVec3& operator *= (const IVec3& v)	{x *= v.x; y *= v.y; z *= v.z; return *this;}
-	IVec3& operator *= (const int i)	{x *= i; y *= i; z *= i; return *this;}
-	IVec3& operator /= (const IVec3& v)	{x /= v.x; y /= v.y; z /= v.z; return *this;}
-	IVec3& operator /= (int i)			{x /= i; y /= i; z /= i; return *this;}
+	IVec3& operator = (const IVec3& v)								{x = v.x; y = v.y; z = v.z; return *this;}
+	IVec3& operator = (const int i)									{x = i; y = i; z = i; return *this;}
+	IVec3& operator += (const IVec3& v)								{x += v.x; y += v.y; z += v.z; return *this;}
+	IVec3& operator -= (const IVec3& v)								{x -= v.x; y -= v.y; z -= v.z; return *this;}
+	IVec3& operator *= (const IVec3& v)								{x *= v.x; y *= v.y; z *= v.z; return *this;}
+	IVec3& operator *= (const int i)								{x *= i; y *= i; z *= i; return *this;}
+	IVec3& operator /= (const IVec3& v)								{x /= v.x; y /= v.y; z /= v.z; return *this;}
+	IVec3& operator /= (int i)										{x /= i; y /= i; z /= i; return *this;}
 
 	// ******************************************************************************** //
 	// Arithmetic operators
-	inline IVec3 operator + (const IVec3& b) const	{return IVec3(x + b.x, y + b.y, z + b.z);}
-	inline IVec3 operator - (const IVec3& b) const	{return IVec3(x - b.x, y - b.y, z - b.z);}
-	inline IVec3 operator - () const				{return IVec3(-x, -y, -z);}
-	inline IVec3 operator * (const IVec3& b) const	{return IVec3(x*b.x, y*b.y, z*b.z);}
-	inline IVec3 operator * (const int i) const		{return IVec3(x * i, y * i, z * i);}
-	inline IVec3 operator / (const IVec3& b) const	{return IVec3(x / b.x, y / b.y, z / b.z);}
-	inline IVec3 operator / (int i) const			{return IVec3(x * i, y * i, z * i);}
+	inline IVec3 operator + (const IVec3& b) const					{return IVec3(x + b.x, y + b.y, z + b.z);}
+	inline IVec3 operator - (const IVec3& b) const					{return IVec3(x - b.x, y - b.y, z - b.z);}
+	inline IVec3 operator - () const								{return IVec3(-x, -y, -z);}
+	inline IVec3 operator * (const IVec3& b) const					{return IVec3(x*b.x, y*b.y, z*b.z);}
+	inline IVec3 operator * (const int i) const						{return IVec3(x * i, y * i, z * i);}
+	inline IVec3 operator / (const IVec3& b) const					{return IVec3(x / b.x, y / b.y, z / b.z);}
+	inline IVec3 operator / (int i) const							{return IVec3(x * i, y * i, z * i);}
 
 	// ******************************************************************************** //
 	// Comparison operators
-	inline bool operator == (const IVec3& b) const	{if(x != b.x) return false; if(y != b.y) return false; return z == b.z;}
-	inline bool operator != (const IVec3& b) const	{if(x != b.x) return true; if(y != b.y) return true; return z != b.z;}
+	inline bool operator == (const IVec3& b) const					{if(x != b.x) return false; if(y != b.y) return false; return z == b.z;}
+	inline bool operator != (const IVec3& b) const					{if(x != b.x) return true; if(y != b.y) return true; return z != b.z;}
 
 	// ******************************************************************************** //
 	// Vector3 functions
@@ -227,14 +228,14 @@ inline IVec3 Abs(const IVec3& v1)									{return IVec3(Abs(v1.x), Abs(v1.y), Ab
 
 // ******************************************************************************** //
 // Combined operators between integer and float vectors
-inline Vec3 operator + (const Vec3& v1, const IVec3& v2)				{return Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);}
-inline Vec3 operator + (const IVec3& v1, const Vec3& v2)				{return Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);}
-inline Vec3 operator - (const Vec3& v1, const IVec3& v2)				{return Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);}
-inline Vec3 operator - (const IVec3& v1, const Vec3& v2)				{return Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);}
-inline Vec3 operator * (const Vec3& v1, const IVec3& v2)				{return Vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);}
-inline Vec3 operator * (const IVec3& v1, const Vec3& v2)				{return Vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);}
-inline Vec3 operator / (const Vec3& v1, const IVec3& v2)				{return Vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);}
-inline Vec3 operator / (const IVec3& v1, const Vec3& v2)				{return Vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);}
+inline Vec3 operator + (const Vec3& v1, const IVec3& v2)			{return Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);}
+inline Vec3 operator + (const IVec3& v1, const Vec3& v2)			{return Vec3(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);}
+inline Vec3 operator - (const Vec3& v1, const IVec3& v2)			{return Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);}
+inline Vec3 operator - (const IVec3& v1, const Vec3& v2)			{return Vec3(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);}
+inline Vec3 operator * (const Vec3& v1, const IVec3& v2)			{return Vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);}
+inline Vec3 operator * (const IVec3& v1, const Vec3& v2)			{return Vec3(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);}
+inline Vec3 operator / (const Vec3& v1, const IVec3& v2)			{return Vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);}
+inline Vec3 operator / (const IVec3& v1, const Vec3& v2)			{return Vec3(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z);}
 
 
 }; // namespace Math

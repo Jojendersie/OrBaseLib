@@ -64,6 +64,7 @@ template <class T> const T Lerp(const T a, const T b, const T f)		{return a + (b
 __forceinline int Sgn(const int a)							{return (a<0)?-1:1;}			// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
 __forceinline float Sgn(const float a)						{return (a<0)?-1.0f:1.0f;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
 __forceinline double Sgn(const double a)					{return (a<0)?-1.0:1.0;}		// Not mathematicly: [-oo,0) -> -1; [0,oo] -> 1;
+template <typename T> int Signum(T val)						{return (val < T(0)) ? -1 : (T(0) < val);}					// mathematically: [-oo,0) -> -1; 0 -> 0, (0,oo] -> 1
 __forceinline int Floor(const float a)						{int r=(int)a; return r - (int)((a<0)&&(a-r!=0.0f));}		// Round down
 __forceinline int Ceil(const float a)						{int r=(int)a; return r + (int)((a>0)&&(a-r!=0.0f));}		// Round up
 

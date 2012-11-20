@@ -194,6 +194,7 @@
     <ClInclude Include="include\OrVector2.h" />
     <ClInclude Include="include\OrVector3.h" />
     <ClInclude Include="include\OrVector4.h" />
+    <ClInclude Include="include\string\OrRegex.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAnalyticalGeometry.cpp" />

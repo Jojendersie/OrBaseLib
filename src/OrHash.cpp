@@ -18,10 +18,12 @@
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrHash.h"
 
-#include "..\Include\OrDebug.h"
+// Do not use in the file! This causes endless loops in debug garbage collection.
+// #include "..\Include\OrDebug.h"
 
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
 using namespace OrE::Algorithm;
 using namespace OrE::ADT;
@@ -356,7 +358,7 @@ void OrE::ADT::HashMap::Delete( ADTElementP _pElement )
 		BucketP pBuck = (BucketP(_pElement))->pRight;
 		while(pBuck->pLeft) pBuck = pBuck->pLeft;
 
-		Assert( !(BucketP(_pElement))->pLeft );
+		assert( !(BucketP(_pElement))->pLeft );
 
 //		pBuck->pLeft = (BucketP(_pElement))->pLeft;
 //		if(pBuck->pLeft)

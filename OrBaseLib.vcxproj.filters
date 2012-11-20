@@ -31,6 +31,9 @@
     <Filter Include="Quelldateien\Math">
       <UniqueIdentifier>{a0fe9571-8f8a-4309-b3e5-bc9a6c856f7d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Headerdateien\String">
+      <UniqueIdentifier>{704b4e4b-1374-42a8-b6a3-ae6ba557710e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\OrBaseLib.h">
@@ -113,6 +116,9 @@
     </ClInclude>
     <ClInclude Include=".\include\OrMultimap.h">
       <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
+    <ClInclude Include="include\string\OrRegex.h">
+      <Filter>Headerdateien\String</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

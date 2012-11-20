@@ -26,7 +26,7 @@ using namespace OrE::Math;
 // The most operators and functions are implemented inline in the header
 
 // ******************************************************************************** //
-// Create random direction vectors.
+// Create a random direction vector ( length == 1 ).
 // No inline because of Rand-dependency (-> more includes)
 Vec3 OrE::Math::Vec3::Random()
 {

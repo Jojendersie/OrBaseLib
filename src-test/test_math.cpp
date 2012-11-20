@@ -18,6 +18,9 @@ void test_slerp();
 void test_SRT();
 void benchmark_hit( OrE::Utils::TimeQuerySlot& Time0 );
 void benchmark_slerp( OrE::Utils::TimeQuerySlot& Time0 );
+void benchmark_sgn( OrE::Utils::TimeQuerySlot& Time0 );
+
+#define ms(x) (int(x*100000)/100.0)
 
 
 // ******************************************************************************** //
@@ -40,6 +43,10 @@ void test_math()
 	// Transformations
 	benchmark_slerp( Time0 );
 	
+	// Primitives - debug only otherwise they are removed be optimization
+#ifdef _DEBUG
+	benchmark_sgn( Time0 );
+#endif
 	// Sqrt, InvSqrt
 /*	OrE::Utils::TimeQuery( Time0 );
 	float fRes;
@@ -90,15 +97,15 @@ void benchmark_hit( OrE::Utils::TimeQuerySlot& Time0 )
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<100000; ++i )
 		HitTest(S1, S2);
-	std::cout << "\tTime for 100000 HitTest (Sphere-Sphere) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 HitTest (Sphere-Sphere) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<100000; ++i )
 		HitTest(E1, E2);
-	std::cout << "\tTime for 100000 HitTest (Ellipsoid-Ellipsoid) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 HitTest (Ellipsoid-Ellipsoid) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<100000; ++i )
 		HitDetection(E1, E2, vFeedback);
-	std::cout << "\tTime for 100000 HitDetection (Ellipsoid-Ellipsoid) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 HitDetection (Ellipsoid-Ellipsoid) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 }
 
 
@@ -140,12 +147,12 @@ void benchmark_slerp( OrE::Utils::TimeQuerySlot& Time0 )
 	Vec2 v2Lerp2(0.0f, 1.0f);
 	for( int i=0; i<100000; ++i )
 		v2Lerp1 = Slerp( v2Lerp1, v2Lerp2, 0.01f );
-	std::cout << "\tTime for 100000 Slerp (Vec2) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 Slerp (Vec2) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<100000; ++i )
 		v2Lerp1 = Lerp( v2Lerp1, v2Lerp2, 0.1f );
-	std::cout << "\tTime for 100000 Lerp (Vec2) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 Lerp  (Vec2) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 
 	// ********** Vec3 ***********
 	OrE::Utils::TimeQuery( Time0 );
@@ -153,12 +160,12 @@ void benchmark_slerp( OrE::Utils::TimeQuerySlot& Time0 )
 	Vec3 vLerp2(0.0f, 1.0f, 0.0f);
 	for( int i=0; i<100000; ++i )
 		vLerp1 = Slerp( vLerp1, vLerp2, 0.1f );
-	std::cout << "\tTime for 100000 Slerp (Vec3) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 Slerp (Vec3) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<100000; ++i )
 		vLerp1 = Lerp( vLerp1, vLerp2, 0.1f );
-	std::cout << "\tTime for 100000 Lerp (Vec3) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 Lerp  (Vec3) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 
 	// ********** Vec4 ***********
 	OrE::Utils::TimeQuery( Time0 );
@@ -166,12 +173,12 @@ void benchmark_slerp( OrE::Utils::TimeQuerySlot& Time0 )
 	Vec4 v4Lerp2(0.0f, 1.0f, 0.0f, 0.0f);
 	for( int i=0; i<100000; ++i )
 		v4Lerp1 = Slerp( v4Lerp1, v4Lerp2, 0.1f );
-	std::cout << "\tTime for 100000 Slerp (Vec4) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 Slerp (Vec4) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<100000; ++i )
 		v4Lerp1 = Lerp( v4Lerp1, v4Lerp2, 0.1f );
-	std::cout << "\tTime for 100000 Lerp (Vec4) calls: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\tTime for 100000 Lerp  (Vec4) calls: " << ms(OrE::Utils::TimeQuery( Time0 )) << " ms\n";
 }
 
 
@@ -215,4 +222,60 @@ void test_SRT()
 	//Matrix mR = MatrixInvert( mTr1 ) - Srt1_2.GetInverseTransformation();
 
 	std::cout << (bSucc ? "\tSRT testing: succeeded\n" : "\tSRT testing: failed\n");
+}
+
+// ******************************************************************************** //
+void benchmark_sgn( OrE::Utils::TimeQuerySlot& Time0 )
+{
+	int x=1, y=-1, z=0;
+	float fx=1, fy=-1, fz=0;
+	double dx=1, dy=-1, dz=0;
+	OrE::Utils::TimeQuery( Time0 );
+	for( int i=0; i<100000; ++i )
+	{
+		x = Sgn( x ); y = Sgn( y ); x = Sgn( x ); y = Sgn( y ); z = Sgn( z );
+		x = Sgn( x ); y = Sgn( y ); x = Sgn( x ); y = Sgn( y ); z = Sgn( z );
+	}
+	double t1 = OrE::Utils::TimeQuery( Time0 );
+
+	for( int i=0; i<100000; ++i )
+	{
+		fx = Sgn( fx ); fy = Sgn( fy ); fx = Sgn( fx ); fy = Sgn( fy ); fz = Sgn( fz );
+		fx = Sgn( fx ); fy = Sgn( fy ); fx = Sgn( fx ); fy = Sgn( fy ); fz = Sgn( fz );
+	}
+	double t2 = OrE::Utils::TimeQuery( Time0 );
+
+	for( int i=0; i<100000; ++i )
+	{
+		dx = Sgn( dx ); dy = Sgn( dy ); dx = Sgn( dx ); dy = Sgn( dy ); dz = Sgn( dz );
+		dx = Sgn( dx ); dy = Sgn( dy ); dx = Sgn( dx ); dy = Sgn( dy ); dz = Sgn( dz );
+	}
+	double t3 = OrE::Utils::TimeQuery( Time0 );
+	std::cout << "\t1000000 Sgn    (int, float, double) calls: " << ms(t1) << " ms, " << ms(t2) << " ms, " << ms(t3) << " ms\n";
+
+	x=1; y=-1; z=0;
+	fx=1; fy=-1; fz=0;
+	dx=1; dy=-1; dz=0;
+	OrE::Utils::TimeQuery( Time0 );
+	for( int i=0; i<100000; ++i )
+	{
+		x = Signum( x ); y = Signum( y ); x = Signum( x ); y = Signum( y ); z = Signum( z );
+		x = Signum( x ); y = Signum( y ); x = Signum( x ); y = Signum( y ); z = Signum( z );
+	}
+	t1 = OrE::Utils::TimeQuery( Time0 );
+
+	for( int i=0; i<100000; ++i )
+	{
+		fx = Signum( fx ); fy = Signum( fy ); fx = Signum( fx ); fy = Signum( fy ); fz = Signum( fz );
+		fx = Signum( fx ); fy = Signum( fy ); fx = Signum( fx ); fy = Signum( fy ); fz = Signum( fz );
+	}
+	t2 = OrE::Utils::TimeQuery( Time0 );
+
+	for( int i=0; i<100000; ++i )
+	{
+		dx = Signum( dx ); dy = Signum( dy ); dx = Signum( dx ); dy = Signum( dy ); dz = Signum( dz );
+		dx = Signum( dx ); dy = Signum( dy ); dx = Signum( dx ); dy = Signum( dy ); dz = Signum( dz );
+	}
+	t3 = OrE::Utils::TimeQuery( Time0 );
+	std::cout << "\t1000000 Signum (int, float, double) calls: " << ms(t1) << " ms, " << ms(t2) << " ms, " << ms(t3) << " ms\n";
 }
