@@ -19,11 +19,13 @@ int main()
 {
 	OrE::Algorithm::SRand( 2 );
 
+	test_tokenizer();
+	test_heap();
 	test_math();
-	test_multimap();
-	test_hashmap();
-	test_list();
-	test_avl();
+//	test_multimap();
+//	test_hashmap();
+//	test_list();
+//	test_avl();
 
 	std::cout << "\nPress any key to close ...\n";
 	_getch();

@@ -266,8 +266,8 @@ void benchmark_sgn( OrE::Utils::TimeQuerySlot& Time0 )
 
 	for( int i=0; i<100000; ++i )
 	{
-		fx = Signum( fx ); fy = Signum( fy ); fx = Signum( fx ); fy = Signum( fy ); fz = Signum( fz );
-		fx = Signum( fx ); fy = Signum( fy ); fx = Signum( fx ); fy = Signum( fy ); fz = Signum( fz );
+		fx = (float)Signum( fx ); fy = (float)Signum( fy ); fx = (float)Signum( fx ); fy = (float)Signum( fy ); fz = (float)Signum( fz );
+		fx = (float)Signum( fx ); fy = (float)Signum( fy ); fx = (float)Signum( fx ); fy = (float)Signum( fy ); fz = (float)Signum( fz );
 	}
 	t2 = OrE::Utils::TimeQuery( Time0 );
 

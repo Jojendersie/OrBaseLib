@@ -71,6 +71,12 @@ namespace ADT {
 				_pSibling->pRight = this;
 			} else pLeft = pRight = this;
 		}
+
+	public:
+#ifdef _DEBUG
+		// Checks all invariants of a heap node. Call in debug only!
+		void CheckNode();
+#endif
 	};
 	typedef HeapNode* HeapNodeP;
 	typedef HeapNode const * HeapNodePC;
@@ -88,28 +94,53 @@ namespace ADT {
 	protected:
 		HeapNodeP m_pRoot;
 
-		void CutChildren(HeapNodeP _pPartition);								// Merge of a part of a heap into the root list
-		void Consolidate();														// Ensure that now two roots have the same degree
-		void Cut(HeapNodeP _pElement);											// Cuts one element and insert it to the root list. (Similar to meld, but do not affect the siblings of the element)
+		// Merge of a part of a heap into the root list
+		void CutChildren(HeapNodeP _pPartition);
+
+		// Ensure that no two roots have the same degree
+		void Consolidate();
+
+		// Cuts one element and insert it to the root list. (Similar to meld, but do not affect the siblings of the element)
+		void Cut(HeapNodeP _pElement);
 	public:
 		Heap():m_pRoot(nullptr) {}
 		~Heap();
 
 		// Heap operations
-		void* DeleteMin();												// Delete minimum element and return the data (element is deleted)
-		HeapNodeP Min();												// Show the minimum element
-		void ChangeKey(HeapNodeP _pElement, qword _qwNewKey);			// Change the key value and reorder the elements if necessary
+		// Delete minimum element and return the data (element is deleted)
+		void* DeleteMin();
+
+		// Show the minimum element
+		HeapNodeP Min();
+
+		// Change the key value and reorder the elements if necessary.
+		// The _qwNewKey can be lower or higher than the old one. (In contrast to the
+		// standard fibonacci heap, which allows decreases only)
+		void ChangeKey(HeapNodeP _pElement, qword _qwNewKey);
 
 		// general ADT operations
-		HeapNodeP Insert(void* _pObject, qword _qwKey) override;		// Standard operation insert
-		void Delete(qword _qwKey) override;								// Unsupported function (doing nothing)
-		void Delete(ADTElementP _pElement) override;					// The only arbitrary delete operation for the heap
-		void Clear() override;											// Remove everything
-		HeapNodeP Search(qword _qwKey) override;						// Unsupported function (returning 0)
-		HeapNodeP GetFirst() override;									// First element = min element
+		// Standard operation insert - _qwKey is the priority of the node
+		HeapNodeP Insert(void* _pObject, qword _qwKey) override;
+
+		// Unsupported function (doing nothing)
+		void Delete(qword _qwKey) override;
+
+		// The only arbitrary delete operation for the heap
+		void Delete(ADTElementP _pElement) override;
+
+		// Remove everything
+		void Clear() override;
+
+		// Unsupported function (returning 0)
+		HeapNodeP Search(qword _qwKey) override;
+
+		// First element = min element
+		HeapNodeP GetFirst() override;
 		HeapNodeP GetLast() override;
 		HeapNodeP GetNext(ADTElementP _pCurrent) override;				// Preorder traverse
 		HeapNodeP GetPrevious(ADTElementP _pCurrent) override;			// Preorder traverse
+
+		typedef OrE::ADT::Iterator<HeapNode> Iterator;
 	};
 
 }; // namespace ADT

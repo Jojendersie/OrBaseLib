@@ -16,7 +16,8 @@
 #include "..\include\OrTypeDef.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrHeap.h"
-#include <assert.h>
+#include "..\include\OrDebug.h"
+//#include <assert.h>
 
 using namespace OrE::ADT;
 
@@ -28,6 +29,31 @@ using namespace OrE::ADT;
 //		- The pLeft and pRight pointers create the same ring buffer each. But they	//
 //			go through this ring in the opposite direction.							//
 // ******************************************************************************** //
+
+
+// ******************************************************************************** //
+#ifdef _DEBUG
+	// Checks all invariants of a heap node. Call in debug only!
+	void OrE::ADT::HeapNode::CheckNode()
+	{
+		// Check of the value of all children is larger than the current one
+		HeapNode* pCurrent = pChild;
+		int iNum = 0;
+		if( pChild )
+		{
+			do
+			{
+				// Min-Heap property
+				Assert( pCurrent->qwKey >= qwKey );
+				iNum++;
+				pCurrent = pCurrent->pRight;
+			} while( pCurrent && pCurrent != pChild );
+			// invariant of closed rings implicit, otherwise endless,... runs
+		}
+		// Degree invariant
+		Assert( iDegree == iNum );
+	}
+#endif
 
 // ******************************************************************************** //
 OrE::ADT::Heap::~Heap()
@@ -82,7 +108,7 @@ void OrE::ADT::Heap::Consolidate()
 	// Traverse root list
 	HeapNodeP pCurrent = m_pRoot;
 	do {
-		assert(!pCurrent->pParent);
+		Assert(!pCurrent->pParent);
 		// Is there an other node with the same degree?
 		if(aDegrees[pCurrent->iDegree] && (aDegrees[pCurrent->iDegree] != pCurrent))
 		{
@@ -183,7 +209,7 @@ void* OrE::ADT::Heap::DeleteMin()
 		HeapNodeP pStart = m_pRoot;
 		HeapNodeP pCurrent = m_pRoot;
 		do {
-			assert(!pCurrent->pParent);
+			Assert(!pCurrent->pParent);
 			if(pCurrent->qwKey < m_pRoot->qwKey)
 				m_pRoot = pCurrent;
 			pCurrent = pCurrent->pRight;
@@ -228,37 +254,38 @@ void OrE::ADT::Heap::Cut(HeapNodeP _pElement)
 
 // ******************************************************************************** //
 // Change the key value and reorder the elements if necessary
-void OrE::ADT::Heap::ChangeKey(HeapNodeP _pElement, qword _qwNewKey)
+void OrE::ADT::Heap::ChangeKey( HeapNodeP _pElement, qword _qwNewKey )
 {
 	// Set new value, it is changed anyway
 	bool bIncrease = _pElement->qwKey<_qwNewKey;
 	_pElement->qwKey = _qwNewKey;
 
 	// Check if heap violated (decreased key)
-	if(_pElement->pParent && (_pElement->qwKey < _pElement->pParent->qwKey))
+	if( _pElement->pParent && (_pElement->qwKey < _pElement->pParent->qwKey) )
 	{
 		// Cut simple (cascading in original tree, but I don't understand the advantage of the cascading)
-		Cut(_pElement);
+		Cut( _pElement );
 	}
 	
 	// Check violation if key value was increased
-	if(bIncrease && _pElement->pChild)
+	if( bIncrease && _pElement->pChild )
 	{
 		// Compare all child values (unsorted and independent)
 		HeapNodeP pChild = _pElement->pChild;
+		HeapNodeP pStop = _pElement->pChild;
 		do {
 			HeapNodeP pNextChild = pChild->pRight;
 			if(pChild->qwKey < _qwNewKey)
 				// Send child to root list
 				Cut(pChild);
 			pChild = pNextChild;
-		} while(pChild != _pElement->pChild);
+		} while( pChild != pStop );
 	}
 
 	// Check for new minimum
-	if(_qwNewKey <= m_pRoot->qwKey)
+	if( _qwNewKey <= m_pRoot->qwKey )
 	{
-		assert(!_pElement->pParent);
+		Assert(!_pElement->pParent);
 		m_pRoot = _pElement;
 	}
 }
@@ -300,7 +327,11 @@ void OrE::ADT::Heap::RecursiveDelete(HeapNodeP _pCurrent)
 
 void OrE::ADT::Heap::Clear()
 {
-	RecursiveDelete( m_pRoot );
+	if(m_pDeleteCallback)
+		while(m_pRoot) m_pDeleteCallback( DeleteMin() );
+	else
+		while(m_pRoot) DeleteMin();
+//	RecursiveDelete( m_pRoot );
 	m_pRoot = nullptr;
 }
 

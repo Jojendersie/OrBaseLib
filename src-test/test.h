@@ -23,3 +23,9 @@ void test_math();
 
 // Test of OrE::ADT::MultiMap
 void test_multimap();
+
+// Test of OrE::String::Tokenizer
+void test_tokenizer();
+
+// Test and Benchmark of the fibonacci heap
+void test_heap();
