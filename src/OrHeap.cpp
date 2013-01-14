@@ -14,6 +14,7 @@
 // ******************************************************************************** //
 
 #include "..\include\OrTypeDef.h"
+#include "..\include\OrAssert.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrHeap.h"
 #include "..\include\OrDebug.h"
@@ -172,7 +173,7 @@ void OrE::ADT::Heap::Consolidate()
 
 // ******************************************************************************** //
 // Standard operation insert
-HeapNodeP OrE::ADT::Heap::Insert(void* _pObject, qword _qwKey)
+HeapNodeP OrE::ADT::Heap::Insert(void* _pObject, uint64 _qwKey)
 {
 	HeapNodeP pNew = new HeapNode(m_pRoot, _pObject, _qwKey);
 	// Min update
@@ -254,7 +255,7 @@ void OrE::ADT::Heap::Cut(HeapNodeP _pElement)
 
 // ******************************************************************************** //
 // Change the key value and reorder the elements if necessary
-void OrE::ADT::Heap::ChangeKey( HeapNodeP _pElement, qword _qwNewKey )
+void OrE::ADT::Heap::ChangeKey( HeapNodeP _pElement, uint64 _qwNewKey )
 {
 	// Set new value, it is changed anyway
 	bool bIncrease = _pElement->qwKey<_qwNewKey;
@@ -292,7 +293,7 @@ void OrE::ADT::Heap::ChangeKey( HeapNodeP _pElement, qword _qwNewKey )
 
 // ******************************************************************************** //
 // Unsupported function
-void OrE::ADT::Heap::Delete(qword _qwKey) {}
+void OrE::ADT::Heap::Delete(uint64 _qwKey) {}
 
 // ******************************************************************************** //
 // The only arbitrary delete operation for the heap
@@ -337,7 +338,7 @@ void OrE::ADT::Heap::Clear()
 
 // ******************************************************************************** //
 // Unsupported function
-HeapNodeP OrE::ADT::Heap::Search(qword _qwKey)
+HeapNodeP OrE::ADT::Heap::Search(uint64 _qwKey)
 {
 /*	Iterator<HeapNode> It(this);
 	while(++It)

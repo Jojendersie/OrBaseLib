@@ -86,7 +86,7 @@ void OrE::ADT::SplayTree::SemiSplay(BinaryTreeNodeP _pNode)
 
 // ******************************************************************************** //
 // Search with a key and splay
-BinaryTreeNodeP OrE::ADT::SplayTree::SearchNode(qword _qwKey)
+BinaryTreeNodeP OrE::ADT::SplayTree::SearchNode(uint64 _qwKey)
 {
 	// Search normal
 	BinaryTreeNodeP pCurrent = m_pRoot;
@@ -109,7 +109,7 @@ BinaryTreeNodeP OrE::ADT::SplayTree::SearchNode(qword _qwKey)
 
 // ******************************************************************************** //
 // Insert operation with splay
-BinaryTreeNodeP OrE::ADT::SplayTree::Insert(void* _pObject, qword _qwKey)
+BinaryTreeNodeP OrE::ADT::SplayTree::Insert(void* _pObject, uint64 _qwKey)
 {
 	// Insert as usual
 	BinaryTreeNodeP pCurrent = m_pRoot;
@@ -136,7 +136,7 @@ BinaryTreeNodeP OrE::ADT::SplayTree::Insert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Standard operation delete
-void OrE::ADT::SplayTree::Delete(qword _qwKey)
+void OrE::ADT::SplayTree::Delete(uint64 _qwKey)
 {
 	// Search with splay (access)
 	SearchNode(_qwKey);

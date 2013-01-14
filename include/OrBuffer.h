@@ -42,7 +42,7 @@ class Buffer
 	int				m_iHeadCursor;			// Pointer to the next "free" element (Head-1==newest instance)
 	int				m_iTailCursor;			// Pointer to the last element (oldest)
 	int				m_iMax;					// Size of the underlying array
-	volatile dword	m_dwSemaphore;			// Locking for multi threads
+	volatile uint32	m_dwSemaphore;			// Locking for multi threads
 	void**			m_Buffer;				// The storage array for all elements
 
 	// Prevent copy constructor and operator = being generated.

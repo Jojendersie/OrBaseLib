@@ -21,7 +21,7 @@ using namespace OrE::ADT;
 
 // ******************************************************************************** //
 // Standard search with a key
-BinaryTreeNodeP OrE::ADT::BinaryTree::Search(qword _qwKey)
+BinaryTreeNodeP OrE::ADT::BinaryTree::Search(uint64 _qwKey)
 {
 	// Use internal search, but do not return the node if it's just a "near by case".
 	BinaryTreeNodeP pN = SearchNode(_qwKey);

@@ -17,6 +17,7 @@
 #include <thread>
 
 #include "..\include\OrTypeDef.h"
+#include "..\include\OrAssert.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrHash.h"
 #include "..\include\OrMultimap.h"
@@ -119,7 +120,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0 )
 	// Since the hash maps are not thread safe lock during insertion
 	{ LOCK
 		// Object address = hash, data = array with pointers to the group entries (setup later)
-		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
+		pOE = m_ObjectMap.Insert( nullptr, (uint64)_pNewObject );
 		Assert( pOE );
 		// Reference counter should be one
 		// -> double insertion occurred -> ref is 1 too large
@@ -168,7 +169,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 	// Since the hash maps are not thread safe lock during insertion
 	{ LOCK
 		// Object address = hash, data = array with pointers to the group entries (setup later)
-		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
+		pOE = m_ObjectMap.Insert( nullptr, (uint64)_pNewObject );
 		Assert( pOE );
 		// Reference counter should be one
 		// -> double insertion occurred -> ref is 1 too large
@@ -229,7 +230,7 @@ void OrE::ADT::MultiMap::Add( void* _pNewObject, const char* _pcGroup0, const ch
 	// Since the hash maps are not thread safe lock during insertion
 	{ LOCK
 		// Object address = hash, data = array with pointers to the group entries (setup later)
-		pOE = m_ObjectMap.Insert( nullptr, (qword)_pNewObject );
+		pOE = m_ObjectMap.Insert( nullptr, (uint64)_pNewObject );
 		Assert( pOE );
 		// Reference counter should be one
 		// -> double insertion occurred -> ref is 1 too large
@@ -265,7 +266,7 @@ void OrE::ADT::MultiMap::Remove( void* _pObject )
 	// Test if object is in map and stop if not
 	{ LOCK
 		ADTElementP pOE;
-		if( !(pOE=m_ObjectMap.Search( (qword)_pObject )) ) return;
+		if( !(pOE=m_ObjectMap.Search( (uint64)_pObject )) ) return;
 
 		// Remove from all groups
 		GroupIndex* pIndex = (GroupIndex*)pOE->pObject;
@@ -307,7 +308,7 @@ void OrE::ADT::MultiMap::Map( void* _pObject, const char* _pcGroup )
 	// Test if object is in map and stop if not
 	{ LOCK
 		// Object is not in map
-		if( !(pOE=m_ObjectMap.Search( (qword)_pObject )) ) return;
+		if( !(pOE=m_ObjectMap.Search( (uint64)_pObject )) ) return;
 
 		// The object is in map -> apply to new group
 		GroupIndex* pIndex = (GroupIndex*)(pOE->pObject);
@@ -337,7 +338,7 @@ void OrE::ADT::MultiMap::Unmap( void* _pObject, const char* _pcGroup )
 
 	{ LOCK
 		// Search element.
-		ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
+		ADTElementP pOE = m_ObjectMap.Search( (uint64)_pObject );
 		if( !pOE ) return;
 
 		// Delete from group and from index
@@ -365,7 +366,7 @@ bool OrE::ADT::MultiMap::IsIn( void* _pObject, const char* _pcGroup )
 	if( IsDefaultGroup( _pcGroup ) )
 	{
 		LOCK
-		return m_ObjectMap.Search( (qword)_pObject ) != nullptr;
+		return m_ObjectMap.Search( (uint64)_pObject ) != nullptr;
 	} else {
 		int ID;
 		// Since groups can only be added the index is persistent
@@ -378,7 +379,7 @@ bool OrE::ADT::MultiMap::IsIn( void* _pObject, const char* _pcGroup )
 
 		{ LOCK
 			// Does object exists?
-			ADTElementP pOE = m_ObjectMap.Search( (qword)_pObject );
+			ADTElementP pOE = m_ObjectMap.Search( (uint64)_pObject );
 			// The object can be found but not in group.
 			// Easy case: not found.
 			if( !pOE ) return false;

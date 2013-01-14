@@ -49,10 +49,10 @@ bool Strneq(const char* p1, const char* p2);
 //	_dwTo - 0-indexed index of last char to copy (inclusive)
 //			or 0xffffffff to copy the whole postfix beginning in _dwFrom
 // Returns a 0-terminated string which have to be deleted with free().
-char* Substr(const char* _pcString, const dword _dwFrom, dword _dwTo);
+char* Substr(const char* _pcString, const uint32 _dwFrom, uint32 _dwTo);
 
 // Counts number of matching characters
-dword Match(const char* _pcStr1, const char* _pcStr2);
+uint32 Match(const char* _pcStr1, const char* _pcStr2);
 
 // Compare a string and ignore the case.
 // returns -1 if str1 lexicographic smaller than str2

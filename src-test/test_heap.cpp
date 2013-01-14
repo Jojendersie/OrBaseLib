@@ -41,6 +41,8 @@ void test_heap()
 #endif
 		++x;
 	}
+	// Not sure how heap reacts to changes in its structure during iteration (ChangeKey)
+	Assert( x==1000 );
 
 	std::cout << "\tIterate over 1000 elements, changing there keys\n\tand testing validity: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 

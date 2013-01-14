@@ -42,10 +42,10 @@ namespace Algorithm {
 
 // ******************************************************************************** //
 // Standard hash for any data. Should result in nice uniform distributions mostly.
-dword CreateHash32(const void* pData, const int iSize);	// Create a 32 bit hash value of a data set
-qword CreateHash64(const void* pData, const int iSize);	// Create a 64 bit hash value of a data set
-dword CreateHash32(const void* pData);					// Create a 32 bit hash value of a 0-terminated data set (e.g. strings)
-qword CreateHash64(const void* pData);					// Create a 64 bit hash value of a 0-terminated data set (e.g. strings)
+uint32 CreateHash32(const void* pData, const int iSize);	// Create a 32 bit hash value of a data set
+uint64 CreateHash64(const void* pData, const int iSize);	// Create a 64 bit hash value of a data set
+uint32 CreateHash32(const void* pData);					// Create a 32 bit hash value of a 0-terminated data set (e.g. strings)
+uint64 CreateHash64(const void* pData);					// Create a 64 bit hash value of a 0-terminated data set (e.g. strings)
 
 // ******************************************************************************** //
 // CRC - Error proving hash (cyclic redundancy check)
@@ -54,19 +54,19 @@ qword CreateHash64(const void* pData);					// Create a 64 bit hash value of a 0-
 // the CRC function with the same polynomial. A result of 0 denotes, that no checkable
 // error occurred.
 // Creates the hash with a arbitrary polynomial with a degree less than 32
-dword CreateCRCHash(dword dwPolynom, void* pData, dword dwSize);
+uint32 CreateCRCHash(uint32 dwPolynom, void* pData, uint32 dwSize);
 
 // Using of polynomial: x32 + x26 + x23 + x22 + x16 + x12 + x11 + x10 + x8 + x7 + x5 + x4 + x2 + x + 1
-inline dword CreateCRC32IEEEHash(void* pData, dword dwSize)		{return CreateCRCHash(0x04C11DB7, pData, dwSize);}
+inline uint32 CreateCRC32IEEEHash(void* pData, uint32 dwSize)		{return CreateCRCHash(0x04C11DB7, pData, dwSize);}
 
 // Using of polynomial: x24 + x23 + x18 + x17 + x14 + x11 + x10 + x7 + x6 + x5 + x4 + x3 + x + 1
-inline dword CreateCRC24RadixHash(void* pData, dword dwSize)	{return CreateCRCHash(0x864CFB, pData, dwSize);}
+inline uint32 CreateCRC24RadixHash(void* pData, uint32 dwSize)	{return CreateCRCHash(0x864CFB, pData, dwSize);}
 
 // Using of polynomial: x16+x12+x5+1
-inline dword CreateCRCCCITT16Hash(void* pData, dword dwSize)	{return CreateCRCHash(0x00011022, pData, dwSize);}
+inline uint32 CreateCRCCCITT16Hash(void* pData, uint32 dwSize)	{return CreateCRCHash(0x00011022, pData, dwSize);}
 
 // Using of polynomial: x16+x15+x2+1
-inline dword CreateCRC16Hash(void* pData, dword dwSize)			{return CreateCRCHash(0x00018006, pData, dwSize);}
+inline uint32 CreateCRC16Hash(void* pData, uint32 dwSize)			{return CreateCRCHash(0x00018006, pData, dwSize);}
 
 }; // namespace Algorithm
 namespace ADT {
@@ -85,7 +85,7 @@ enum HashMapMode
 // The buckets are a very simple binary trees without any optimization.
 class Bucket: public ADTElement
 {
-	Bucket(void* _pObj, const qword& _qwKey, Bucket* _pParent) :
+	Bucket(void* _pObj, const uint64& _qwKey, Bucket* _pParent) :
 			ADTElement(_pObj, _qwKey),
 			pLeft(nullptr),
 			pRight(nullptr),
@@ -109,8 +109,8 @@ class HashMap: public ADT
 {
 private:
 	BucketP*		m_apBuckets;				// An array with buckets (binary trees)
-	dword			m_dwSize;					// Size of the array and therewith of hash map
-	dword			m_dwNumElements;			// Number of elements currently in map (can be larger than array size)
+	uint32			m_dwSize;					// Size of the array and therewith of hash map
+	uint32			m_dwNumElements;			// Number of elements currently in map (can be larger than array size)
 	HashMapMode		m_Mode;						// Modes set in initialization (String mode?, Resize mode?)
 
 	void RemoveData(BucketP _pBucket);
@@ -121,29 +121,30 @@ private:
 
 	// Prevent copy constructor and operator = being generated.
 	HashMap(const HashMap&);
-	const HashMap& operator = (const HashMap&);
+	HashMap& operator = (const HashMap&);
 public:
-	HashMap(dword _dwSize, HashMapMode _Mode);
+	HashMap(uint32 _dwSize, HashMapMode _Mode);
 	virtual ~HashMap();
 
 	// Remove everything
 	void Clear();
 
 	// Recreate the table and reinsert all elements
-	void Resize(const dword _dwSize);
+	void Resize(const uint32 _dwSize);
 
 	// Standard operation insert; If already existing, the object is NOT overwritten,
 	// but reference counter is increased.
-	ADTElementP Insert(void* _pObject, qword _qwKey) override;
+	ADTElementP Insert(void* _pObject, uint64 _qwKey) override;
 
 	// Standard operation delete
-	void Delete(qword _qwKey) override;
+	void Delete(uint64 _qwKey) override;
 
 	// Faster operation delete (no search)
 	void Delete(ADTElementP _pElement) override;
 
 	// Standard search with a key
-	ADTElementP Search(qword _qwKey) override;
+	ADTElementP Search(uint64 _qwKey) override;
+	const ADTElement* Search(uint64 _qwKey) const;// override;
 
 	// String-Mode functions
 	// insert using strings; If already existing, the object is NOT overwritten,
@@ -162,18 +163,18 @@ public:
 	ADTElementP GetNext(ADTElementP _pCurrent) override;
 	ADTElementP GetPrevious(ADTElementP _pCurrent) override;
 
-	bool IsEmpty()			{return m_dwNumElements==0;}
+	bool IsEmpty() const			{return m_dwNumElements==0;}
 
 	// Objects/elements in the hash map. Not its capacity.
-	dword GetNumElements()	{return m_dwNumElements;}
+	uint32 GetNumElements() const	{return m_dwNumElements;}
 
 	// Size of table array. This is not the number of elements (GetNumElements).
-	dword GetSize()			{return m_dwSize;}
+	uint32 GetSize() const			{return m_dwSize;}
 
 	typedef Iterator<ADTElement> Iterator;
 
 #ifdef _DEBUG
-	dword m_dwCollsionCounter;
+	uint32 m_dwCollsionCounter;
 #endif
 };
 typedef HashMap* HashMapP;

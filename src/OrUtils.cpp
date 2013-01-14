@@ -38,9 +38,9 @@ const double CLOCKS_PER_SEC_INV = 1.0/CLOCKS_PER_SEC;	// Pre calculated for perf
 double OrE::Utils::TimeQuery(TimeQuerySlot& _Slot)
 {
 	// Remember old timestamp and sample new one
-	qword OldTime = _Slot;
+	uint64 OldTime = _Slot;
 #ifdef WINDOWS
-	qword qwF;
+	uint64 qwF;
 	QueryPerformanceFrequency((LARGE_INTEGER*)&qwF);
 	QueryPerformanceCounter((LARGE_INTEGER*)&_Slot);
 #else
@@ -80,14 +80,14 @@ bool OrE::Utils::Strneq(const char* p1, const char* p2)
 //	_dwFrom - 0-indexed index of first char to copy (inclusive)
 //	_dwTo - 0-indexed index of last char to copy (inclusive)
 //			or 0xffffffff to copy the whole postfix beginning in _dwFrom
-char* OrE::Utils::Substr(const char* _pcString, const dword _dwFrom, dword _dwTo)
+char* OrE::Utils::Substr(const char* _pcString, const uint32 _dwFrom, uint32 _dwTo)
 {
 	// Special case: String until the end
 	if(_dwTo == 0xffffffff) _dwTo = Max(0,int(strlen(_pcString))-1);
 
 	// Definition: from 0 to 0 means one character (inclusive 0)
 	char* pcRet = (char*)malloc((_dwTo+2-_dwFrom)*sizeof(char));
-	dword i=_dwFrom;
+	uint32 i=_dwFrom;
 	for(;i<=_dwTo;++i)
 		pcRet[i-_dwFrom] = _pcString[i];
 	pcRet[_dwTo-_dwFrom+1] = 0;
@@ -96,10 +96,10 @@ char* OrE::Utils::Substr(const char* _pcString, const dword _dwFrom, dword _dwTo
 }
 
 // ******************************************************************************** //
-dword OrE::Utils::Match(const char* _pcStr1, const char* _pcStr2)
+uint32 OrE::Utils::Match(const char* _pcStr1, const char* _pcStr2)
 {
-	//dword dwMax = OrE::Math::Min(strlen(_pcStr1), strlen(_pcStr2));
-	dword i;
+	//uint32 dwMax = OrE::Math::Min(strlen(_pcStr1), strlen(_pcStr2));
+	uint32 i;
 	for(i=0; (_pcStr1[i]*_pcStr2[i] != 0) && (_pcStr1[i]==_pcStr2[i]); ++i);
 	return i;
 }

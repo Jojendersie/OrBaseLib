@@ -63,14 +63,14 @@ OrE::Algorithm::HuffmanTree_Splay::HuffmanTree_Splay(unsigned int _uiNumCharacte
 }
 
 // ******************************************************************************** //
-bool OrE::Algorithm::HuffmanTree_Splay::Encode(dword _c, BitBufferStreamP _pDest)
+bool OrE::Algorithm::HuffmanTree_Splay::Encode(uint32 _c, BitBufferStreamP _pDest)
 {
 	// Stop if we could use more bits than remaining buffer.
 	if(_pDest->GetUsedSize()+70 > _pDest->GetSize()) return false;
 
 	// Search the char in the tree and write down the path.
 	BinaryTreeNodeP pCurrent = m_pRoot;
-	qword qwKey = _c*NODE_VALUE_FACTOR;
+	uint64 qwKey = _c*NODE_VALUE_FACTOR;
 	while(pCurrent->qwKey!=qwKey)
 	{
 		// It should be impossible, that there is missing one character (initialization)
@@ -91,7 +91,7 @@ bool OrE::Algorithm::HuffmanTree_Splay::Encode(dword _c, BitBufferStreamP _pDest
 }
 
 // ******************************************************************************** //
-bool OrE::Algorithm::HuffmanTree_Splay::Decode(BitBufferStreamP _pSrc, dword& _Dest)
+bool OrE::Algorithm::HuffmanTree_Splay::Decode(BitBufferStreamP _pSrc, uint32& _Dest)
 {
 	// Run through the tree. The bits are showing the way.
 	int iBit = -1;//_pSrc->GetBit();
@@ -103,7 +103,7 @@ bool OrE::Algorithm::HuffmanTree_Splay::Decode(BitBufferStreamP _pSrc, dword& _D
 		else pCurrent = pCurrent->pLeft;
 	}
 
-	_Dest = (dword)pCurrent->qwKey/NODE_VALUE_FACTOR;
+	_Dest = (uint32)pCurrent->qwKey/NODE_VALUE_FACTOR;
 
 	// Splay last parent to change the tree the same way like in encode.
 	Splay(pCurrent->pParent);
@@ -117,7 +117,7 @@ bool OrE::Algorithm::HuffmanTree_Splay::Decode(BitBufferStreamP _pSrc, dword& _D
 
 
 // ******************************************************************************** //
-bool OrE::Algorithm::HuffmanTree_SemiSplay::Encode(dword _c, BitBufferStreamP _pDest)
+bool OrE::Algorithm::HuffmanTree_SemiSplay::Encode(uint32 _c, BitBufferStreamP _pDest)
 {
 	// Stop if we could use more bits than remaining buffer.
 	if(_pDest->GetUsedSize()+70 > _pDest->GetSize()) return false;
@@ -144,7 +144,7 @@ bool OrE::Algorithm::HuffmanTree_SemiSplay::Encode(dword _c, BitBufferStreamP _p
 }
 
 // ******************************************************************************** //
-bool OrE::Algorithm::HuffmanTree_SemiSplay::Decode(BitBufferStreamP _pSrc, dword& _Dest)
+bool OrE::Algorithm::HuffmanTree_SemiSplay::Decode(BitBufferStreamP _pSrc, uint32& _Dest)
 {
 	// Run through the tree. The bits are showing the way.
 	int iBit = -1;//_pSrc->GetBit();
@@ -156,7 +156,7 @@ bool OrE::Algorithm::HuffmanTree_SemiSplay::Decode(BitBufferStreamP _pSrc, dword
 		else pCurrent = pCurrent->pLeft;
 	}
 
-	_Dest = (dword)pCurrent->qwKey/NODE_VALUE_FACTOR;
+	_Dest = (uint32)pCurrent->qwKey/NODE_VALUE_FACTOR;
 
 	// Splay last parent to change the tree the same way like in encode.
 	SemiSplay(pCurrent);

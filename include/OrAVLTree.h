@@ -56,7 +56,7 @@ protected:
 	void RepairHeightProperty(BinaryTreeNodeP _pNode);
 
 	void Rebalance(BinaryTreeNodeP _pNode);							// Rebuild AVL property, if and only if _pNode changed it's height by one. (_pNode has to be the parent of the inserted or deleted node)
-	BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key (searches for nearest element)
+	BinaryTreeNodeP SearchNode(uint64 _qwKey) override;				// Search with a key (searches for nearest element)
 	void RecursiveDelete(BinaryTreeNodeP _pNode);					// Internal called from clear
 	static int GetHeight(BinaryTreeNodeP _pNode)		{return _pNode?_pNode->iParam:0;}
 
@@ -65,8 +65,8 @@ protected:
 	const AVLTree& operator = (const AVLTree&);
 public:
 	AVLTree():BinaryTree()	{}
-	BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
-	void Delete(qword _qwKey) override;								// Standard operation delete
+	BinaryTreeNodeP Insert(void* _pObject, uint64 _qwKey) override;	// Insert operation
+	void Delete(uint64 _qwKey) override;								// Standard operation delete
 	void Delete(ADTElementP _pNode) override;						// Faster delete operation without search
 	void Clear() override;											// The remove everything method
 
@@ -86,7 +86,7 @@ private:
 	BinaryTreeLinkedNode* pNext;
 	BinaryTreeLinkedNode* pPrev;
 
-	BinaryTreeLinkedNode(BinaryTreeLinkedNode* _pParent, void* _pObj, const qword& _qwKey):BinaryTreeNode(_pParent, _pObj, _qwKey), pNext(nullptr), pPrev(nullptr)	{}
+	BinaryTreeLinkedNode(BinaryTreeLinkedNode* _pParent, void* _pObj, const uint64& _qwKey):BinaryTreeNode(_pParent, _pObj, _qwKey), pNext(nullptr), pPrev(nullptr)	{}
 
 	// Prevent copy constructor and operator = being generated.
 	BinaryTreeLinkedNode(const BinaryTreeLinkedNode&);
@@ -105,8 +105,8 @@ class LinkedAVLTree : public AVLTree
 	const LinkedAVLTree& operator = (const LinkedAVLTree&);
 public:
 	LinkedAVLTree():AVLTree()	{}
-	BinaryTreeLinkedNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation
-	void Delete(qword _qwKey) override	{AVLTree::Delete( _qwKey );}		// Standard operation delete
+	BinaryTreeLinkedNodeP Insert(void* _pObject, uint64 _qwKey) override;	// Insert operation
+	void Delete(uint64 _qwKey) override	{AVLTree::Delete( _qwKey );}		// Standard operation delete
 	void Delete(ADTElementP _pNode) override;								// Faster delete operation without search
 
 	BinaryTreeLinkedNodeP GetNext(ADTElementP _pCurrent) override;			// Fast inorder traverse

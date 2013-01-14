@@ -183,12 +183,12 @@ public:
 private:
 	bool m_bDel;
 
-	TrieString(dword _dwLen, char *_pcString):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(true)	{}
+	TrieString(uint32 _dwLen, char *_pcString):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(true)	{}
 public:
-	dword m_dwLen;
+	uint32 m_dwLen;
 	const char* m_pcString;
 
-	TrieString(const char *_pcString, dword _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
+	TrieString(const char *_pcString, uint32 _dwLen):m_pcString(_pcString),m_dwLen(_dwLen),m_bDel(false)	{}
 	virtual ~TrieString();
 
 	// ******************************************************************************** //
@@ -197,11 +197,11 @@ public:
 	//	_dwFrom - 0-indexed index of first char to copy (inclusive)
 	//	_dwTo - 0-indexed index of last char to copy (inclusive)
 	//			or 0xffffffff to copy the whole postfix beginning in _dwFrom
-	TrieString* substr(const dword _dwFrom, dword _dwTo) const;
+	TrieString* substr(const uint32 _dwFrom, uint32 _dwTo) const;
 
 	// ******************************************************************************** //
 	// Auxiliary function to estimate length of the prefix match
-	dword match(const TrieString* _pStr) const;
+	uint32 match(const TrieString* _pStr) const;
 };
 
 // ******************************************************************************** //

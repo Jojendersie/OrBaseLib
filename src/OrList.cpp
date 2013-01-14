@@ -47,7 +47,7 @@ OrE::ADT::List::~List()
 
 // ******************************************************************************** //
 // Standard operation insert
-ListNodeP OrE::ADT::List::Insert(void* _pObject, qword _qwKey)
+ListNodeP OrE::ADT::List::Insert(void* _pObject, uint64 _qwKey)
 {
 	// Create Node
 	++m_iNumElements;
@@ -70,7 +70,7 @@ ListNodeP OrE::ADT::List::Insert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Insert and allow each key only to occur one time (insert sorted as well)
-ListNodeP OrE::ADT::List::SetInsert(void* _pObject, qword _qwKey)
+ListNodeP OrE::ADT::List::SetInsert(void* _pObject, uint64 _qwKey)
 {
 	// Search
 	ListNodeP pCurrent = m_pFirst;
@@ -100,7 +100,7 @@ ListNodeP OrE::ADT::List::SetInsert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Slow delete with search
-void OrE::ADT::List::Delete(qword _qwKey)
+void OrE::ADT::List::Delete(uint64 _qwKey)
 {
 	Iterator<ListNode> It(this);
 	while(++It)
@@ -143,7 +143,7 @@ void OrE::ADT::List::Clear()
 
 // ******************************************************************************** //
 // Standard search with a key
-ListNodeP OrE::ADT::List::Search(qword _qwKey)
+ListNodeP OrE::ADT::List::Search(uint64 _qwKey)
 {
 	Iterator<ListNode> It(this);
 	while(++It)

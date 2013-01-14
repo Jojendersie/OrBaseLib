@@ -44,15 +44,16 @@
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>
+#include <memory>
 
 using namespace OrE::Algorithm;
 
-const dword OR_AVC_NUMVEC			= 5;
-const dword OR_AVC_OFFSET_BITS[]	= {4,7,10,12,14};
-const dword OR_AVC_LENGTH_BITS[]	= {1,3,4,7,8};
-const dword OR_AVC_LENGTH_OFFSETS[]	= {2,3,4,5,5};
-const dword OR_AVC_MAX_OFFSET		= 16384;//(1<<OR_AVC_OFFSET_BITS[OR_AVC_NUMVEC-1]);
-const dword OR_AVC_MAX_LENGTH		= (1<<OR_AVC_LENGTH_BITS[OR_AVC_NUMVEC-1])-1+OR_AVC_LENGTH_OFFSETS[OR_AVC_NUMVEC-1];
+const uint32 OR_AVC_NUMVEC			= 5;
+const uint32 OR_AVC_OFFSET_BITS[]	= {4,7,10,12,14};
+const uint32 OR_AVC_LENGTH_BITS[]	= {1,3,4,7,8};
+const uint32 OR_AVC_LENGTH_OFFSETS[]	= {2,3,4,5,5};
+const uint32 OR_AVC_MAX_OFFSET		= 16384;//(1<<OR_AVC_OFFSET_BITS[OR_AVC_NUMVEC-1]);
+const uint32 OR_AVC_MAX_LENGTH		= (1<<OR_AVC_LENGTH_BITS[OR_AVC_NUMVEC-1])-1+OR_AVC_LENGTH_OFFSETS[OR_AVC_NUMVEC-1];
 // Test results:
 //	test.bmp - 982162/956131/956075/954565/948540/947984/948054/952318/937.../929187/917727
 //	test2.bmp - 
@@ -63,10 +64,10 @@ const dword OR_AVC_MAX_LENGTH		= (1<<OR_AVC_LENGTH_BITS[OR_AVC_NUMVEC-1])-1+OR_A
 //	test.exe - 25811/25772/25885/25729/25737/25492/25610/25372
 //	test.pdf - 1098117/1097731/1095218/1091566/1075793/1074379/1052953
 
-static dword Statistic_Entro = 0;
-static dword Statistic_Vec[OR_AVC_NUMVEC] = {0};
-static dword Statistic_VecLen[OR_AVC_NUMVEC] = {0};
-static dword Statistic_VecOff[OR_AVC_NUMVEC] = {0};
+static uint32 Statistic_Entro = 0;
+static uint32 Statistic_Vec[OR_AVC_NUMVEC] = {0};
+static uint32 Statistic_VecLen[OR_AVC_NUMVEC] = {0};
+static uint32 Statistic_VecOff[OR_AVC_NUMVEC] = {0};
 
 // ******************************************************************************** //
 // Pattern matching with Knuth-Morris-Pratt-Algorithmus
@@ -139,9 +140,12 @@ struct OrDictCharEntry
 bool OrE::Algorithm::AVCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest)
 {
 	// Create free list dictionary for the first chars
-	OrDictCharEntry* pDict[256];						// The Dictionary of vectors
-	OrDictCharEntry  pFreeList[OR_AVC_MAX_OFFSET+1];	// Memory management
-	OrDictCharEntry* pNextFree = pFreeList;
+	OrDictCharEntry* pDict[256];			// The dictionary of vectors
+	// Memory management
+	// Use a scoped pointer to avoid memory leaks in the many return cases
+	std::unique_ptr<OrDictCharEntry> pScopedPointerToList( new OrDictCharEntry[OR_AVC_MAX_OFFSET+1] );
+	OrDictCharEntry* pFreeList = pScopedPointerToList.get();
+	OrDictCharEntry* pNextFree = pScopedPointerToList.get();
 	// Initialize free list
 	memset(pDict, 0, sizeof(pDict));
 	for(int i=0; i<OR_AVC_MAX_OFFSET; ++i)
@@ -150,35 +154,35 @@ bool OrE::Algorithm::AVCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStrea
 
 	// If a vector was saved the following chars are already in _pDest. We have to
 	// look at them to build our dictionary, but we don't have to code them again!
-	dword dwNoCode = 0;
+	uint32 dwNoCode = 0;
 	// Encode each character
-	for(dword i=0; i<(dword)_iSize; ++i)
+	for(uint32 i=0; i<(uint32)_iSize; ++i)
 	{
-		dword dwMaxVSize = Math::Min(_iSize-i, OR_AVC_MAX_LENGTH);
+		uint32 dwMaxVSize = Math::Min(_iSize-i, OR_AVC_MAX_LENGTH);
 		if(dwNoCode) --dwNoCode;
 		else
 		{
 			// 1. Search for longest match
-			dword dwLength=0, dwOffset=1000000;
+			uint32 dwLength=0, dwOffset=1000000;
 			OrDictCharEntry* pCur = pDict[_pSrc[i]];
 			while(pCur)
 			{
 				// Begin to count matches starting in pCur
 				byte* pBytePast = pCur->pFile;
 				byte* pByteCurrent = &_pSrc[i];
-				dword dwL = 1;
+				uint32 dwL = 1;
 				while(pBytePast[dwL] == pByteCurrent[dwL] && (dwL<dwMaxVSize)) ++dwL;
 				if(dwL>dwLength) {
 					dwLength = dwL;
-					dwOffset = (dword)(&_pSrc[i]-pBytePast);
+					dwOffset = (uint32)(&_pSrc[i]-pBytePast);
 				}
 				pCur = pCur->pNext;
 			}
 			//dwLength = Minu(dwLength, dwMaxVSize);
 			/*TrieString Cursor = TrieString((char*)&_pSrc[i], dwMaxVSize);
 			TrieNodeP pMatchV = m_pDict->Match(Cursor);
-			dword dwLength = dwMaxVSize-Cursor.m_dwLen; //(dword)Cursor.m_pcString - (dword)&_pSrc[i];
-			dword dwOffset = pMatchV?(i + 1 - (dword)pMatchV->pData):1000000;*/
+			uint32 dwLength = dwMaxVSize-Cursor.m_dwLen; //(uint32)Cursor.m_pcString - (uint32)&_pSrc[i];
+			uint32 dwOffset = pMatchV?(i + 1 - (uint32)pMatchV->pData):1000000;*/
 			// There is the possibility, that the vector has even an longer match than in dict (could be used for 1024-1029 bytes (gaining 5 extra bytes)
 
 			// 2. Classify match and safe character/vector
@@ -200,14 +204,14 @@ bool OrE::Algorithm::AVCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStrea
 					dwLength -= OR_AVC_LENGTH_OFFSETS[j]; --dwOffset;
 
 					// Stop if we could use more bits than remaining buffer.
-					if(_pDest->GetUsedSize()+(OR_AVC_OFFSET_BITS[j]+OR_AVC_LENGTH_BITS[j])/8+1 >= (dword)_pDest->GetSize())
+					if(_pDest->GetUsedSize()+(OR_AVC_OFFSET_BITS[j]+OR_AVC_LENGTH_BITS[j])/8+1 >= (uint32)_pDest->GetSize())
 						return false;
 
 					_pDest->SetBits(dwOffset, OR_AVC_OFFSET_BITS[j]);
 					_pDest->SetBits(dwLength, OR_AVC_LENGTH_BITS[j]);
-					/*for(dword k=0; k<OR_AVC_OFFSET_BITS[j]; ++k)
+					/*for(uint32 k=0; k<OR_AVC_OFFSET_BITS[j]; ++k)
 						_pDest->SetBit((dwOffset&(1<<k))?1:0);
-					for(dword k=0; k<OR_AVC_LENGTH_BITS[j]; ++k)
+					for(uint32 k=0; k<OR_AVC_LENGTH_BITS[j]; ++k)
 						_pDest->SetBit((dwLength&(1<<k))?1:0);*/
 					goto SkipSingleChar;
 				}
@@ -254,7 +258,7 @@ SkipSingleChar:;
 		Statistic_VecLen[i] /= Statistic_Vec[i];
 		Statistic_VecOff[i] /= Statistic_Vec[i];
 	}
-	dword dwNonEntro = _iSize - Statistic_Entro;
+	uint32 dwNonEntro = _iSize - Statistic_Entro;
 	return true;
 }
 
@@ -266,7 +270,7 @@ SkipSingleChar:;
 //	_iMaxSize - Size of uncompressed file.
 int OrE::Algorithm::AVCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
 {
-	dword c;
+	uint32 c;
 	int i=-1;
 	// EOF is given by an return value false from Decode()
 	while(Decode(_pSrc, c) && ++i<_iMaxSize)
@@ -278,13 +282,13 @@ int OrE::Algorithm::AVCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, in
 			c -= 256;
 
 			// Read vector reference
-			dword dwLength = 0, dwOffset = 0;
+			uint32 dwLength = 0, dwOffset = 0;
 			if(!_pSrc->GetBits(dwOffset, OR_AVC_OFFSET_BITS[c])) return false;
 			if(!_pSrc->GetBits(dwLength, OR_AVC_LENGTH_BITS[c])) return false;
 			dwLength += OR_AVC_LENGTH_OFFSETS[c]; ++dwOffset;
 
 			// Read vector (byte by byte since offset could be one -> copy of the last copied char)
-			for(dword k=0; k<dwLength; ++k)
+			for(uint32 k=0; k<dwLength; ++k)
 			{
 				if(i+(int)k >= _iMaxSize)
 					return -1;

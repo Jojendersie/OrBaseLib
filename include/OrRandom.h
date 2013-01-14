@@ -24,7 +24,7 @@ namespace Algorithm {
 
 // ******************************************************************************** //
 // Initialize Mersenne Twister
-void SRand(dword _dwSeed);
+void SRand(uint32 _dwSeed);
 
 // Creates a random number between 0 and 1 (inclusive)
 float Rand();
@@ -33,7 +33,7 @@ float Rand();
 int	Rand(int _iMin, int _iMax);
 
 // Creates an unsigned random Number
-dword RandU();
+uint32 RandU();
 
 // Creates a random number of an exponential distribution [0,+Inf]
 float ExpRand(float _fLambda);
@@ -49,7 +49,7 @@ float NormRand();
 class PerlinNoise
 {
 private:
-	dword m_dwSeed;
+	uint32 m_dwSeed;
 	float m_fPeriodicity;
 	double Sample1D(__int64 _i);
 public:
@@ -57,7 +57,7 @@ public:
 	// Parameter:
 	//	_dwSeed - Random base value - causes same results in same applications
 	//	_fPeriodicity - after which distance the noise should be periodically. Minimum is 1.
-	PerlinNoise(dword _dwSeed, float _fPeriodicity);
+	PerlinNoise(uint32 _dwSeed, float _fPeriodicity);
 
 	// One sample at the specified position R^d -> [-1,1]
 	// Parameter:
@@ -82,8 +82,8 @@ public:
 	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ);
 	float Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad);
 
-	void SetSeed(dword _dwSeed)		{m_dwSeed = _dwSeed;}
-	dword GetSeed()					{return m_dwSeed;}
+	void SetSeed(uint32 _dwSeed)		{m_dwSeed = _dwSeed;}
+	uint32 GetSeed()					{return m_dwSeed;}
 };
 
 }; // namespace OrE

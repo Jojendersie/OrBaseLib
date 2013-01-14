@@ -19,13 +19,13 @@
 
 // ******************************************************************************** //
 // Create one set per item (all items are there own set representatives).
-OrE::ADT::SetBuilder::SetBuilder(dword _dwMaxNumElements):
+OrE::ADT::SetBuilder::SetBuilder(uint32 _dwMaxNumElements):
 	m_dwNumElements(_dwMaxNumElements)
 {
-	dword dwSize = sizeof(OrE::ADT::SetBuilder::ElementInfo);
+	uint32 dwSize = sizeof(OrE::ADT::SetBuilder::ElementInfo);
 	m_pInfos = (OrE::ADT::SetBuilder::ElementInfo*)malloc(dwSize * _dwMaxNumElements);
 	// Init each element as a set
-	for(dword i=0;i<_dwMaxNumElements;++i)
+	for(uint32 i=0;i<_dwMaxNumElements;++i)
 		m_pInfos[i] = OrE::ADT::SetBuilder::ElementInfo(i, _dwMaxNumElements);
 }
 
@@ -39,7 +39,7 @@ OrE::ADT::SetBuilder::~SetBuilder()
 // Union to of the subsets
 // Input: two representatives/set-IDs, do not use other elements
 // Output: the new set representative (one of the two from input)
-dword OrE::ADT::SetBuilder::Union(dword _dwRep1, dword _dwRep2)
+uint32 OrE::ADT::SetBuilder::Union(uint32 _dwRep1, uint32 _dwRep2)
 {
 	if(_dwRep1==_dwRep2) return _dwRep1;
 	if(m_pInfos[_dwRep1].dwRank >= m_pInfos[_dwRep2].dwRank)
@@ -70,13 +70,13 @@ dword OrE::ADT::SetBuilder::Union(dword _dwRep1, dword _dwRep2)
 
 // ******************************************************************************** //
 // Finds the representative of the set, which contains the given element. 
-dword OrE::ADT::SetBuilder::GetSet(dword _dwElementIndex) const
+uint32 OrE::ADT::SetBuilder::GetSet(uint32 _dwElementIndex) const
 {
 	// The Element can be the representative
 	if(m_pInfos[_dwElementIndex].bRepresentant) return _dwElementIndex;
 	
 	// Already compressed path?
-	dword dwParent = m_pInfos[_dwElementIndex].dwParentIdx;
+	uint32 dwParent = m_pInfos[_dwElementIndex].dwParentIdx;
 	if(m_pInfos[dwParent].bRepresentant) return dwParent;
 
 	// Otherwise do path compression recursive

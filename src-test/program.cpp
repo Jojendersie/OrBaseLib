@@ -19,6 +19,7 @@ int main()
 {
 	OrE::Algorithm::SRand( 2 );
 
+	test_graph();
 	test_tokenizer();
 	test_heap();
 	test_math();

@@ -59,7 +59,7 @@ namespace ADT {
 		int iDegree;					// Number of children
 
 		// Constructor inserting in the structure
-		HeapNode(HeapNode* _pSibling, void* _pObj, const qword& _qwKey):
+		HeapNode(HeapNode* _pSibling, void* _pObj, const uint64& _qwKey):
 			ADTElement(_pObj, _qwKey), pChild(nullptr), pParent(nullptr), iDegree(0)
 		{
 			if(_pSibling)
@@ -116,14 +116,14 @@ namespace ADT {
 		// Change the key value and reorder the elements if necessary.
 		// The _qwNewKey can be lower or higher than the old one. (In contrast to the
 		// standard fibonacci heap, which allows decreases only)
-		void ChangeKey(HeapNodeP _pElement, qword _qwNewKey);
+		void ChangeKey(HeapNodeP _pElement, uint64 _qwNewKey);
 
 		// general ADT operations
 		// Standard operation insert - _qwKey is the priority of the node
-		HeapNodeP Insert(void* _pObject, qword _qwKey) override;
+		HeapNodeP Insert(void* _pObject, uint64 _qwKey) override;
 
 		// Unsupported function (doing nothing)
-		void Delete(qword _qwKey) override;
+		void Delete(uint64 _qwKey) override;
 
 		// The only arbitrary delete operation for the heap
 		void Delete(ADTElementP _pElement) override;
@@ -132,7 +132,7 @@ namespace ADT {
 		void Clear() override;
 
 		// Unsupported function (returning 0)
-		HeapNodeP Search(qword _qwKey) override;
+		HeapNodeP Search(uint64 _qwKey) override;
 
 		// First element = min element
 		HeapNodeP GetFirst() override;

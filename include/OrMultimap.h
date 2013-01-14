@@ -104,7 +104,7 @@ private:
 
 		// TODO: speed test
 //		GroupIndex() : iNumInGroups(0)	{ for( int i=0; i<32; ++i) pGroupE[i] = 0; }
-		GroupIndex() : iNumInGroups(0)	{ for( int i=0; i<16; ++i) ((qword*)pGroupE)[i] = 0; }
+		GroupIndex() : iNumInGroups(0)	{ for( int i=0; i<16; ++i) ((uint64*)pGroupE)[i] = 0; }
 	};
 
 	// A dynamical map of the objects. Each object is mapped to an array

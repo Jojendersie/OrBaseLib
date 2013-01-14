@@ -35,7 +35,7 @@ protected:
 	ADTElement(const ADTElement&);
 	const ADTElement& operator = (const ADTElement&);
 public:
-	qword qwKey;				// 64 Key value
+	uint64 qwKey;				// 64 Key value
 	void* pObject;				// Stored data
 
 	// Constructor: assure consistent state
@@ -45,7 +45,7 @@ public:
 	//			The key is used to create an ordering and to find data. It can be
 	//			manipulated and sometimes have an other behavior. For details look
 	//			at the specified data structure.
-	ADTElement(void* _pObj, const qword& _qwKey):pObject(_pObj), iRef(1), qwKey(_qwKey) {}
+	ADTElement(void* _pObj, const uint64& _qwKey):pObject(_pObj), iRef(1), qwKey(_qwKey) {}
 
 	virtual ~ADTElement()		{}
 
@@ -74,10 +74,10 @@ protected:
 public:
 	ADT():m_pDeleteCallback(nullptr), m_iNumElements(0)	{}			// Creates a consistent ADT object
 	virtual ~ADT()						{}
-	virtual ADTElementP Insert(void* _pObject, qword _qwKey) = 0;	// Standard operation insert
-	virtual void Delete(qword _qwKey) = 0;							// Standard operation delete
+	virtual ADTElementP Insert(void* _pObject, uint64 _qwKey) = 0;	// Standard operation insert
+	virtual void Delete(uint64 _qwKey) = 0;							// Standard operation delete
 	virtual void Delete(ADTElementP _pElement) = 0;					// Sometimes faster operation delete (no search)
-	virtual ADTElementP Search(qword _qwKey) = 0;					// Standard search with a key
+	virtual ADTElementP Search(uint64 _qwKey) = 0;					// Standard search with a key
 	virtual void Clear() = 0;										// The remove everything method
 
 	// Navigation on the structure. The order depends on the specified
@@ -156,6 +156,56 @@ public:
 	// Postfix
 	const Iterator operator++(int) { Iterator temp = *this; ++*this; return temp; }
 	const Iterator operator--(int) { Iterator temp = *this; --*this; return temp; }
+};
+
+
+
+// ******************************************************************************** //
+// New interface for derived iterators. NOT FINISHED.
+template <typename Type, class _DerivedIteratorName> class _Iterator
+{
+public:
+	// Force overriding boolean operator that if(Iterator) can be asked
+//	operator bool () const = 0;
+
+	// Force overriding implicit conversion to the element type.
+	// The operators *It, It-> and &It are created automatically from this.
+//	operator Type* () const = 0;
+
+	// Comparison operators for iterator equality. This is not for type comparison
+	// itself.
+	// Only implement ==. The != is created automatically.
+//	bool operator == (const _DerivedIteratorName& T) const = 0;
+
+	// Implement the + for arbitrary numbers. Negative numbers must be supported to!
+	// The ++, -- and - operator are auto generated from this method.
+	// Use 64 bit indices for upward compatibility (e.g. iterate in a file < 4GB).
+//	_DerivedIteratorName operator + (const int64 _rng ) const = 0;
+
+
+
+	// ******************************************************************************** //
+	// All methods below this line does not need reimplementation. All this methods
+	// can be automatically created
+
+	// Comparison operator !=
+	bool operator != (const _DerivedIteratorName& T) const {return !(*this == T);}
+
+	// Casting operators (auto creation for each derived class)
+	Type& operator * () const {return *(Type*)this;}
+	Type* operator -> () const {return (Type*)this;}
+	Type* operator & () const {return (Type*)this;}
+
+	// TODO: template vererbung??? als rückgabetyp den neuen Namen einsetzen?
+	// Override prefix ++ and -- to navigate
+	_DerivedIteratorName& operator ++ () { *this = *this + 1; return *this;}
+	_DerivedIteratorName& operator -- () { *this = *this - 1; return *this;}
+	// Postfix
+	const _DerivedIteratorName operator ++ (int) { _Iterator temp = *this; *this = *this + 1; return temp; }
+	const _DerivedIteratorName operator -- (int) { _Iterator temp = *this; *this = *this - 1; return temp; }
+
+	// - operator as inverse +
+	_DerivedIteratorName operator - (const int64 ) const {return *this + (-_rng)};
 };
 
 }; // namespace ADT

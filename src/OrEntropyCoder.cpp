@@ -66,7 +66,7 @@ int OrE::Algorithm::BitBufferStream::GetBit()
 
 // ******************************************************************************** //
 // Writes _iNum bits and move.
-bool OrE::Algorithm::BitBufferStream::SetBits(dword _dwBits, int _iNum)
+bool OrE::Algorithm::BitBufferStream::SetBits(uint32 _dwBits, int _iNum)
 {
 	// Buffer overflow?
 	if(((m_iBitPos+_iNum)>>3)+m_iBufferPos >= m_iSize) return false;
@@ -78,7 +78,7 @@ bool OrE::Algorithm::BitBufferStream::SetBits(dword _dwBits, int _iNum)
 		m_pBuffer[m_iBufferPos+1] |= iOverfill-8<0?_dwBits<<-(iOverfill-8):(_dwBits>>(iOverfill-8));
 		m_pBuffer[m_iBufferPos+2] |= iOverfill-16<0?_dwBits<<-(iOverfill-16):(_dwBits>>(iOverfill-16));
 		m_pBuffer[m_iBufferPos+3] |= iOverfill-24<0?_dwBits<<-(iOverfill-24):(_dwBits>>(iOverfill-24));
-//		(*(dword*)&m_pBuffer[m_iBufferPos+1]) |= _dwBits<<(32-iOverfill);	// adds all remaining bits
+//		(*(uint32*)&m_pBuffer[m_iBufferPos+1]) |= _dwBits<<(32-iOverfill);	// adds all remaining bits
 	} else
 	{
 		m_pBuffer[m_iBufferPos] |= _dwBits<<-iOverfill;						// copies all new bits
@@ -93,7 +93,7 @@ bool OrE::Algorithm::BitBufferStream::SetBits(dword _dwBits, int _iNum)
 
 // ******************************************************************************* //
 // Reads iNum bits and move
-bool OrE::Algorithm::BitBufferStream::GetBits(dword& _dwBits, int _iNum)
+bool OrE::Algorithm::BitBufferStream::GetBits(uint32& _dwBits, int _iNum)
 {
 	// Buffer overflow?
 	if(((m_iBitPos+_iNum)>>3)+m_iBufferPos >= m_iSize) return false;
@@ -109,7 +109,7 @@ bool OrE::Algorithm::BitBufferStream::GetBits(dword& _dwBits, int _iNum)
 	_dwBits &= ((1<<_iNum) - 1);
 	// Copy 25-32 bits and mask all unnecessary
 	//_dwBits = (m_pBuffer[m_iBufferPos]) << m_iBitPos) & ((1<<_iNum) - 1);
-	//_dwBits = (*(dword*)&m_pBuffer[m_iBufferPos] << m_iBitPos) >> (32-_iNum);
+	//_dwBits = (*(uint32*)&m_pBuffer[m_iBufferPos] << m_iBitPos) >> (32-_iNum);
 
 	m_iBitPos += _iNum;					// Adds number of new bits
 	m_iBufferPos += (m_iBitPos>>3);		// Adds 1 to 4 if m_iBitPos>=8
@@ -123,7 +123,7 @@ bool OrE::Algorithm::BitBufferStream::GetBits(dword& _dwBits, int _iNum)
 bool OrE::Algorithm::EntropyCoder::EncodeFile(byte* _pSrc, int _iSize, BitBufferStreamP _pDest)
 {
 	bool bNoError = true;
-	dword c;
+	uint32 c;
 	for(int i=0;i<_iSize && bNoError;++i)
 	{
 		c = _pSrc[i];
@@ -137,7 +137,7 @@ bool OrE::Algorithm::EntropyCoder::EncodeFile(byte* _pSrc, int _iSize, BitBuffer
 // Decode into a buffer
 int OrE::Algorithm::EntropyCoder::DecodeFile(BitBufferStreamP _pSrc, byte* _pDest, int _iMaxSize)
 {
-	dword c;
+	uint32 c;
 	int i=-1;
 	// EOF is given by an return value false from Decode()
 	while(Decode(_pSrc, c) && ++i<_iMaxSize)

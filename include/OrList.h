@@ -47,7 +47,7 @@ namespace ADT {
 		ListNode* pLeft;
 		ListNode* pRight;
 
-		ListNode(void* _pObj, const qword& _qwKey) : ADTElement(_pObj, _qwKey), pLeft(nullptr), pRight(nullptr)	{}
+		ListNode(void* _pObj, const uint64& _qwKey) : ADTElement(_pObj, _qwKey), pLeft(nullptr), pRight(nullptr)	{}
 	};
 	typedef ListNode* ListNodeP;
 	typedef ListNode const * ListNodePC;
@@ -69,14 +69,14 @@ namespace ADT {
 		List():m_pFirst(nullptr), m_pLast(nullptr) {}
 		virtual ~List();
 
-		ListNodeP Insert(void* _pObject, qword _qwKey) override;	// Standard operation insert
-		ListNodeP SetInsert(void* _pObject, qword _qwKey);			// Insert and allow each key only to occur one time (insert sorted as well)
-		void Delete(qword _qwKey) override;							// Slow delete with search
+		ListNodeP Insert(void* _pObject, uint64 _qwKey) override;	// Standard operation insert
+		ListNodeP SetInsert(void* _pObject, uint64 _qwKey);			// Insert and allow each key only to occur one time (insert sorted as well)
+		void Delete(uint64 _qwKey) override;							// Slow delete with search
 		void Delete(ADTElementP _pElement) override;				// Fast delete
 		void Clear() override;										// Remove everything
 
 		// Implementation of navigation
-		ListNodeP Search(qword _qwKey) override;					// Standard search with a key
+		ListNodeP Search(uint64 _qwKey) override;					// Standard search with a key
 		ListNodeP GetFirst() override		{return m_pFirst;}		// List access for iterator
 		ListNodeP GetLast() override		{return m_pLast;}		// List access for iterator
 		ListNodeP GetNext(ADTElementP _pCurrent) override		{return _pCurrent?ListNodeP(_pCurrent)->pRight:nullptr;}	// Traverse

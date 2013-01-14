@@ -54,7 +54,7 @@ protected:
 	BinaryTreeNode* pParent;
 	int iParam;					// Statistic information to mark nodes (use case differs on application)
 
-	BinaryTreeNode(BinaryTreeNode* _pParent, void* _pObj, const qword& _qwKey):ADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr),pParent(_pParent)	{}
+	BinaryTreeNode(BinaryTreeNode* _pParent, void* _pObj, const uint64& _qwKey):ADTElement(_pObj, _qwKey), pLeft(nullptr),pRight(nullptr),pParent(_pParent)	{}
 
 	// Prevent copy constructor and operator = being generated.
 	BinaryTreeNode(const BinaryTreeNode&);
@@ -81,7 +81,7 @@ private:
 	const BinaryTree& operator = (const BinaryTree&);
 protected:
 	BinaryTreeNodeP m_pRoot;
-	virtual BinaryTreeNodeP SearchNode(qword _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
+	virtual BinaryTreeNodeP SearchNode(uint64 _qwKey)=0;			// Internal standard search with a key (searches for nearest element)
 
 	// Exchange two nodes by changing there 3 connections.
 	// The node will keep its address and its data.
@@ -101,7 +101,7 @@ public:
 	virtual ~BinaryTree();
 
 	// Only implement the navigation the rest is overwritten by special trees
-	virtual BinaryTreeNodeP Search(qword _qwKey) override;					// Standard search with a key
+	virtual BinaryTreeNodeP Search(uint64 _qwKey) override;					// Standard search with a key
 	virtual BinaryTreeNodeP GetFirst() override;
 	virtual BinaryTreeNodeP GetLast() override;
 	virtual BinaryTreeNodeP GetNext(ADTElementP _pCurrent) override;		// Slow inorder traverse

@@ -19,6 +19,7 @@
 #include <cstdlib>
 
 #include "..\Include\OrTypeDef.h"
+#include "..\include\OrAssert.h"
 #include "..\Include\OrADTObjects.h"
 #include "..\Include\OrTrie.h"
 #include "..\Include\OrFastMath.h"
@@ -41,13 +42,13 @@ int OrE::ADT::Trie::Add( const char* _pcName, void* _pData, bool _bOverrideData 
 	while(pCurrent)
 	{
 		// Compare strings
-		dword dwEqual = OrE::Utils::Match(pCurrent->pSubString, _pcName);
+		uint32 dwEqual = OrE::Utils::Match(pCurrent->pSubString, _pcName);
 
 		// If at least one character is equal go to subtree
 		if(dwEqual)
 		{
 			// Set index to the last valid location
-			dword dwI = dwEqual-1;
+			uint32 dwI = dwEqual-1;
 			// Case 1: _pcName ends -> Attach data to this node.
 			// Overwrites data if already leave node.
 			if(!_pcName[dwEqual])
@@ -164,13 +165,13 @@ TrieNodeP OrE::ADT::Trie::Match( const char** _ppcName )
 	// Introduce a marker to remember biggest matching subsequence
 	TrieNodeP pLastPossibleData = 0;
 	const char* pcLastPossibleName = *_ppcName;
-//	dword dwLastPossibleLen = _Name.m_dwLen;
+//	uint32 dwLastPossibleLen = _Name.m_dwLen;
 	// Search from root
 	TrieNodeP pCurrent = m_pFirstNode;
 	while(pCurrent)
 	{
 		// Compare strings
-		dword dwEqual = OrE::Utils::Match(pCurrent->pSubString, *_ppcName);
+		uint32 dwEqual = OrE::Utils::Match(pCurrent->pSubString, *_ppcName);
 
 		if(dwEqual)
 		{
@@ -230,7 +231,7 @@ void OrE::ADT::Trie::Remove( const char* _pcName, void* _pData )
 	while(pCurrent)
 	{
 		// Compare strings
-		dword dwEqual = OrE::Utils::Match(pCurrent->pSubString, _pcName);
+		uint32 dwEqual = OrE::Utils::Match(pCurrent->pSubString, _pcName);
 
 		if(dwEqual)
 		{
@@ -341,14 +342,14 @@ void OrE::ADT::Trie::ReleaseTrie(TrieNodeP _pNode)
 //	_dwFrom - 0-indexed imdex of first char to copy (inclusive)
 //	_dwTo - 0-indexed imdex of last char to copy (inclusive)
 //			or 0xffffffff to copy the whole postfix begining in _dwFrom
-TrieString* OrE::ADT::TrieString::substr(const dword _dwFrom, dword _dwTo) const
+TrieString* OrE::ADT::TrieString::substr(const uint32 _dwFrom, uint32 _dwTo) const
 {
 	// Spezialfall: String bis zum Ende
 	if(_dwTo == 0xffffffff) _dwTo = m_dwLen?(m_dwLen-1):0;
 
 	// Definition: von 0 bis 0 bedeutet wir wollen ein Zeichen
 	char* pcRet = (char*)malloc((_dwTo+1-_dwFrom)*sizeof(char));
-	dword i=_dwFrom;
+	uint32 i=_dwFrom;
 	for(;i<=_dwTo;++i)
 		pcRet[i-_dwFrom] = m_pcString[i];
 
@@ -356,10 +357,10 @@ TrieString* OrE::ADT::TrieString::substr(const dword _dwFrom, dword _dwTo) const
 }
 
 // ******************************************************************************** //
-dword OrE::ADT::TrieString::match(const TrieString* _pStr) const
+uint32 OrE::ADT::TrieString::match(const TrieString* _pStr) const
 {
-	dword dwMax = Min(_pStr->m_dwLen, m_dwLen);
-	dword i;
+	uint32 dwMax = Min(_pStr->m_dwLen, m_dwLen);
+	uint32 i;
 	for(i=0; (i<dwMax) && (_pStr->m_pcString[i]==m_pcString[i]); ++i);
 	return i;
 }
@@ -374,13 +375,13 @@ int OrE::ADT::Trie::Add(TrieString _Name, void* _pData, bool _bOverrideData)
 	while(pCurrent)
 	{
 		// Strings vergleichen
-		dword dwEqual=pCurrent->pSubString->match(&_Name);
+		uint32 dwEqual=pCurrent->pSubString->match(&_Name);
 
 		// Wenn min. ein Zeichen gleich, dann Unterbaum besuchen
 		if(dwEqual)
 		{
 			// Index auf letzte gültige Stelle setzen
-			dword dwI = dwEqual-1;
+			uint32 dwI = dwEqual-1;
 			// Fall 1: _pcName ist zu ende -> Funktion an diesen Knoten
 			// anhängen. Überladen/Überschreiben wenn bereits Endknoten.
 			if(_Name.m_dwLen == dwEqual)
@@ -501,13 +502,13 @@ TrieNodeP OrE::ADT::Trie::Match(TrieString& _Name)
 	// Da größtmögliche Teilfunktion gesucht einen Merker einführen.
 	TrieNodeP pLastPossibleData = 0;
 	const char* pcLastPossibleName = _Name.m_pcString;
-	dword dwLastPossibleLen = _Name.m_dwLen;
+	uint32 dwLastPossibleLen = _Name.m_dwLen;
 	// Bei der Wurzel geht die Suche los und iteriert durch den Baum
 	TrieNodeP pCurrent = m_pFirstNode;
 	while(pCurrent)
 	{
 		// Strings vergleichen
-		dword dwEqual=pCurrent->pSubString->match(&_Name);
+		uint32 dwEqual=pCurrent->pSubString->match(&_Name);
 
 		if(dwEqual)
 		{
@@ -572,7 +573,7 @@ void OrE::ADT::Trie::Remove(TrieString& _Name, void* _pData)
 	while(pCurrent)
 	{
 		// Strings vergleichen
-		dword dwEqual=pCurrent->pSubString->match(&_Name);
+		uint32 dwEqual=pCurrent->pSubString->match(&_Name);
 
 		if(dwEqual)
 		{

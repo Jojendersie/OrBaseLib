@@ -34,6 +34,15 @@
     <Filter Include="Headerdateien\String">
       <UniqueIdentifier>{704b4e4b-1374-42a8-b6a3-ae6ba557710e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Quelldateien\String">
+      <UniqueIdentifier>{22268899-01a4-49f7-a0a8-9ca2e78b24f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Headerdateien\ADT\Graph">
+      <UniqueIdentifier>{2c4b1f23-4541-47d6-9393-38edbd9483f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Quelldateien\ADT\Graph">
+      <UniqueIdentifier>{994974ef-9848-41ec-91d7-a1e24445aae9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\OrBaseLib.h">
@@ -120,6 +129,18 @@
     <ClInclude Include="include\string\OrRegex.h">
       <Filter>Headerdateien\String</Filter>
     </ClInclude>
+    <ClInclude Include="include\string\OrTokenizer.h">
+      <Filter>Headerdateien\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\string\OrParser.h">
+      <Filter>Headerdateien\String</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrGraph.h">
+      <Filter>Headerdateien\ADT\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="include\OrAssert.h">
+      <Filter>Headerdateien</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">
@@ -196,6 +217,18 @@
     </ClCompile>
     <ClCompile Include="src\OrMultimap.cpp">
       <Filter>Quelldateien\ADT</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string\OrTokenizer.cpp">
+      <Filter>Quelldateien\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\string\OrParser.cpp">
+      <Filter>Quelldateien\String</Filter>
+    </ClCompile>
+    <ClCompile Include="src\OrGraph.cpp">
+      <Filter>Quelldateien\ADT\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="src\adt\graph\OrMST.cpp">
+      <Filter>Quelldateien\ADT\Graph</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

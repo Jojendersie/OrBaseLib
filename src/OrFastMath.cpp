@@ -231,7 +231,7 @@ float OrE::Math::Ln( float r )
 /*int OrE::Math::Log2(int iValue)
 {
 	__asm bsf eax, iValue
-//	__asm mov dword ptr[iValue], eax
+//	__asm mov uint32 ptr[iValue], eax
 //	return iValue;
 }*/
 
@@ -282,13 +282,13 @@ unsigned int OrE::Math::NumToGrayCode(unsigned int _uiNum)
 
 // ******************************************************************************** //
 // Parallel bit counting to estimate the number of 1 bits in a number
-const qword QMASK_01010101  = 0x5555555555555555;
-const qword QMASK_00110011  = 0x3333333333333333;
-const qword QMASK_00001111  = 0x0f0f0f0f0f0f0f0f;
-const qword QMASK_0x8_1x8   = 0x00ff00ff00ff00ff;
-const qword QMASK_0x16_1x16 = 0x0000ffff0000ffff;
-const qword QMASK_0x32_1x32 = 0x00000000ffffffff;
-qword OrE::Math::CountBits64(qword n)
+const uint64 QMASK_01010101  = 0x5555555555555555;
+const uint64 QMASK_00110011  = 0x3333333333333333;
+const uint64 QMASK_00001111  = 0x0f0f0f0f0f0f0f0f;
+const uint64 QMASK_0x8_1x8   = 0x00ff00ff00ff00ff;
+const uint64 QMASK_0x16_1x16 = 0x0000ffff0000ffff;
+const uint64 QMASK_0x32_1x32 = 0x00000000ffffffff;
+uint64 OrE::Math::CountBits64(uint64 n)
 {
 	n =    (n & QMASK_01010101)  + ((n >> 1) & QMASK_01010101);
 	n =    (n & QMASK_00110011)  + ((n >> 2) & QMASK_00110011);
@@ -298,12 +298,12 @@ qword OrE::Math::CountBits64(qword n)
 	return (n & QMASK_0x32_1x32) + ((n >> 32) & QMASK_0x32_1x32);
 }
 
-const dword MASK_01010101  = 0x55555555;
-const dword MASK_00110011  = 0x33333333;
-const dword MASK_00001111  = 0x0f0f0f0f;
-const dword MASK_0x8_1x8   = 0x00ff00ff;
-const dword MASK_0x16_1x16 = 0x0000ffff;
-dword OrE::Math::CountBits32(dword n)
+const uint32 MASK_01010101  = 0x55555555;
+const uint32 MASK_00110011  = 0x33333333;
+const uint32 MASK_00001111  = 0x0f0f0f0f;
+const uint32 MASK_0x8_1x8   = 0x00ff00ff;
+const uint32 MASK_0x16_1x16 = 0x0000ffff;
+uint32 OrE::Math::CountBits32(uint32 n)
 {
 	n =    (n & MASK_01010101)  + ((n >> 1) & MASK_01010101);
 	n =    (n & MASK_00110011)  + ((n >> 2) & MASK_00110011);
@@ -312,11 +312,11 @@ dword OrE::Math::CountBits32(dword n)
 	return (n & MASK_0x16_1x16) + ((n >> 16) & MASK_0x16_1x16);
 }
 
-const word WMASK_01010101  = 0x5555;
-const word WMASK_00110011  = 0x3333;
-const word WMASK_00001111  = 0x0f0f;
-const word WMASK_0x8_1x8   = 0x00ff;
-word OrE::Math::CountBits16(word n)
+const uint16 WMASK_01010101  = 0x5555;
+const uint16 WMASK_00110011  = 0x3333;
+const uint16 WMASK_00001111  = 0x0f0f;
+const uint16 WMASK_0x8_1x8   = 0x00ff;
+uint16 OrE::Math::CountBits16(uint16 n)
 {
 	n =    (n & WMASK_01010101) + ((n >> 1) & WMASK_01010101);
 	n =	   (n & WMASK_00110011) + ((n >> 2) & WMASK_00110011);

@@ -19,11 +19,6 @@
 
 #include <limits.h>
 
-//typedef unsigned int64_t qword;
-//typedef unsigned int32_t dword;
-//typedef unsigned int16_t word;
-//typedef unsigned int8_t byte;
-
 #if(UCHAR_MAX == 0xff)
 	typedef unsigned char uint8;
 	typedef unsigned char byte;
@@ -39,11 +34,9 @@
 
 #if(USHRT_MAX == 0xffff)
 	typedef unsigned short uint16;
-	typedef unsigned short word;
 #else
 	#if(UINT_MAX == 0xffff)
 		typedef unsigned int uint16;
-		typedef unsigned int word;
 	#else
 		#error "cannot support 16 bit unsigned integer on this plattform"
 	#endif
@@ -61,15 +54,12 @@
 
 #if(USHRT_MAX == 0xffffffff)
 	typedef unsigned short uint32;
-	typedef unsigned short dword;
 #else
 	#if(UINT_MAX == 0xffffffff)
 		typedef unsigned int uint32;
-		typedef unsigned int dword;
 	#else
 		#if(ULONG_MAX == 0xffffffff)
 			typedef unsigned long uint32;
-			typedef unsigned long dword;
 		#else
 			#error "cannot support 32 bit unsigned integer on this plattform"
 		#endif
@@ -92,15 +82,12 @@
 
 #if(ULLONG_MAX == 0xffffffffffffffff)
 	typedef unsigned long long uint64;
-	typedef unsigned long long qword;
 #else
 	#if(UINT_MAX == 0xffffffffffffffff)
 		typedef unsigned int uint64;
-		typedef unsigned int qword;
 	#else
 		#if(ULONG_MAX == 0xffffffffffffffff)
 			typedef unsigned long uint64;
-			typedef unsigned long qword;
 		#else
 			#error "cannot support 64 bit unsigned integer on this plattform"
 		#endif
@@ -142,5 +129,6 @@ class Matrix;
 class Matrix2x3;
 }; // namespace Math
 }; // namespace OrE
+
 
 // *************************************EOF**************************************** //

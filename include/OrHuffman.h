@@ -54,8 +54,8 @@ public:
 		return iRet;
 	}
 
-	bool SetBits(dword _dwBits, int _iNum);		// Writes _iNum bits and move.
-	bool GetBits(dword& _dwBits, int _iNum);	// Reads iNum bits and move !Only use _iNum <= 25!
+	bool SetBits(uint32 _dwBits, int _iNum);		// Writes _iNum bits and move.
+	bool GetBits(uint32& _dwBits, int _iNum);	// Reads iNum bits and move !Only use _iNum <= 25!
 	void const* GetBuffer()		{return m_pBuffer;}
 	int GetSize()				{return m_iSize;}
 	int GetUsedSize()			{return m_iBufferPos+(m_iBitPos?1:0);}
@@ -68,8 +68,8 @@ typedef BitBufferStream* BitBufferStreamP;
 class EntropyCoder
 {
 protected:
-	virtual bool Encode(dword _c, BitBufferStreamP _pDest) = 0;
-	virtual bool Decode(BitBufferStreamP _pSrc, dword& _Dest) = 0;
+	virtual bool Encode(uint32 _c, BitBufferStreamP _pDest) = 0;
+	virtual bool Decode(BitBufferStreamP _pSrc, uint32& _Dest) = 0;
 
 public:
 	// Encodes the given buffer into a new one, returns false if encoding is larger then the buffer
@@ -93,8 +93,8 @@ private:
 	// exclusive _uiRange
 	OrE::ADT::BinaryTreeNodeP Init(unsigned int _uiFrom, unsigned int _uiRange);
 protected:
-	bool Encode(dword _c, BitBufferStreamP _pDest) override;
-	bool Decode(BitBufferStreamP _pSrc, dword& _Dest) override;
+	bool Encode(uint32 _c, BitBufferStreamP _pDest) override;
+	bool Decode(BitBufferStreamP _pSrc, uint32& _Dest) override;
 public:
 	HuffmanTree_Splay(unsigned int _uiNumCharacters);
 };
@@ -105,8 +105,8 @@ typedef HuffmanTree_Splay* HuffmanTree_SplayP;
 class HuffmanTree_SemiSplay : public HuffmanTree_Splay
 {
 protected:
-	bool Encode(dword _c, BitBufferStreamP _pDest) override;
-	bool Decode(BitBufferStreamP _pSrc, dword& _Dest) override;
+	bool Encode(uint32 _c, BitBufferStreamP _pDest) override;
+	bool Decode(BitBufferStreamP _pSrc, uint32& _Dest) override;
 public:
 	HuffmanTree_SemiSplay(unsigned int _uiNumCharacters) : HuffmanTree_Splay(_uiNumCharacters)	{}
 };

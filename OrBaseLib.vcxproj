@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include=".\include\OrMultimap.h" />
     <ClInclude Include="include\OrAnalyticalGeometry.h" />
+    <ClInclude Include="include\OrAssert.h" />
     <ClInclude Include="include\OrComplexNumber.h" />
     <ClInclude Include="include\OrADTObjects.h" />
     <ClInclude Include="include\OrAVLTree.h" />
@@ -178,6 +179,7 @@
     <ClInclude Include="include\OrDebug.h" />
     <ClInclude Include="include\OrFastMath.h" />
     <ClInclude Include="include\OrFFT.h" />
+    <ClInclude Include="include\OrGraph.h" />
     <ClInclude Include="include\OrHash.h" />
     <ClInclude Include="include\OrHeap.h" />
     <ClInclude Include="include\OrHuffman.h" />
@@ -194,9 +196,12 @@
     <ClInclude Include="include\OrVector2.h" />
     <ClInclude Include="include\OrVector3.h" />
     <ClInclude Include="include\OrVector4.h" />
+    <ClInclude Include="include\string\OrParser.h" />
     <ClInclude Include="include\string\OrRegex.h" />
+    <ClInclude Include="include\string\OrTokenizer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\adt\graph\OrMST.cpp" />
     <ClCompile Include="src\OrAnalyticalGeometry.cpp" />
     <ClCompile Include="src\OrAVCoder.cpp" />
     <ClCompile Include="src\OrAVLTree.cpp" />
@@ -207,6 +212,7 @@
     <ClCompile Include="src\OrEntropyCoder.cpp" />
     <ClCompile Include="src\OrFastMath.cpp" />
     <ClCompile Include="src\OrFFT.cpp" />
+    <ClCompile Include="src\OrGraph.cpp" />
     <ClCompile Include="src\OrHash.cpp" />
     <ClCompile Include="src\OrHeap.cpp" />
     <ClCompile Include="src\OrHuffman.cpp" />
@@ -222,6 +228,8 @@
     <ClCompile Include="src\OrVector2.cpp" />
     <ClCompile Include="src\OrVector3.cpp" />
     <ClCompile Include="src\OrVector4.cpp" />
+    <ClCompile Include="src\string\OrParser.cpp" />
+    <ClCompile Include="src\string\OrTokenizer.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

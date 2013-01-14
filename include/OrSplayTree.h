@@ -47,11 +47,11 @@ namespace ADT {
 	protected:
 		void Splay(BinaryTreeNodeP _pNode);										// Splay: reorganization through rotations (move the node to the root)
 		void SemiSplay(BinaryTreeNodeP _pNode);									// Semi-Splay: reorganization through rotations (half the path length to the root)
-		virtual BinaryTreeNodeP SearchNode(qword _qwKey) override;				// Search with a key and splay (searches for nearest element)
+		virtual BinaryTreeNodeP SearchNode(uint64 _qwKey) override;				// Search with a key and splay (searches for nearest element)
 	public:
 		SplayTree():BinaryTree()	{}
-		virtual BinaryTreeNodeP Insert(void* _pObject, qword _qwKey) override;	// Insert operation with splay
-		virtual void Delete(qword _qwKey) override;								// Standard operation delete
+		virtual BinaryTreeNodeP Insert(void* _pObject, uint64 _qwKey) override;	// Insert operation with splay
+		virtual void Delete(uint64 _qwKey) override;								// Standard operation delete
 		virtual void Delete(ADTElementP _pNode) override;						// Delete operation without search (not much faster)
 	};
 

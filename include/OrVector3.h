@@ -57,7 +57,7 @@ public:
 	operator const float* () const									{return (const float*)(c);}
 
 	// Casting to "color" with alpha channel==255
-	operator dword () const											{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | 255;}
+	operator uint32 () const											{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | 255;}
 
 	// Assignment operators
 	Vec3& operator = (const Vec3& v)								{x = v.x; y = v.y; z = v.z; return *this;}
@@ -169,7 +169,7 @@ public:
 	operator const int* () const									{return (const int*)(c);}
 
 	// Casting to "color" with alpha channel==255
-	operator dword () const											{return (Clamp(x, 0, 255)<<24) | (Clamp(y, 0, 255)<<16) | (Clamp(z, 0, 255)<<8) | 255;}
+	operator uint32 () const											{return (Clamp(x, 0, 255)<<24) | (Clamp(y, 0, 255)<<16) | (Clamp(z, 0, 255)<<8) | 255;}
 
 	// Assignment operators
 	IVec3& operator = (const IVec3& v)								{x = v.x; y = v.y; z = v.z; return *this;}

@@ -67,31 +67,15 @@ void operator delete[](void* m, const char* pcFile, int iLine);
 
 
 // ******************************************************************************** //
-// My own assertion, which doesn't jump into an other file and did not ask for debugging
-#include <intrin.h>
-
-// Simple assertion like cassert, but stops in the line of source, where the
-// assertion is located in not in some other file like the std::assert.
-#define Assert(a) if(!(a)) __debugbreak()
 
 // Complex, slow assertion to check pointer validity.
 // You can use the function IsPointerInvalid to handle bad pointers your own way.
 #define AssertPointerValidity(p) if( IsPointerInvalid(p) ) __debugbreak()
 
-// The Assert__ execute A (even in release) and test for non-/equality with Const (debug only)
-#define AssertEq(A,Const) if((A)!=(Const)) __debugbreak()
-#define AssertNeq(A,Const) if((A)==(Const)) __debugbreak()
-
 
 #else	// _DEBUG
 
-
-#define Assert(a)
 #define AssertPointerValidity(p)
-
-// The Assert__ execute A (even in release) and test for non-/equality with Const (debug only)
-#define AssertEq(A,Const) A
-#define AssertNeq(A,Const) A
 
 #endif // _DEBUG
 

@@ -31,17 +31,17 @@ using namespace OrE::Math;
 
 // ******************************************************************************** //
 // Create a 32 bit hash value of a data set
-dword OrE::Algorithm::CreateHash32(const void* pData, const int iSize)
+uint32 OrE::Algorithm::CreateHash32(const void* pData, const int iSize)
 {
-	qword qwHash = CreateHash64(pData, iSize);
-	return ((dword)qwHash) ^ ((dword)(qwHash >> 32));
+	uint64 qwHash = CreateHash64(pData, iSize);
+	return ((uint32)qwHash) ^ ((uint32)(qwHash >> 32));
 }
 
 // ******************************************************************************** //
 // Create a 64 bit hash value of a data set
-qword OrE::Algorithm::CreateHash64(const void* pData, const int iSize)
+uint64 OrE::Algorithm::CreateHash64(const void* pData, const int iSize)
 {
-	qword qwHash = 0x84222325cbf29ce4ULL;
+	uint64 qwHash = 0x84222325cbf29ce4ULL;
 
 	byte* pFirst = (byte*)(pData),
 		* pLast  = pFirst + iSize;
@@ -57,16 +57,16 @@ qword OrE::Algorithm::CreateHash64(const void* pData, const int iSize)
 
 // ******************************************************************************** //
 // Create a 32 bit hash value of a 0-terminated data set (e.g. strings)
-dword OrE::Algorithm::CreateHash32(const void* pData)
+uint32 OrE::Algorithm::CreateHash32(const void* pData)
 {
-	return ((dword)CreateHash64(pData)) ^ (((dword)CreateHash64(pData) >> 16) >> 16);
+	return ((uint32)CreateHash64(pData)) ^ (((uint32)CreateHash64(pData) >> 16) >> 16);
 }
 
 // ******************************************************************************** //
 // Create a 64 bit hash value of a 0-terminated data set (e.g. strings)
-qword OrE::Algorithm::CreateHash64(const void* pData)
+uint64 OrE::Algorithm::CreateHash64(const void* pData)
 {
-	qword qwHash = 0x84222325cbf29ce4ULL;
+	uint64 qwHash = 0x84222325cbf29ce4ULL;
 
 	byte* pFirst = (byte*)(pData);
 
@@ -82,16 +82,16 @@ qword OrE::Algorithm::CreateHash64(const void* pData)
 // ******************************************************************************** //
 // CRC - Error proving hash (cyclic redundancy check)
 // Creates the hash with a arbitrary polynomial with a degree less than 32
-dword OrE::Algorithm::CreateCRCHash(dword dwPolynom, void* pData, dword dwSize)
+uint32 OrE::Algorithm::CreateCRCHash(uint32 dwPolynom, void* pData, uint32 dwSize)
 {
-	dword dwCRC = 0;	// Shift register
-	for(dword i=0; i<dwSize; ++i)
+	uint32 dwCRC = 0;	// Shift register
+	for(uint32 i=0; i<dwSize; ++i)
 	{
 		// For each bit
-		for(dword j=7; j>=0; --j)
+		for(uint32 j=7; j>=0; --j)
 		{
 			// Compare first bit of data with current check sum
-			if((dwCRC>>31) != (dword)((((byte*)pData)[i]>>j) & 1))
+			if((dwCRC>>31) != (uint32)((((byte*)pData)[i]>>j) & 1))
 				dwCRC = (dwCRC << 1) ^ dwPolynom;
 			else
 				dwCRC <<= 1;
@@ -108,22 +108,22 @@ dword OrE::Algorithm::CreateCRCHash(dword dwPolynom, void* pData, dword dwSize)
 
 // ******************************************************************************** //
 // The hash function used for names ...
-static dword OrStringHash(const char* _pcString)
+static uint32 OrStringHash(const char* _pcString)
 {
-	/*dword dwHash = 5381;
+	/*uint32 dwHash = 5381;
 
 	while(int c = *_pcString++)
 		dwHash = ((dwHash << 5) + dwHash) + c; // dwHash * 33 + c
 		// Alternative dwHash * 33 ^ c
 
 	return dwHash;//*/
-	dword dwHash = 208357;
+	uint32 dwHash = 208357;
 
 	while(int c = *_pcString++)
 		dwHash = ((dwHash << 5) + (dwHash << 1) + dwHash) ^ c; 
 
 	return dwHash;//*/
-	/*dword dwHash = 208357;
+	/*uint32 dwHash = 208357;
 
 	while(int c = *_pcString++)
 		dwHash = (dwHash*17) ^ c + ~(dwHash >> 7) + (c >> 3);
@@ -142,7 +142,7 @@ void OrE::ADT::HashMap::RecursiveReAdd(Bucket* _pBucket)
 
 // ******************************************************************************** //
 // Initialization to given start size
-OrE::ADT::HashMap::HashMap( dword _dwSize, HashMapMode _Mode ) :
+OrE::ADT::HashMap::HashMap( uint32 _dwSize, HashMapMode _Mode ) :
 	m_apBuckets( nullptr )
 {
 	// Resize allocates memory too
@@ -194,7 +194,7 @@ OrE::ADT::HashMap::~HashMap()
 void OrE::ADT::HashMap::Clear()
 {
 	// Remove all binary trees and data.
-	for(dword i=0;i<m_dwSize;++i)
+	for(uint32 i=0;i<m_dwSize;++i)
 	{
 		// Precondition of RecursiveRelease: Bucket exists (not proven in method
 		// for speed up)
@@ -210,10 +210,10 @@ void OrE::ADT::HashMap::Clear()
 
 // ******************************************************************************** //
 // Recreate the table and reinsert all elements
-void OrE::ADT::HashMap::Resize(const dword _dwSize)
+void OrE::ADT::HashMap::Resize(const uint32 _dwSize)
 {
 	BucketP* pOldList = m_apBuckets;
-	dword dwOldSize = m_dwSize;
+	uint32 dwOldSize = m_dwSize;
 	// Allocate a new larger? table and make it empty
 	m_apBuckets = (BucketP*)malloc(sizeof(BucketP)*_dwSize);
 	if(!m_apBuckets) return;	// TODO: report error
@@ -227,7 +227,7 @@ void OrE::ADT::HashMap::Resize(const dword _dwSize)
 	if( pOldList )
 	{
 		// Reinsert all elements
-		for(dword i=0;i<dwOldSize;++i)
+		for(uint32 i=0;i<dwOldSize;++i)
 			if(pOldList[i]) RecursiveReAdd(pOldList[i]);
 
 		// Delete old list
@@ -245,17 +245,17 @@ void OrE::ADT::HashMap::TestSize()
 		// Slow growth
 		case HM_PREFER_SIZE: 
 			if(m_dwNumElements >= m_dwSize*3)
-				Resize(m_dwSize+3*(dword)Sqrt((float)m_dwSize));
+				Resize(m_dwSize+3*(uint32)Sqrt((float)m_dwSize));
 			break;
 		// Medium growth
 		case HM_RESIZE_MODERATE:
-			if(m_dwNumElements >= (dword)(m_dwSize*1.5f))
-				Resize(m_dwSize+Max(6*(dword)Sqrt((float)m_dwSize), (dword)128));
+			if(m_dwNumElements >= (uint32)(m_dwSize*1.5f))
+				Resize(m_dwSize+Max(6*(uint32)Sqrt((float)m_dwSize), (uint32)128));
 			break;
 		// Fast growth, scarce resize
 		case HM_PREFER_PERFORMANCE:
 			if(m_dwNumElements >= m_dwSize)
-				Resize((dword)((m_dwSize+100)*1.5f));
+				Resize((uint32)((m_dwSize+100)*1.5f));
 			break;
 	}
 }
@@ -271,7 +271,7 @@ int OrE::ADT::HashMap::ListIndex(BucketP _pBucket)
 
 // ******************************************************************************** //
 // Standard operation insert
-ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
+ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, uint64 _qwKey)
 {
 #ifdef _DEBUG
 	if(!m_apBuckets) return nullptr;		// TODO report error
@@ -283,7 +283,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 		_qwKey &= 0xffffffff;
 	
 	// Sort element into binary tree
-	dword dwHash = _qwKey%m_dwSize;
+	uint32 dwHash = _qwKey%m_dwSize;
 	if(m_apBuckets[dwHash])
 	{
 		BucketP pBucket = m_apBuckets[dwHash];
@@ -317,7 +317,7 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Standard operation delete
-void OrE::ADT::HashMap::Delete(qword _qwKey)
+void OrE::ADT::HashMap::Delete(uint64 _qwKey)
 {
 	Delete(Search(_qwKey));
 }
@@ -396,10 +396,26 @@ void OrE::ADT::HashMap::Delete( ADTElementP _pElement )
 
 // ******************************************************************************** //
 // Standard search with a key
-ADTElementP OrE::ADT::HashMap::Search( qword _qwKey )
+ADTElementP OrE::ADT::HashMap::Search( uint64 _qwKey )
 {
 	// Find correct bucked with hashing
-	dword dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
+	uint32 dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
+	BucketP pBucket = m_apBuckets[dwHash];
+	//if(pBucket) return nullptr;
+	// Tree search
+	while(pBucket)
+	{
+		if(_qwKey==pBucket->qwKey) return pBucket;
+		else if(_qwKey<pBucket->qwKey) pBucket = pBucket->pLeft;
+		else pBucket = pBucket->pRight;
+	}
+	return nullptr;
+}
+
+const ADTElement* OrE::ADT::HashMap::Search( uint64 _qwKey ) const
+{
+	// Find correct bucked with hashing
+	uint32 dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
 	//if(pBucket) return nullptr;
 	// Tree search
@@ -426,8 +442,8 @@ ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 	TestSize();
 	
 	// Insert new element now
-	dword dwH = OrStringHash(_pcKey);
-	dword dwHash = dwH%m_dwSize;
+	uint32 dwH = OrStringHash(_pcKey);
+	uint32 dwHash = dwH%m_dwSize;
 	if(m_apBuckets[dwHash])
 	{
 		BucketP pBucket = m_apBuckets[dwHash];
@@ -471,7 +487,7 @@ ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 		int iLen = (int)strlen(_pcKey)+1;
 		void* pStr = malloc(iLen);
 		memcpy(pStr, _pcKey, iLen);
-		pBucket->qwKey = ((((qword)pStr)<<16)<<16) | dwH;
+		pBucket->qwKey = ((((uint64)pStr)<<16)<<16) | dwH;
 		++m_dwNumElements;
 		return pBucket;
 	} else
@@ -482,7 +498,7 @@ ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 		int iLen = (int)strlen(_pcKey)+1;
 		void* pStr = malloc(iLen);
 		memcpy(pStr, _pcKey, iLen);
-		m_apBuckets[dwHash]->qwKey = ((((qword)pStr)<<16)<<16) | dwH;
+		m_apBuckets[dwHash]->qwKey = ((((uint64)pStr)<<16)<<16) | dwH;
 		++m_dwNumElements;
 		return m_apBuckets[dwHash];
 	}
@@ -502,7 +518,7 @@ ADTElementP OrE::ADT::HashMap::Search( const char* _pcKey )
 {
 	if(!(m_Mode & HM_USE_STRING_MODE) || !_pcKey) return nullptr;
 	// Find bucket with hashing
-	dword dwHash = OrStringHash(_pcKey)%m_dwSize;
+	uint32 dwHash = OrStringHash(_pcKey)%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
 	// tree search with strings
 	while(pBucket)
@@ -522,7 +538,7 @@ ADTElementP OrE::ADT::HashMap::Search( const char* _pcKey )
 // ******************************************************************************** //
 ADTElementP OrE::ADT::HashMap::GetFirst()
 {
-	for(dword i=0;i<m_dwSize;++i)
+	for(uint32 i=0;i<m_dwSize;++i)
 		// Skip all empty buckets.
 		if(m_apBuckets[i])
 		{
@@ -538,7 +554,7 @@ ADTElementP OrE::ADT::HashMap::GetFirst()
 // ******************************************************************************** //
 ADTElementP OrE::ADT::HashMap::GetLast()
 {
-	for(dword i=m_dwSize-1;i>=0;--i)
+	for(uint32 i=m_dwSize-1;i>=0;--i)
 		// Skip all empty buckets.
 		if(m_apBuckets[i])
 		{

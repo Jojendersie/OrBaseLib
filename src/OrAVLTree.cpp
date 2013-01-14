@@ -14,6 +14,7 @@
 // ******************************************************************************** //
 
 #include "..\include\OrTypeDef.h"
+#include "..\include\OrAssert.h"
 #include "..\include\OrADTObjects.h"
 #include "..\include\OrBinaryTree.h"
 #include "..\include\OrAVLTree.h"
@@ -89,7 +90,7 @@ void OrE::ADT::AVLTree::Rebalance(BinaryTreeNodeP _pNode)
 
 // ******************************************************************************** //
 // Search with a key (searches for nearest element)
-BinaryTreeNodeP OrE::ADT::AVLTree::SearchNode(qword _qwKey)
+BinaryTreeNodeP OrE::ADT::AVLTree::SearchNode(uint64 _qwKey)
 {
 	if(!m_pRoot) return nullptr;
 	// Search normal
@@ -111,7 +112,7 @@ BinaryTreeNodeP OrE::ADT::AVLTree::SearchNode(qword _qwKey)
 
 // ******************************************************************************** //
 // Insert operation
-BinaryTreeNodeP OrE::ADT::AVLTree::Insert(void* _pObject, qword _qwKey)
+BinaryTreeNodeP OrE::ADT::AVLTree::Insert(void* _pObject, uint64 _qwKey)
 {
 	// Search for the element. If already in tree just increase the reference counter.
 	BinaryTreeNodeP pParent = SearchNode( _qwKey );
@@ -156,7 +157,7 @@ BinaryTreeNodeP OrE::ADT::AVLTree::Insert(void* _pObject, qword _qwKey)
 
 // ******************************************************************************** //
 // Standard operation delete
-void OrE::ADT::AVLTree::Delete(qword _qwKey)
+void OrE::ADT::AVLTree::Delete(uint64 _qwKey)
 {
 	// Search the node
 	BinaryTreeNodeP pNode = Search(_qwKey);
@@ -261,7 +262,7 @@ void OrE::ADT::AVLTree::Clear()
 
 // ******************************************************************************** //
 // Insert operation
-BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, qword _qwKey)
+BinaryTreeLinkedNodeP OrE::ADT::LinkedAVLTree::Insert(void* _pObject, uint64 _qwKey)
 {
 	// Insert as usual
 	// Search for the element. If already in tree just increase the reference counter.

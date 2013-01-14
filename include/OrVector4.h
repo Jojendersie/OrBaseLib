@@ -79,7 +79,7 @@ namespace Math {
 		operator Vec3 () const				{return xyz;}
 
 		// Casting to "color"
-		operator dword () const				{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | byte(Clamp(w*255.0, 0.0, 255.0));}
+		operator uint32 () const				{return (byte(Clamp(x*255.0, 0.0, 255.0))<<24) | (byte(Clamp(y*255.0, 0.0, 255.0))<<16) | (byte(Clamp(z*255.0, 0.0, 255.0))<<8) | byte(Clamp(w*255.0, 0.0, 255.0));}
 
 		// Assignment operators
 		Vec4& operator = (const Vec4& v)	{x = v.x; y = v.y; z = v.z; w = v.w; return *this;}

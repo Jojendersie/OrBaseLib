@@ -17,6 +17,7 @@
 #include "..\include\OrBuffer.h"
 
 #include <stdlib.h>
+#include <string.h>
 // #include <mutex.h> TODO insert if vc11 released
 
 // TODO test with threads
@@ -98,7 +99,11 @@ void OrE::ADT::Buffer::Extend(int iAdditionalSize)
 	//OrLock(&m_dwSemaphore);
 
 	m_iMax += iAdditionalSize;
-	m_Buffer = (void**)realloc(m_Buffer, sizeof(void*)*m_iMax);
+	void** pOld = m_Buffer;
+	m_Buffer = (void**)malloc( sizeof(void*)*m_iMax );
+	if( m_Buffer && pOld )
+		memcpy( m_Buffer, pOld, sizeof(void*)*(m_iMax-iAdditionalSize) );
+	free( pOld );
 
 	//OrUnlock(&m_dwSemaphore);
 }

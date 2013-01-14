@@ -33,6 +33,7 @@ struct StaticState
 // Calculation of the Fourier transformation factors
 void ComputeFTFactors(OrE::Math::ComplexNumberP* _pFTFactors, int _iNum, bool _bInverse) {
 	*_pFTFactors = (OrE::Math::ComplexNumberP)malloc(_iNum * sizeof(OrE::Math::ComplexNumber));
+	if( !_pFTFactors ) return;	// TODO: Fehlermeldung
 	// Calculate 2*pi*i/n factors
 	const float fFac = OrE::Math::f2Pi / _iNum;
     for(int i=0; i<_iNum; ++i) {

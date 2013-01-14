@@ -341,13 +341,14 @@ Matrix OrE::Math::MatrixProjection(const float fFOV,
 							const float fNearPlane,
 							const float fFarPlane)
 {
+	const float fFar = fFarPlane * 0.5f;
 	const float s = 1.0f / Tan(fFOV * 0.5f);
-	const float fFrustumLengthInv = 1.0f / (fNearPlane - fFarPlane);
+	const float fFrustumLengthInv = 1.0f / (fNearPlane - fFar);
 
-	return Matrix(s / fAspect,	0.0f,  0.0f,										0.0f,
-				  0.0f,			s,	   0.0f,										0.0f,
-				  0.0f,			0.0f, (fNearPlane + fFarPlane)*fFrustumLengthInv,	(2.0f*fNearPlane*fFarPlane)*fFrustumLengthInv,
-				  0.0f,			0.0f, -1.0f,										0.0f);
+	return Matrix(s / fAspect,	0.0f,  0.0f,									0.0f,
+				  0.0f,			s,	   0.0f,									0.0f,
+				  0.0f,			0.0f, (fNearPlane + fFar)*fFrustumLengthInv,	(2.0f*fNearPlane*fFar)*fFrustumLengthInv,
+				  0.0f,			0.0f, -1.0f,									0.0f);
 	// DirectX compatible version:
 /*	const float s = 1.0f / Tan(fFOV * 0.5f);
 	const float Q = fFarPlane / (fFarPlane - fNearPlane);
@@ -452,7 +453,7 @@ Matrix MatrixMirror(const Plane& p)
 // in _pV_X
 bool OrE::Math::MatrixSolveEquation(Matrix _A, Vec4* _pV_X)
 {
-	for(dword i=0;i<4;++i)
+	for(uint32 i=0;i<4;++i)
 	{
 		// make sure that the pivot element != 0
 		if(_A.m[i][i]==0.0f)
@@ -460,7 +461,7 @@ bool OrE::Math::MatrixSolveEquation(Matrix _A, Vec4* _pV_X)
 			// Problem: find a valid row and swap with the current one.
 			// The row is valid if the currently first element is != 0. Additionally
 			// the element in the current row has to be !=0 too.
-			dword j=i+1;
+			uint32 j=i+1;
 			for(;j<4;++j)
 			{
 				if(_A.m[i][j]!=0.0f && _A.m[j][i]!=0)
@@ -490,11 +491,11 @@ bool OrE::Math::MatrixSolveEquation(Matrix _A, Vec4* _pV_X)
 		_A.m[i][i] = 1.0f;
 
 		// Subtract new row from all other rows
-		for(dword j=0;j<4;++j)
+		for(uint32 j=0;j<4;++j)
 			if(i!=j)
 			{
 				float fFactor = _A.m[j][i];
-				// Bench: for(dword k=i+1;k<4;++k) _A.m[j,k] -= fFactor*_A.m[i,k];
+				// Bench: for(uint32 k=i+1;k<4;++k) _A.m[j,k] -= fFactor*_A.m[i,k];
 				_A.m[j][1] -= fFactor*_A.m[i][1];
 				_A.m[j][2] -= fFactor*_A.m[i][2];
 				_A.m[j][3] -= fFactor*_A.m[i][3];

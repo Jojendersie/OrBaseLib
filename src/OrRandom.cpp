@@ -41,14 +41,14 @@ const int       OR_MT_L		=	18;
 const unsigned	OR_MT_LLMASK=	0x7FFFFFFF;
 const unsigned	OR_MT_UMASK	=	0x80000000;
 
-dword g_adwMT[OR_MT_N];
-dword g_dwMTIndex = 0;
+uint32 g_adwMT[OR_MT_N];
+uint32 g_dwMTIndex = 0;
 
 // ******************************************************************************** //
 // The intrinsic generator: refills the table with new numbers
 void OrMTReCreate()
 {
-	dword y;
+	uint32 y;
 
 	g_dwMTIndex = 0;
 
@@ -67,7 +67,7 @@ void OrMTReCreate()
 
 // ******************************************************************************** //
 // Initialize Mersenne Twister
-void OrE::Algorithm::SRand(dword _dwSeed)
+void OrE::Algorithm::SRand(uint32 _dwSeed)
 {
 	// fill table
 	for(int i=0; i<OR_MT_N; i++)
@@ -81,9 +81,9 @@ void OrE::Algorithm::SRand(dword _dwSeed)
 
 // ******************************************************************************** //
 // Creates an unsigned random Number
-dword OrE::Algorithm::RandU()
+uint32 OrE::Algorithm::RandU()
 {
-	dword y;
+	uint32 y;
 
 	if(g_dwMTIndex == OR_MT_N)
 		OrMTReCreate();
@@ -102,7 +102,7 @@ dword OrE::Algorithm::RandU()
 // Creates a integral random number between _iMin and _iMax (inclusive)
 int	OrE::Algorithm::Rand(int _iMin, int _iMax)
 {
-	dword y;
+	uint32 y;
 
 	if(g_dwMTIndex == OR_MT_N)
 		OrMTReCreate();
@@ -122,7 +122,7 @@ int	OrE::Algorithm::Rand(int _iMin, int _iMax)
 // Creates a random number between 0 and 1 (inclusive)
 float OrE::Algorithm::Rand()
 {
-	dword y;
+	uint32 y;
 
 	if(g_dwMTIndex == OR_MT_N)
 		OrMTReCreate();
@@ -162,7 +162,7 @@ float OrE::Algorithm::NormRand()
 
 
 // ******************************************************************************** //
-OrE::Algorithm::PerlinNoise::PerlinNoise(dword _dwSeed, float _fPeriodicity)
+OrE::Algorithm::PerlinNoise::PerlinNoise(uint32 _dwSeed, float _fPeriodicity)
 {
 	m_dwSeed = _dwSeed*1987;
 	m_fPeriodicity = OrE::Math::Max(1.0f, _fPeriodicity);

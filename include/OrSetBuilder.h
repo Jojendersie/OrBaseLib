@@ -34,47 +34,47 @@ namespace ADT {
 		struct ElementInfo {
 			bool bRepresentant;		// Is this element an representative?
 			union {
-				dword dwParentIdx;	// All non representatives know a maybe repr.
-				dword dwNextSet;	// Double linked list of sets (together with dwPreviousSet)
+				uint32 dwParentIdx;	// All non representatives know a maybe repr.
+				uint32 dwNextSet;	// Double linked list of sets (together with dwPreviousSet)
 			};
-			dword dwPreviousSet;	// Undefined if not the representative
-			dword dwSetSize:24;		// Undefined if not the representative
-			dword dwRank:8;			// Rank statistic for path compression
+			uint32 dwPreviousSet;	// Undefined if not the representative
+			uint32 dwSetSize:24;		// Undefined if not the representative
+			uint32 dwRank:8;			// Rank statistic for path compression
 
-			ElementInfo(dword _dwIdx, dword _dwNum):bRepresentant(true),dwParentIdx((_dwIdx+1)%_dwNum),dwPreviousSet((_dwIdx+_dwNum-1)%_dwNum),dwRank(0),dwSetSize(1)	{}
+			ElementInfo(uint32 _dwIdx, uint32 _dwNum):bRepresentant(true),dwParentIdx((_dwIdx+1)%_dwNum),dwPreviousSet((_dwIdx+_dwNum-1)%_dwNum),dwRank(0),dwSetSize(1)	{}
 		};
 #pragma pack(pop)
 
 		// Each index has additional informations to determine set infos.
 		ElementInfo* m_pInfos;
-		dword m_dwNumElements;
+		uint32 m_dwNumElements;
 
 		// Prevent copy constructor and operator = being generated.
 		SetBuilder(const SetBuilder&);
 		const SetBuilder& operator = (const SetBuilder&);
 	public:
 		// Create one set per item (all items are there own set representatives).
-		SetBuilder(dword _dwMaxNumElements);
+		SetBuilder(uint32 _dwMaxNumElements);
 		~SetBuilder();
 
 		// Union to of the subsets
 		// Input: two representatives/set-IDs, do not use other elements
 		// Output: the new set representative (one of the two from input)
-		dword Union(dword _dwRep1, dword _dwRep2);
+		uint32 Union(uint32 _dwRep1, uint32 _dwRep2);
 
 		// Finds the representative of the set, which contains the given element. 
-		dword GetSet(dword _dwElementIndex) const;
+		uint32 GetSet(uint32 _dwElementIndex) const;
 
 		// Replace the first element with the last one, i.e. the first element is deleted
 		// and the second changes its index.
-		//void Delete(dword _dwElementIndex)			{m_pInfos[_dwElementIndex] = m_pInfos[--m_dwNumElements];}
+		//void Delete(uint32 _dwElementIndex)			{m_pInfos[_dwElementIndex] = m_pInfos[--m_dwNumElements];}
 
-		dword GetSetSize(dword _dwRep) const		{return m_pInfos[_dwRep].dwSetSize;}
-		dword GetNumElements() const				{return m_dwNumElements;}
+		uint32 GetSetSize(uint32 _dwRep) const		{return m_pInfos[_dwRep].dwSetSize;}
+		uint32 GetNumElements() const				{return m_dwNumElements;}
 
 		// Iterator options
-		dword GetNextSet(dword _dwRep) const		{return m_pInfos[_dwRep].dwNextSet;}
-		dword GetPreviousSet(dword _dwRep) const	{return m_pInfos[_dwRep].dwPreviousSet;}
+		uint32 GetNextSet(uint32 _dwRep) const		{return m_pInfos[_dwRep].dwNextSet;}
+		uint32 GetPreviousSet(uint32 _dwRep) const	{return m_pInfos[_dwRep].dwPreviousSet;}
 	};
 	typedef SetBuilder* SetBuilderP;
 }; // namespace ADT

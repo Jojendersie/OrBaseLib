@@ -59,7 +59,7 @@ bool IsPointerInvalid(const void* _Pointer)
 // ******************************************************************************** //
 // PART I the Garbage
 // The garbage objects saves allocation location and the size of the memory.
-// This Object has an design size of 32 bytes (don't really no if that matters).
+// This Object has an design size of 32 bytes (don't really know if that matters).
 // You can change the acFileName if you want. Per default your filenames (without paths)
 // should not longer than 23 bytes (truncated). If you change the constant change it
 // in the sprintf as well.
@@ -76,7 +76,7 @@ struct Garbage
 		for(int i=iLen-1; i>=0; --i)
 			if(_pcFile[i] == '\\' || _pcFile[i] == '/')
 			{
-				sprintf(acFileName, "%.23s", &_pcFile[i+1], iLine);
+				sprintf(acFileName, "%.23s", &_pcFile[i+1]);
 				break;
 			}
 	}
@@ -143,7 +143,7 @@ void* operator new(size_t sz, const char* pcFile, int iLine) {
 	//PGarbage G = PGarbage(m, Garbage(sz, pcFile, iLine));
 
 	++g_iInOperator;
-	Col.Collection.Insert(new Garbage(sz, pcFile, iLine), qword(m));
+	Col.Collection.Insert(new Garbage(sz, pcFile, iLine), uint64(m));
 	--g_iInOperator;
 	return m;
 }
@@ -156,7 +156,7 @@ inline void Delete(void* m)
 		if(!g_iInOperator)
 		{
 			++g_iInOperator;
-			Col.Collection.Delete(qword(m));
+			Col.Collection.Delete(uint64(m));
 			--g_iInOperator;
 		}
 		free(m);

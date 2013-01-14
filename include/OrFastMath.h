@@ -33,7 +33,7 @@
 //		Integer Min/Max:				62.0										//
 //		Cast int->float:				 3.1										//
 //		Cast float->int:				 7.0										//
-//		Cast float->dword:				 25.0										//
+//		Cast float->uint32:				 25.0										//
 //		std::floor:					   174.7										//
 //		Floor:							71.8										//
 // ******************************************************************************** //
@@ -67,6 +67,7 @@ __forceinline double Sgn(const double a)					{return (a<0)?-1.0:1.0;}		// Not ma
 template <typename T> int Signum(T val)						{return (val < T(0)) ? -1 : (T(0) < val);}					// mathematically: [-oo,0) -> -1; 0 -> 0, (0,oo] -> 1
 __forceinline int Floor(const float a)						{int r=(int)a; return r - (int)((a<0)&&(a-r!=0.0f));}		// Round down
 __forceinline int Ceil(const float a)						{int r=(int)a; return r + (int)((a>0)&&(a-r!=0.0f));}		// Round up
+__forceinline int Round(const float a)						{return Ceil(a+0.5f);}										// Round
 
 // Bit hacking alternatives:
 //__forceinline int Abs(const int a)						{int m=a>>31; return (a+m)^m;}	a little bit slower than the other variant
@@ -135,18 +136,18 @@ inline float InvSqrt(float fValue)	{return float(1.0/sqrt(double(fValue)));}
 	__asm
 	{
 		mov eax, 0be6eb508h
-		mov dword ptr[esp-12],03fc00000h
-		sub eax, dword ptr[esp + 4]
-		sub dword ptr[esp+4], 800000h
+		mov uint32 ptr[esp-12],03fc00000h
+		sub eax, uint32 ptr[esp + 4]
+		sub uint32 ptr[esp+4], 800000h
 		shr eax, 1
-		mov dword ptr[esp -  8], eax
+		mov uint32 ptr[esp -  8], eax
 
-		fld dword ptr[esp -  8]
+		fld uint32 ptr[esp -  8]
 		fmul st, st
-		fld dword ptr[esp -  8]
+		fld uint32 ptr[esp -  8]
 		fxch st(1)
-		fmul dword ptr[esp +  4]
-		fld dword ptr[esp - 12]
+		fmul uint32 ptr[esp +  4]
+		fld uint32 ptr[esp - 12]
 		fld st(0)
 		fsub st,st(2)
 
@@ -194,9 +195,9 @@ unsigned int NumToGrayCode(unsigned int _uiNum);
 
 // ******************************************************************************** //
 // Parallel bit counting to estimate the number of 1 bits in a number
-qword CountBits64(qword n);
-dword CountBits32(dword n);
-word CountBits16(word n);
+uint64 CountBits64(uint64 n);
+uint32 CountBits32(uint32 n);
+uint16 CountBits16(uint16 n);
 
 }; // namespace Math
 }; // namespace OrE

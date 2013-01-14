@@ -29,3 +29,6 @@ void test_tokenizer();
 
 // Test and Benchmark of the fibonacci heap
 void test_heap();
+
+// Test of OrE::ADT::Graph
+void test_graph();
