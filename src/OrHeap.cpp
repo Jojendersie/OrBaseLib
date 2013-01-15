@@ -176,6 +176,7 @@ void OrE::ADT::Heap::Consolidate()
 HeapNodeP OrE::ADT::Heap::Insert(void* _pObject, uint64 _qwKey)
 {
 	HeapNodeP pNew = new HeapNode(m_pRoot, _pObject, _qwKey);
+	++m_iNumElements;
 	// Min update
 	if((!m_pRoot) || (pNew->qwKey<m_pRoot->qwKey))
 		m_pRoot = pNew;
@@ -218,6 +219,7 @@ void* OrE::ADT::Heap::DeleteMin()
 	}
 
 	// Delete and return the element
+	--m_iNumElements;
 	delete pNode;
 	return pData;
 }
@@ -311,7 +313,7 @@ void OrE::ADT::Heap::Delete(ADTElementP _pElement)
 
 // ******************************************************************************** //
 // Remove everything
-void OrE::ADT::Heap::RecursiveDelete(HeapNodeP _pCurrent)
+/*void OrE::ADT::Heap::RecursiveDelete(HeapNodeP _pCurrent)
 {
 	// Recursive deletion
 	if( _pCurrent->pChild )
@@ -323,8 +325,9 @@ void OrE::ADT::Heap::RecursiveDelete(HeapNodeP _pCurrent)
 
 	// Delete the resources
 	if( m_pDeleteCallback ) m_pDeleteCallback( _pCurrent->pObject );
+	--m_iNumElements;
 	delete _pCurrent;
-}
+}*/
 
 void OrE::ADT::Heap::Clear()
 {

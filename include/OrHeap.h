@@ -90,7 +90,7 @@ namespace ADT {
 		const Heap& operator = (const Heap&);
 
 		// Clear Kernel function
-		void RecursiveDelete( HeapNodeP _pCurrent );
+		//void RecursiveDelete( HeapNodeP _pCurrent );
 	protected:
 		HeapNodeP m_pRoot;
 
@@ -115,11 +115,11 @@ namespace ADT {
 
 		// Change the key value and reorder the elements if necessary.
 		// The _qwNewKey can be lower or higher than the old one. (In contrast to the
-		// standard fibonacci heap, which allows decreases only)
+		// standard fibonacci heap, which allows decreases only).
 		void ChangeKey(HeapNodeP _pElement, uint64 _qwNewKey);
 
 		// general ADT operations
-		// Standard operation insert - _qwKey is the priority of the node
+		// Standard operation insert - _qwKey is the priority of the node.
 		HeapNodeP Insert(void* _pObject, uint64 _qwKey) override;
 
 		// Unsupported function (doing nothing)
