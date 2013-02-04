@@ -16,11 +16,11 @@
 //																					//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrRandom.h"
-#include "..\include\OrFastMath.h"
-#include "..\include\OrVector2.h"
-#include "..\include\OrVector3.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrRandom.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrVector2.h"
+#include "../include/OrVector3.h"
 
 using namespace OrE::Math;
 using namespace OrE::Algorithm;

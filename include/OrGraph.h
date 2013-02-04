@@ -57,7 +57,15 @@ namespace ADT {
 
 			friend class Graph;
 		public:
-			Node() : m_Adjacence( 8, HM_RESIZE_MODERATE )	{}
+			Node() : m_Adjacence( 8, HashMap::Mode::HM_RESIZE_MODERATE ), m_uiInDegree(0), m_uiOutDegree(0), m_uiDegree(0)	{}
+
+			// The copy function has to be implemented for each node type. Only on this way
+			// algorithms can create copies of a valid type.
+			// Copy construction and assignment can not do that, because the type is not known.
+			// The copied node has no adjacence! It has only the same data.
+			// Nodes cannot be without a graph. They are always added on creation. The new graph can
+			// be the same graph where the node comes from.
+			virtual NodeP CopyTo( Graph& _pNewGraph ) const { return _pNewGraph.AddNode<Node>(); }
 
 			// Virtual default destructor.
 			virtual ~Node()	{}
@@ -87,6 +95,45 @@ namespace ADT {
 			// node as source the method returns nullptr.
 			EdgeP GetEdge( NodeCP _pNode );
 			EdgeCP GetEdge( NodeCP _pNode ) const;
+
+
+			// Outgoing edges of a single node. Outgoing edges are all which have
+			// the node as source (subset of directed + all undirected).
+			class OutEdgeIterator
+			{
+			private:
+				HashMap::Iterator I;
+				NodeCP m_pNode;
+
+				OutEdgeIterator( NodeP _pNode ) : I(&_pNode->m_Adjacence), m_pNode(_pNode)	{}
+				friend class Graph;
+
+			public:
+				operator bool () const		{ return bool( I ); }
+
+				// The functions are unsafe/they crash if Iterator not valid.
+				// Make sure your iterator is valid with if(iter).
+				operator Edge* () const		{ return EdgeP( I->pObject ); }
+				Edge& operator*() const		{ return *EdgeP( I->pObject ); }
+				Edge* operator->() const	{ return EdgeP( I->pObject ); }
+				Edge* operator&() const		{ return EdgeP( I->pObject ); }
+
+				bool operator==(const OutEdgeIterator& T) const	{ return I == T.I; }
+				bool operator!=(const OutEdgeIterator& T) const	{ return I != T.I; }
+
+				OutEdgeIterator& operator++()			{ do ++I; while( I && !EdgeP(I->pObject)->IsSrc(m_pNode) ); return *this; }
+				OutEdgeIterator& operator--()			{ do --I; while( I && !EdgeP(I->pObject)->IsSrc(m_pNode) ); return *this; }
+				const OutEdgeIterator operator++(int)	{ OutEdgeIterator temp = *this; ++*this; return temp; }
+				const OutEdgeIterator operator--(int)	{ OutEdgeIterator temp = *this; --*this; return temp; }
+
+				// TODO +, - operator
+			};
+		
+			// TODO: make const function
+			OutEdgeIterator GetOutEdgeIterator()	{ return OutEdgeIterator( this ); }
+			// TODO: ingoing edges
+			// TODO: all adjacent edges exactly once. In the case there is an edge
+			// in both directions only the one starting at v is enumerated.
 		};
 
 		// ******************************************************************************** //
@@ -284,44 +331,6 @@ namespace ADT {
 		};
 
 		EdgeIterator GetEdgeIterator() const	{ return EdgeIterator( this ); }
-
-		// Outgoing edges of a single node. Outgoing edges are all which have
-		// the node as source (subset of directed + all undirected).
-		// TODO: move to node???
-		class OutEdgeIterator
-		{
-		private:
-			HashMap::Iterator I;
-			NodeCP m_pNode;
-
-			OutEdgeIterator( NodeP _pNode ) : I(&_pNode->m_Adjacence), m_pNode(_pNode)	{}
-			friend class Graph;
-
-		public:
-			operator bool () const		{ return bool( I ); }
-
-			// The functions are unsafe/they crash if Iterator not valid.
-			// Make sure your iterator is valid with if(iter).
-			operator Edge* () const		{ return EdgeP( I->pObject ); }
-			Edge& operator*() const		{ return *EdgeP( I->pObject ); }
-			Edge* operator->() const	{ return EdgeP( I->pObject ); }
-			Edge* operator&() const		{ return EdgeP( I->pObject ); }
-
-			bool operator==(const OutEdgeIterator& T) const	{ return I == T.I; }
-			bool operator!=(const OutEdgeIterator& T) const	{ return I != T.I; }
-
-			OutEdgeIterator& operator++()			{ do ++I; while( I && !EdgeP(I->pObject)->IsSrc(m_pNode) ); return *this; }
-			OutEdgeIterator& operator--()			{ do --I; while( I && !EdgeP(I->pObject)->IsSrc(m_pNode) ); return *this; }
-			const OutEdgeIterator operator++(int)	{ OutEdgeIterator temp = *this; ++*this; return temp; }
-			const OutEdgeIterator operator--(int)	{ OutEdgeIterator temp = *this; --*this; return temp; }
-
-			// TODO +, - operator
-		};
-		
-		static OutEdgeIterator GetOutEdgeIterator( NodeP _pNode )	{ return OutEdgeIterator( _pNode ); }
-		// TODO: ingoing edges
-		// TODO: all adjacent edges exactly once. In the case there is an edge
-		// in both directions only the one starting at v is enumerated.
 	};
 
 
@@ -364,8 +373,11 @@ namespace ADT {
 			void* m_pTmpLabel;
 
 		public:
-
 			PosNode() : Node()	{}
+
+			// Redefinition of node copy. Creates a new node with the same position as this one.
+			// The label is not copied and undefined for the new node.
+			virtual NodeP CopyTo( Graph& _pNewGraph ) const override;
 
 			// Virtual default destructor.
 			virtual ~PosNode()	{}
@@ -407,9 +419,8 @@ namespace ADT {
 			Graph( _uiNumNodes, _uiNumEdges )
 		{}
 
-		// Destructor deletes all edges, nodes and adjacence objects. Each reference
-		// to a node or edge is invalid afterwards.
-		virtual ~Mesh();
+		// Default destructor. Calls all inherited destructors.
+		virtual ~Mesh()	 {}
 
 		// ******************************************************************************** //
 		// Graph modification methods
@@ -417,9 +428,10 @@ namespace ADT {
 		// Compute the minimal spanning tree for this graph. The result is written to a copy.
 		// The graph must not be connected. If there are more than one cluster the MST for
 		// each cluster is created.
-		// The algorithm changes m_pTmpLabel. It is set to 0 afterwards.
+		// The algorithm changes m_pTmpLabel. It is undefined afterwards.
+		// Delete the result yourself, if you don't need it anymore.
 		// Runtime: O(e+n log n)	(Prim; uses fibonacci heap)
-		Mesh BuildMST() const;
+		Mesh* BuildMST() const;
 
 		// ******************************************************************************** //
 		// Iterators

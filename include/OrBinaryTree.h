@@ -65,6 +65,12 @@ public:
 	BinaryTreeNode* GetLeft()		{return pLeft;}
 	BinaryTreeNode* GetRight()		{return pRight;}
 	BinaryTreeNode* GetParent()		{return pParent;}
+
+	// Reset all pointers of surrounding, if the node is swaped.
+	// This method assumes, that all pointers of this node are set
+	// correct.
+	// The _pN is the node which is replaced by this node.
+	void Repair( BinaryTreeNode* _pN );
 };
 typedef BinaryTreeNode* BinaryTreeNodeP;
 typedef BinaryTreeNode const * BinaryTreeNodePC;

@@ -13,10 +13,10 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrList.h"
-#include "..\include\OrDebug.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrList.h"
+#include "../include/OrDebug.h"
 
 
 using namespace OrE::ADT;

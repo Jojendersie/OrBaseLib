@@ -13,8 +13,8 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrBuffer.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrBuffer.h"
 
 #include <stdlib.h>
 #include <string.h>

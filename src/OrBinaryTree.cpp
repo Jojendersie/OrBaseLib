@@ -13,11 +13,32 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrBinaryTree.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrBinaryTree.h"
+#include "../include/OrAssert.h"
 
 using namespace OrE::ADT;
+
+// ******************************************************************************** //
+// Reset all pointers of surrounding, if the node is swaped
+void OrE::ADT::BinaryTreeNode::Repair( BinaryTreeNodeP _pN )
+{
+	// Repair children's parent pointers
+	if( pLeft ) pLeft->pParent = this;
+	if( pRight ) pRight->pParent = this;
+
+	Assert( _pN );
+	if( pParent )
+	{
+		if( pParent->pLeft == _pN )
+			pParent->pLeft = this;
+		else if( pParent->pRight == _pN )
+			pParent->pRight = this;
+	}
+}
+
+
 
 // ******************************************************************************** //
 // Standard search with a key
@@ -68,7 +89,7 @@ BinaryTreeNodeP OrE::ADT::BinaryTree::GetPrevious(ADTElementP _pCurrent)
 
 // ******************************************************************************** //
 // Exchange two nodes
-void OrE::ADT::BinaryTree::Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2)
+void OrE::ADT::BinaryTree::Swap( BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2 )
 {
 	// Save all pointers of one node in temporary swap memory.
 	BinaryTreeNodeP pP = _pN1->pParent;
@@ -83,39 +104,15 @@ void OrE::ADT::BinaryTree::Swap(BinaryTreeNodeP _pN1, BinaryTreeNodeP _pN2)
 	_pN2->pLeft = (pL == _pN2) ? _pN1 : pL;
 	_pN2->pRight = (pR == _pN2) ? _pN1 : pR;
 
+	// A swap of two nodes from the same parent is not allowed!
+	// There was a version which supports that (see repo if required)
+	Assert( _pN1->pParent != _pN2->pParent );
+
 	// Repair surrounding of node 1
-	if( _pN1->pLeft ) _pN1->pLeft->pParent = _pN1;
-	if( _pN1->pRight ) _pN1->pRight->pParent = _pN1;
+	_pN1->Repair( _pN2 );
 
 	// Repair surrounding of node 2
-	if( _pN2->pLeft ) _pN2->pLeft->pParent = _pN2;
-	if( _pN2->pRight ) _pN2->pRight->pParent = _pN2;
-
-	// Special case: exchange two children of the same node -> swap left and right
-	if( _pN1->pParent == _pN2->pParent )
-	{
-		pL = _pN1->pParent->pLeft;
-		_pN1->pParent->pLeft = _pN1->pParent->pRight;
-		_pN1->pParent->pRight = pL;
-	} else {
-		// Repair surrounding of node 1
-		if( _pN1->pParent )
-		{
-			if( _pN1->pParent->pLeft == _pN2 )
-				_pN1->pParent->pLeft = _pN1;
-			else if( _pN1->pParent->pRight == _pN2 )
-				_pN1->pParent->pRight = _pN1;
-		} else m_pRoot = _pN1;
-
-		// Repair surrounding of node 2
-		if( _pN2->pParent )
-		{
-			if( _pN2->pParent->pLeft == _pN1 )
-				_pN2->pParent->pLeft = _pN2;
-			else if( _pN2->pParent->pRight == _pN1 )
-				_pN2->pParent->pRight = _pN2;
-		} else m_pRoot = _pN2;
-	}
+	_pN2->Repair( _pN1 );
 }
 
 // ******************************************************************************** //

@@ -16,12 +16,12 @@
 #include <mutex>
 #include <thread>
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrAssert.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrHash.h"
-#include "..\include\OrMultimap.h"
-#include "..\include\OrDebug.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrAssert.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrHash.h"
+#include "../include/OrMultimap.h"
+#include "../include/OrDebug.h"
 
 
 #define LOCK std::lock_guard<std::mutex> Guard( m_Lock );
@@ -80,8 +80,8 @@ inline bool IsDefaultGroup( const char* _pcGroup )	{ return (_pcGroup==nullptr) 
 // ******************************************************************************** //
 // Constructor creates an empty map of a chosen size.
 OrE::ADT::MultiMap::MultiMap( int _iSize ) :
-	m_GroupMap( 23, HashMapMode(HashMapMode::HM_NO_RESIZE | HashMapMode::HM_USE_STRING_MODE) ),
-	m_ObjectMap( _iSize, HashMapMode::HM_PREFER_PERFORMANCE ),
+	m_GroupMap( 23, HashMap::Mode::HM_NO_RESIZE ),
+	m_ObjectMap( _iSize, HashMap::Mode::HM_PREFER_PERFORMANCE ),
 	m_DefaultGroup( 0 )
 {
 	m_GroupMap.SetDeleteCallback( DeleteGroup );

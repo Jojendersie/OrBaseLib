@@ -13,13 +13,13 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\Include\OrTypeDef.h"
-#include "..\Include\OrFastMath.h"
-#include "..\Include\OrRandom.h"
-#include "..\Include\OrVector2.h"
-#include "..\Include\OrVector3.h"
-#include "..\Include\OrVector4.h"
-#include "..\Include\OrMatrix.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrRandom.h"
+#include "../include/OrVector2.h"
+#include "../include/OrVector3.h"
+#include "../include/OrVector4.h"
+#include "../include/OrMatrix.h"
 
 using namespace OrE::Algorithm;
 using namespace OrE::Math;

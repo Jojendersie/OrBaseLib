@@ -71,15 +71,6 @@ inline uint32 CreateCRC16Hash(void* pData, uint32 dwSize)			{return CreateCRCHas
 }; // namespace Algorithm
 namespace ADT {
 
-// ******************************************************************************** //
-enum HashMapMode
-{
-	HM_NO_RESIZE = 0,			// Constant size (no reszie during insertion); high collision count; could be verry fast for some purposes
-	HM_PREFER_SIZE = 1,			// Resize if {#E>=3*Size} to {Size+3*sqrt(Size)}
-	HM_RESIZE_MODERATE = 2,		// Resize if {#E>=1.5*Size} to {Size+Max(128,6*sqrt(Size))}
-	HM_PREFER_PERFORMANCE = 3,	// Resize if {#E>=Size} to {(Size+100)*1.5}
-	HM_USE_STRING_MODE = 8		// Special mode using strings as keys
-};
 
 // ******************************************************************************** //
 // The buckets are a very simple binary trees without any optimization.
@@ -89,11 +80,15 @@ class Bucket: public ADTElement
 			ADTElement(_pObj, _qwKey),
 			pLeft(nullptr),
 			pRight(nullptr),
-			pParent(_pParent) {}
+			pParent(_pParent),
+			pcName(nullptr) {}
 private:
 	Bucket* pLeft;
 	Bucket* pRight;
 	Bucket* pParent;
+
+	// The name of the element is only used in string mode.
+	char* pcName;
 
 	friend class HashMap;
 
@@ -107,11 +102,20 @@ typedef Bucket* BucketP;
 // The hash map is a structure to store and find data in nearly constant time (stochastically).
 class HashMap: public ADT
 {
+public:
+	enum struct Mode
+	{
+		HM_NO_RESIZE = 0,						// Constant size (no reszie during insertion); high collision count; could be verry fast for some purposes
+		HM_PREFER_SIZE = 1,						// Resize if {#E>=3*Size} to {Size+3*sqrt(Size)}
+		HM_RESIZE_MODERATE = 2,					// Resize if {#E>=1.5*Size} to {Size+Max(128,6*sqrt(Size))}
+		HM_PREFER_PERFORMANCE = 3,				// Resize if {#E>=Size} to {(Size+100)*1.5}
+	};
+
 private:
 	BucketP*		m_apBuckets;				// An array with buckets (binary trees)
 	uint32			m_dwSize;					// Size of the array and therewith of hash map
 	uint32			m_dwNumElements;			// Number of elements currently in map (can be larger than array size)
-	HashMapMode		m_Mode;						// Modes set in initialization (String mode?, Resize mode?)
+	Mode			m_Mode;						// Modes set in initialization (String mode?, Resize mode?)
 
 	void RemoveData(BucketP _pBucket);
 	void RecursiveReAdd(BucketP _pBucket);
@@ -123,7 +127,8 @@ private:
 	HashMap(const HashMap&);
 	HashMap& operator = (const HashMap&);
 public:
-	HashMap(uint32 _dwSize, HashMapMode _Mode);
+
+	HashMap(uint32 _dwSize, Mode _Mode);
 	virtual ~HashMap();
 
 	// Remove everything

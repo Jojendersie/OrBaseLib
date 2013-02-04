@@ -13,8 +13,8 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrSetBuilder.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrSetBuilder.h"
 #include <cstdlib>
 
 // ******************************************************************************** //

@@ -13,8 +13,8 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrFastMath.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrFastMath.h"
 
 const float asm_one = 1.0f;
 

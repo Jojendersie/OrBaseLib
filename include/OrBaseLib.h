@@ -16,6 +16,12 @@
 
 #pragma once
 
+#ifdef _DEBUG
+	#pragma comment(lib, "OrBaseLib32D.lib")
+#else
+	#pragma comment(lib, "OrBaseLib32.lib")
+#endif
+
 #include <mutex>
 
 // Raw Types

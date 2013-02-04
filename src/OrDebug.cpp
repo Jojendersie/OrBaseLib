@@ -16,7 +16,7 @@
 
 #include <csignal>
 #include <string>
-#include "..\include\OrDebug.h"
+#include "../include/OrDebug.h"
 
 #pragma warning(disable: 4996)
 
@@ -46,9 +46,9 @@ bool IsPointerInvalid(const void* _Pointer)
 
 #ifdef _DEBUG
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrHash.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrHash.h"
 
 // ******************************************************************************** //
 // Implementation of the garbage collector.
@@ -97,7 +97,7 @@ public:
 	OrE::ADT::HashMap Collection;
 
 	// Nothing to do - standard constructor
-	Collector() : Collection(50000, OrE::ADT::HM_PREFER_SIZE) {}
+	Collector() : Collection(50000, OrE::ADT::HashMap::Mode::HM_PREFER_SIZE) {}
 
 	// Log every non-freed memory
 	~Collector()

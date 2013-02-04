@@ -13,17 +13,17 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrFastMath.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrHash.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrHash.h"
+#include "../include/OrAssert.h"
 
 // Do not use in the file! This causes endless loops in debug garbage collection.
-// #include "..\Include\OrDebug.h"
+// #include "../include/OrDebug.h"
 
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 using namespace OrE::Algorithm;
 using namespace OrE::ADT;
@@ -108,7 +108,7 @@ uint32 OrE::Algorithm::CreateCRCHash(uint32 dwPolynom, void* pData, uint32 dwSiz
 
 // ******************************************************************************** //
 // The hash function used for names ...
-static uint32 OrStringHash(const char* _pcString)
+static uint64 OrStringHash(const char* _pcString)
 {
 	/*uint32 dwHash = 5381;
 
@@ -117,7 +117,7 @@ static uint32 OrStringHash(const char* _pcString)
 		// Alternative dwHash * 33 ^ c
 
 	return dwHash;//*/
-	uint32 dwHash = 208357;
+	uint64 dwHash = 208357;
 
 	while(int c = *_pcString++)
 		dwHash = ((dwHash << 5) + (dwHash << 1) + dwHash) ^ c; 
@@ -142,7 +142,7 @@ void OrE::ADT::HashMap::RecursiveReAdd(Bucket* _pBucket)
 
 // ******************************************************************************** //
 // Initialization to given start size
-OrE::ADT::HashMap::HashMap( uint32 _dwSize, HashMapMode _Mode ) :
+OrE::ADT::HashMap::HashMap( uint32 _dwSize, Mode _Mode ) :
 	m_apBuckets( nullptr )
 {
 	// Resize allocates memory too
@@ -158,12 +158,9 @@ OrE::ADT::HashMap::HashMap( uint32 _dwSize, HashMapMode _Mode ) :
 // Delete data from user and (owned) identifier if in string mode
 void OrE::ADT::HashMap::RemoveData(BucketP _pBucket)
 {
-	if(m_pDeleteCallback && _pBucket->pObject) m_pDeleteCallback(_pBucket->pObject);
-	if(m_Mode & HM_USE_STRING_MODE)
-	{
-		char* pcString = (char*)(_pBucket->qwKey>>32);
-		if(pcString) free(pcString);
-	}
+	if( m_pDeleteCallback && _pBucket->pObject )
+		m_pDeleteCallback( _pBucket->pObject );
+	free( _pBucket->pcName );
 }
 
 // ******************************************************************************** //
@@ -240,20 +237,20 @@ void OrE::ADT::HashMap::Resize(const uint32 _dwSize)
 void OrE::ADT::HashMap::TestSize()
 {
 	// To improve performance extend
-	switch( m_Mode & 3 )
+	switch( uint(m_Mode) & 3 )
 	{
 		// Slow growth
-		case HM_PREFER_SIZE: 
+		case Mode::HM_PREFER_SIZE: 
 			if(m_dwNumElements >= m_dwSize*3)
 				Resize(m_dwSize+3*(uint32)Sqrt((float)m_dwSize));
 			break;
 		// Medium growth
-		case HM_RESIZE_MODERATE:
+		case Mode::HM_RESIZE_MODERATE:
 			if(m_dwNumElements >= (uint32)(m_dwSize*1.5f))
 				Resize(m_dwSize+Max(6*(uint32)Sqrt((float)m_dwSize), (uint32)128));
 			break;
 		// Fast growth, scarce resize
-		case HM_PREFER_PERFORMANCE:
+		case Mode::HM_PREFER_PERFORMANCE:
 			if(m_dwNumElements >= m_dwSize)
 				Resize((uint32)((m_dwSize+100)*1.5f));
 			break;
@@ -273,14 +270,10 @@ int OrE::ADT::HashMap::ListIndex(BucketP _pBucket)
 // Standard operation insert
 ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, uint64 _qwKey)
 {
-#ifdef _DEBUG
-	if(!m_apBuckets) return nullptr;		// TODO report error
-#endif
+	// It seems that during initialization an out-of-memory error occured.
+	Assert( m_apBuckets );
 
 	TestSize();
-
-	if(m_Mode & HM_USE_STRING_MODE)
-		_qwKey &= 0xffffffff;
 	
 	// Sort element into binary tree
 	uint32 dwHash = _qwKey%m_dwSize;
@@ -327,69 +320,54 @@ void OrE::ADT::HashMap::Delete(uint64 _qwKey)
 void OrE::ADT::HashMap::Delete( ADTElementP _pElement )
 {
 	if(!_pElement) return;
+	BucketP pElement = BucketP(_pElement);
 	// Are there more references?
 	if( _pElement->Release() > 0 ) return;
 
 	// Repair tree
 	// If _pElement has children search for a replacement of the _pElement node.
+	BucketP pReplacement = nullptr;
 	if( (BucketP(_pElement))->pLeft )
 	{
+		pReplacement = pElement->pLeft;
 		// There is a left subtree - use maximum, it preserves tree properties
-		BucketP pBuck = (BucketP(_pElement))->pLeft;
+		BucketP pBuck = pElement->pLeft;
 		while( pBuck->pRight ) pBuck = pBuck->pRight;
 		// Attach right subtree at the left one (all elements larger than in the chosen node)
-		pBuck->pRight = (BucketP(_pElement))->pRight;
+		pBuck->pRight = pElement->pRight;
 		if( pBuck->pRight )
 			pBuck->pRight->pParent = pBuck;
 		// Remove reference from old node and set to left tree instead
-		(BucketP(_pElement))->pLeft->pParent = (BucketP(_pElement))->pParent;
-		// Update a parent or the real list entry.
-		int iI;
-		if( (iI = ListIndex((BucketP(_pElement))->pParent))==-1)
-		{
-			// Case: no list element
-			if((BucketP(_pElement))->pParent->pLeft == BucketP(_pElement))
-				(BucketP(_pElement))->pParent->pLeft = (BucketP(_pElement))->pLeft;
-			else (BucketP(_pElement))->pParent->pRight = (BucketP(_pElement))->pLeft;
-		} else m_apBuckets[iI] = (BucketP(_pElement))->pLeft;
+		pElement->pLeft->pParent = pElement->pParent;
 	} else if( (BucketP(_pElement))->pRight )
 	{
+		pReplacement = pElement->pRight;
 		// There is only a right subtree - use minimum, it preserves tree properties
 		BucketP pBuck = (BucketP(_pElement))->pRight;
 		while(pBuck->pLeft) pBuck = pBuck->pLeft;
 
-		assert( !(BucketP(_pElement))->pLeft );
+		Assert( !pElement->pLeft );
 
 //		pBuck->pLeft = (BucketP(_pElement))->pLeft;
 //		if(pBuck->pLeft)
 //			pBuck->pLeft->pParent = pBuck;
 	
 		// Remove reference from old node and set to right tree instead
-		(BucketP(_pElement))->pRight->pParent = (BucketP(_pElement))->pParent;
-		// Update a parent or the real list entry.
-		int iI;
-		if( (iI = ListIndex((BucketP(_pElement))->pParent))==-1)
-		{
-			// Case: no list element
-			if((BucketP(_pElement))->pParent->pLeft == BucketP(_pElement))
-				(BucketP(_pElement))->pParent->pLeft = (BucketP(_pElement))->pRight;
-			else (BucketP(_pElement))->pParent->pRight = (BucketP(_pElement))->pRight;
-		} else m_apBuckets[iI] = (BucketP(_pElement))->pRight;
-	} else
+		pElement->pRight->pParent = pElement->pParent;
+	} // else: No subtrees needs to be realigned.
+
+	// Update a parent or the real list entry.
+	int iI;
+	if( (iI = ListIndex(pElement->pParent)) == -1)
 	{
-		// No subtrees needs to be realigned.
-		// Update a parent or the real list entry.
-		int iI;
-		if( (iI = ListIndex((BucketP(_pElement))->pParent)) == -1)
-		{
-			if((BucketP(_pElement))->pParent->pLeft == BucketP(_pElement))
-				(BucketP(_pElement))->pParent->pLeft = nullptr;
-			else (BucketP(_pElement))->pParent->pRight = nullptr;
-		} else m_apBuckets[iI] = nullptr;
-	}
+		if(pElement->pParent->pLeft == pElement)
+			pElement->pParent->pLeft = pReplacement;
+		else pElement->pParent->pRight = pReplacement;
+	} else m_apBuckets[iI] = pReplacement;
+	
 	// Delete data
-	RemoveData((BucketP)_pElement);
-	delete (BucketP)_pElement;
+	RemoveData(pElement);
+	delete pElement;
 	// Now it is removed
 	--m_dwNumElements;
 }
@@ -399,9 +377,8 @@ void OrE::ADT::HashMap::Delete( ADTElementP _pElement )
 ADTElementP OrE::ADT::HashMap::Search( uint64 _qwKey )
 {
 	// Find correct bucked with hashing
-	uint32 dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
+	uint32 dwHash = _qwKey%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
-	//if(pBucket) return nullptr;
 	// Tree search
 	while(pBucket)
 	{
@@ -415,9 +392,8 @@ ADTElementP OrE::ADT::HashMap::Search( uint64 _qwKey )
 const ADTElement* OrE::ADT::HashMap::Search( uint64 _qwKey ) const
 {
 	// Find correct bucked with hashing
-	uint32 dwHash = (m_Mode & HM_USE_STRING_MODE) ? (_qwKey&0xffffffff)%m_dwSize : _qwKey%m_dwSize;
+	uint32 dwHash = _qwKey%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
-	//if(pBucket) return nullptr;
 	// Tree search
 	while(pBucket)
 	{
@@ -429,24 +405,23 @@ const ADTElement* OrE::ADT::HashMap::Search( uint64 _qwKey ) const
 }
 
 // ******************************************************************************** //
-// TODO equality for data is other then in the upper date (last step) -> everything reimplement
 // String-Mode functions
 // insert using strings
 ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 {
-	if(!(m_Mode & HM_USE_STRING_MODE)) return nullptr;
-	#ifdef _DEBUG
-	if(!m_apBuckets) return nullptr;		// TODO report error
-#endif
+	// It seems that during initialization an out-of-memory error occured.
+	Assert( m_apBuckets );
+
+	Assert( _pcKey );
 
 	TestSize();
 	
 	// Insert new element now
-	uint32 dwH = OrStringHash(_pcKey);
-	uint32 dwHash = dwH%m_dwSize;
-	if(m_apBuckets[dwHash])
+	uint64 uiH = OrStringHash(_pcKey);
+	uint32 dwHash = uiH%m_dwSize;
+	BucketP pBucket = m_apBuckets[dwHash];
+	if( pBucket )
 	{
-		BucketP pBucket = m_apBuckets[dwHash];
 		bool bAdded = false;
 		while(!bAdded)
 		{
@@ -454,79 +429,74 @@ ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 			++m_dwCollsionCounter;
 #endif
 			// Compare strings -> Tree search
-			char* pcBucketString = (char*)(pBucket->qwKey>>32);
 			// In string mode the upper 32 bit of the 64 Bit key represents a
 			// pointer to the string. It could be that the map contains elements
 			// without a string.
-			// TODO: 64 Bit Portierung - fehler in pointerarithmetric
-			if( !pcBucketString ) 
+			if( !pBucket->pcName ) 
 			{
-				if(pBucket->pRight)
-					pBucket = pBucket->pRight;
-				else {pBucket->pRight = new Bucket(_pObject, 0, pBucket); pBucket = pBucket->pRight; bAdded = true;}
+				if(!pBucket->pRight)
+				{
+					pBucket->pRight = new Bucket(_pObject, uiH, pBucket);
+					bAdded = true;
+				}
+				pBucket = pBucket->pRight;
 			} else
 			{
-				int iCmp = strcmp(_pcKey,pcBucketString);
-				if(iCmp < 0)
-					if(pBucket->pLeft) pBucket = pBucket->pLeft;	// traverse
-					else {pBucket->pLeft = new Bucket(_pObject, 0, pBucket); pBucket = pBucket->pLeft; bAdded = true;}
-				else if(iCmp > 0)
-					if(pBucket->pRight) pBucket = pBucket->pRight;	// traverse
-					else {pBucket->pRight = new Bucket(_pObject, 0, pBucket); pBucket = pBucket->pRight; bAdded = true;}
-				else {
+				int iCmp = strcmp( _pcKey, pBucket->pcName );
+				if(iCmp < 0) {
+					if(!pBucket->pLeft) {pBucket->pLeft = new Bucket(_pObject, uiH, pBucket); bAdded = true;}
+					pBucket = pBucket->pLeft;	// traverse
+				} else if(iCmp > 0) {
+					if(!pBucket->pRight) {pBucket->pRight = new Bucket(_pObject, uiH, pBucket); bAdded = true;}
+					pBucket = pBucket->pRight;	// traverse
+				} else {
+					// This data already exists. It is obvious that this element collides with itself.
 #ifdef _DEBUG
 					--m_dwCollsionCounter;
 #endif
 					pBucket->AddRef();
 					return pBucket;
-				}			// This data already exists. It is obvious that this element collides with itself.
+				}
 			}
 		}
 		// The loop terminates iff pBucket points to the new node.
-		// Copy string.
-		int iLen = (int)strlen(_pcKey)+1;
-		void* pStr = malloc(iLen);
-		memcpy(pStr, _pcKey, iLen);
-		pBucket->qwKey = ((((uint64)pStr)<<16)<<16) | dwH;
-		++m_dwNumElements;
-		return pBucket;
 	} else
 	{
 		// Empty bucket
-		m_apBuckets[dwHash] = new Bucket(_pObject, 0, BucketP(m_apBuckets+dwHash));
-		// Copy the string
-		int iLen = (int)strlen(_pcKey)+1;
-		void* pStr = malloc(iLen);
-		memcpy(pStr, _pcKey, iLen);
-		m_apBuckets[dwHash]->qwKey = ((((uint64)pStr)<<16)<<16) | dwH;
-		++m_dwNumElements;
-		return m_apBuckets[dwHash];
+		pBucket = m_apBuckets[dwHash] = new Bucket(_pObject, uiH, BucketP(m_apBuckets+dwHash));
 	}
+
+	// Copy string.
+	int iLen = (int)strlen(_pcKey)+1;
+	pBucket->pcName = (char*)malloc(iLen);
+	memcpy(pBucket->pcName, _pcKey, iLen);
+	++m_dwNumElements;
+	return pBucket;
 }
 
 // ******************************************************************************** //
 // Standard operation delete for strings
 void OrE::ADT::HashMap::Delete( const char* _pcKey )
 {
-	if(m_Mode & HM_USE_STRING_MODE)
-		Delete( Search( _pcKey ) );
+	Assert( _pcKey );
+	Delete( Search( _pcKey ) );
 }
 
 // ******************************************************************************** //
 // search using strings
 ADTElementP OrE::ADT::HashMap::Search( const char* _pcKey )
 {
-	if(!(m_Mode & HM_USE_STRING_MODE) || !_pcKey) return nullptr;
+	Assert( _pcKey );
+
 	// Find bucket with hashing
 	uint32 dwHash = OrStringHash(_pcKey)%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
 	// tree search with strings
 	while(pBucket)
 	{
-		char* pcBucketString = (char*)((pBucket->qwKey>>16)>>16);
-		if( pcBucketString )
+		if( pBucket->pcName )
 		{
-			int iCmp = strcmp(_pcKey,pcBucketString);
+			int iCmp = strcmp( _pcKey, pBucket->pcName );
 			if(iCmp==0) return pBucket;
 			else if(iCmp<0) pBucket = pBucket->pLeft;
 			else pBucket = pBucket->pRight;

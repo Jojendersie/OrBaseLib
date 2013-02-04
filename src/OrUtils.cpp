@@ -20,9 +20,9 @@
 #include <cstring>
 #include <cstdlib>
 #include <cassert>
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrUtils.h"
-#include "..\include\OrFastMath.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrUtils.h"
+#include "../include/OrFastMath.h"
 
 using namespace OrE::Math;
 using namespace OrE::Utils;

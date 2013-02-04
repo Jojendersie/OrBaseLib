@@ -34,13 +34,13 @@
 //			length: [6,1029]														//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrBinaryTree.h"
-#include "..\include\OrSplayTree.h"
-#include "..\include\OrTrie.h"
-#include "..\include\OrFastMath.h"
-#include "..\include\OrHuffman.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrBinaryTree.h"
+#include "../include/OrSplayTree.h"
+#include "../include/OrTrie.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrHuffman.h"
 #include <assert.h>
 #include <string.h>
 #include <stdlib.h>

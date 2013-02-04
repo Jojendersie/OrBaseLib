@@ -108,6 +108,9 @@
 	#endif
 #endif
 
+
+typedef unsigned int uint;
+
 // ******************************************************************************** //
 // An integral type which has always the size of (void*)
 template <int BYTES> struct PtrToInt;

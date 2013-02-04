@@ -18,15 +18,15 @@
 // include for malloc
 #include <cstdlib>
 
-#include "..\Include\OrTypeDef.h"
-#include "..\include\OrAssert.h"
-#include "..\Include\OrADTObjects.h"
-#include "..\Include\OrTrie.h"
-#include "..\Include\OrFastMath.h"
-#include "..\Include\OrBuffer.h"
-#include "..\Include\OrUtils.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrAssert.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrTrie.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrBuffer.h"
+#include "../include/OrUtils.h"
 
-#include "..\Include\OrDebug.h"
+#include "../include/OrDebug.h"
 
 using namespace OrE::ADT;
 using namespace OrE::Math;

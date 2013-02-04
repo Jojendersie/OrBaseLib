@@ -13,12 +13,12 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\Include\OrTypeDef.h"
-#include "..\Include\OrFastMath.h"
-#include "..\Include\OrVector2.h"
-#include "..\Include\OrVector3.h"
-#include "..\Include\OrPlane.h"
-#include "..\include\OrAnalyticalGeometry.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrVector2.h"
+#include "../include/OrVector3.h"
+#include "../include/OrPlane.h"
+#include "../include/OrAnalyticalGeometry.h"
 
 // ******************************************************************************** //
 // Implementations of hit test functions

@@ -1,6 +1,6 @@
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrFastMath.h"
-#include "..\include\OrComplexNumber.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrComplexNumber.h"
 
 // ******************************************************************************** //
 // A complex number to the power of a complex number.

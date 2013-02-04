@@ -13,15 +13,15 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrAssert.h"
-#include "..\include\OrFastMath.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrHash.h"
-#include "..\include\OrVector2.h"
-#include "..\include\OrVector3.h"
-#include "..\include\OrDebug.h"
-#include "..\include\OrGraph.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrAssert.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrHash.h"
+#include "../include/OrVector2.h"
+#include "../include/OrVector3.h"
+#include "../include/OrDebug.h"
+#include "../include/OrGraph.h"
 
 
 // ******************************************************************************** //
@@ -36,7 +36,7 @@ bool OrE::ADT::Graph::Node::IsAdjacentTo( NodeCP _pNode ) const
 // undirected or directed edge. Directed edges with src='this' are ignored.
 bool OrE::ADT::Graph::Node::IsSuccessorOf( NodeCP _pNode ) const
 {
-	EdgeCP pE = (const Edge*)m_Adjacence.Search( uint64( _pNode ) );
+	EdgeCP pE = (EdgeCP)m_Adjacence.Search( uint64( _pNode ) )->pObject;
 	return (pE!=nullptr) && (!pE->IsDirected() || pE->IsSrc( _pNode ));
 }
 
@@ -45,7 +45,7 @@ bool OrE::ADT::Graph::Node::IsSuccessorOf( NodeCP _pNode ) const
 // undirected or directed edge. Directed edges with src='_pNode' are ignored.
 bool OrE::ADT::Graph::Node::IsPredecessorOf( NodeCP _pNode ) const
 {
-	EdgeCP pE = (const Edge*)m_Adjacence.Search( uint64( _pNode ) );
+	EdgeCP pE = (EdgeCP)m_Adjacence.Search( uint64( _pNode ) )->pObject;
 	return (pE!=nullptr) && (!pE->IsDirected() || pE->IsDst( _pNode ));
 }
 
@@ -55,7 +55,7 @@ bool OrE::ADT::Graph::Node::IsPredecessorOf( NodeCP _pNode ) const
 // method returns nullptr.
 OrE::ADT::Graph::EdgeP OrE::ADT::Graph::Node::GetEdge( NodeCP _pNode )
 {
-	EdgeP pE = (Edge*)m_Adjacence.Search( uint64( _pNode ) );
+	EdgeP pE = (EdgeP)m_Adjacence.Search( uint64( _pNode ) )->pObject;
 	if( pE && pE->IsSrc( this ) )
 		return pE;
 	else return nullptr;
@@ -63,7 +63,7 @@ OrE::ADT::Graph::EdgeP OrE::ADT::Graph::Node::GetEdge( NodeCP _pNode )
 
 OrE::ADT::Graph::EdgeCP OrE::ADT::Graph::Node::GetEdge( NodeCP _pNode ) const
 {
-	EdgeCP pE = (EdgeCP)m_Adjacence.Search( uint64( _pNode ) );
+	EdgeCP pE = (EdgeCP)m_Adjacence.Search( uint64( _pNode ) )->pObject;
 	if( pE && pE->IsSrc( this ) )
 		return pE;
 	else return nullptr;
@@ -159,3 +159,22 @@ void OrE::ADT::Graph::Delete( Edge* _pEdge )
 
 
 // ******************************************************************************** //
+// Part of Mesh graph
+
+// ******************************************************************************** //
+OrE::ADT::Graph::NodeP OrE::ADT::Mesh::PosNode::CopyTo( Graph& _pNewGraph ) const
+{
+	PosNodeP pNew = _pNewGraph.AddNode<PosNode>();
+	pNew->m_vPos = m_vPos;
+	return pNew;
+}
+
+// ******************************************************************************** //
+void OrE::ADT::Mesh::PosNode::SetPos( const Math::Vec3& _vPos )
+{
+	if( m_vPos != _vPos )
+	{
+		m_vPos = _vPos;
+		//TODO auto It = Edges updaten
+	}
+}

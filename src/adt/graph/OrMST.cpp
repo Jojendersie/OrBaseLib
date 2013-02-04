@@ -16,16 +16,16 @@
 // The runtime is O(e+n log n). The implementation is done with a fibonacci heap.	//
 // ******************************************************************************** //
 
-#include "..\..\..\include\OrTypeDef.h"
-#include "..\..\..\include\OrAssert.h"
-#include "..\..\..\include\OrFastMath.h"
-#include "..\..\..\include\OrADTObjects.h"
-#include "..\..\..\include\OrHash.h"
-#include "..\..\..\include\OrVector2.h"
-#include "..\..\..\include\OrVector3.h"
-#include "..\..\..\include\OrDebug.h"
-#include "..\..\..\include\OrGraph.h"
-#include "..\..\..\include\OrHeap.h"
+#include "../../../include/OrTypeDef.h"
+#include "../../../include/OrAssert.h"
+#include "../../../include/OrFastMath.h"
+#include "../../../include/OrADTObjects.h"
+#include "../../../include/OrHash.h"
+#include "../../../include/OrVector2.h"
+#include "../../../include/OrVector3.h"
+#include "../../../include/OrDebug.h"
+#include "../../../include/OrGraph.h"
+#include "../../../include/OrHeap.h"
 
 // ******************************************************************************** //
 struct PrimNodeInfo
@@ -52,13 +52,12 @@ static void CopyNodes( const OrE::ADT::Mesh& _Src, OrE::ADT::Mesh& _Dst, PrimNod
 {
 	auto It = _Src.GetNodeIterator();
 	uint32 i = 0;
-	while( It++ )
+	while( ++It )
 	{
 		// Set Label in original graph
 		OrE::ADT::Mesh::PosNodeP(&It)->m_pTmpLabel = &_pInfoDst[i];
 
-		_pInfoDst[i].pNode = _Dst.AddNode<OrE::ADT::Mesh::PosNode>();
-		_pInfoDst[i].pNode->SetPos( OrE::ADT::Mesh::PosNodeP( &It )->GetPos() );
+		_pInfoDst[i].pNode = OrE::ADT::Mesh::PosNodeP( It->CopyTo( _Dst ) );
 		++i;
 	}
 }
@@ -69,7 +68,7 @@ static void FillHeap( const OrE::ADT::Mesh& _Src, OrE::ADT::Heap& _Dst, PrimNode
 	// Initialization depends on number only. Each node is not part of any tree.
 	auto It = _Src.GetNodeIterator();
 	uint32 i = 0;
-	while( It++ )
+	while( ++It )
 	{
 		// Correspondence should not be changed since CopyNode. Check for multithreading
 		// caused node insertions/deletions.
@@ -92,15 +91,15 @@ class RndIterator: public OrE::ADT::_Iterator<int, RndIterator>
 
 // ******************************************************************************** //
 // Compute the minimal spanning tree for this graph. The result is written to a copy.
-OrE::ADT::Mesh OrE::ADT::Mesh::BuildMST() const
+OrE::ADT::Mesh* OrE::ADT::Mesh::BuildMST() const
 {
 	// Initialize the distances for all nodes and create a forest in an
 	// index structure. (For fast random access; fast heap node access)
 	PrimNodeInfo* aInfos = new PrimNodeInfo[GetNumNodes()];
 
 	// Create the new graph as copy
-	Mesh M;
-	CopyNodes( *this, M, aInfos );
+	Mesh* M = new Mesh;
+	CopyNodes( *this, *M, aInfos );
 	
 	// Fill the Fibonacci heap with all nodes whether they are connected or not.
 	Heap FibHeap;
@@ -116,8 +115,8 @@ OrE::ADT::Mesh OrE::ADT::Mesh::BuildMST() const
 		PrimNodeInfo* pPivotInfo = (PrimNodeInfo*)pPivot->m_pTmpLabel;
 		pPivotInfo->fDist = 0.0f;
 		// Update all neighbour points
-		auto AOutIt = GetOutEdgeIterator( pPivot );
-		while( AOutIt++ )
+		auto AOutIt = pPivot->GetOutEdgeIterator();
+		while( ++AOutIt )
 		{
 			float fDist = WeightedEdgeP( &AOutIt )->GetWeight();
 			PosNodeP pNeighboutNode = PosNodeP( WeightedEdgeP( &AOutIt )->GetOther(pPivot) );
@@ -132,12 +131,11 @@ OrE::ADT::Mesh OrE::ADT::Mesh::BuildMST() const
 		}
 
 		// Create a new edge between parent and the new node in the Graph copy.
-		M.AddEdge< WeightedEdge, PosNode >(
-			((PrimNodeInfo*)pPivotInfo->pParent->m_pTmpLabel)->pNode,
-			pPivotInfo->pNode,
-			pPivotInfo->pParent->GetEdge( pPivot )->IsDirected() );
-
-		pPivot->m_pTmpLabel = nullptr;
+		if( pPivotInfo->pParent )
+			M->AddEdge< WeightedEdge, PosNode >(
+				((PrimNodeInfo*)pPivotInfo->pParent->m_pTmpLabel)->pNode,
+				pPivotInfo->pNode,
+				pPivotInfo->pParent->GetEdge( pPivot )->IsDirected() );
 	}
 
 	delete[] aInfos;

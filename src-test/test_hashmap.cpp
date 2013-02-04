@@ -69,10 +69,10 @@ void test_hashmap()
 	// Collisions can only be counted in debug mode.
 	// First test with 10000 random numbers. Numbers can be used more than one time the
 	// key is the loop index.
-	OrE::ADT::HashMap MyHM1( 128, OrE::ADT::HashMapMode::HM_NO_RESIZE );
-	OrE::ADT::HashMap MyHM2( 128, OrE::ADT::HashMapMode::HM_PREFER_SIZE );
-	OrE::ADT::HashMap MyHM3( 128, OrE::ADT::HashMapMode::HM_RESIZE_MODERATE );
-	OrE::ADT::HashMap MyHM4( 128, OrE::ADT::HashMapMode::HM_PREFER_PERFORMANCE );
+	OrE::ADT::HashMap MyHM1( 128, OrE::ADT::HashMap::Mode::HM_NO_RESIZE );
+	OrE::ADT::HashMap MyHM2( 128, OrE::ADT::HashMap::Mode::HM_PREFER_SIZE );
+	OrE::ADT::HashMap MyHM3( 128, OrE::ADT::HashMap::Mode::HM_RESIZE_MODERATE );
+	OrE::ADT::HashMap MyHM4( 128, OrE::ADT::HashMap::Mode::HM_PREFER_PERFORMANCE );
 	
 	std::cout << "******** Start test OrE::ADT::Hashmap ********\n";
 	std::cout << "\tAll test uses hash maps with the initial size of 128 elements\n";
@@ -83,10 +83,10 @@ void test_hashmap()
 	test_hminteger( MyHM4, "PREFER_PERFORMANCE" );
 
 	// Second test with the 1024 mostly used German words.
-	OrE::ADT::HashMap MySHM1( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_NO_RESIZE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
-	OrE::ADT::HashMap MySHM2( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_PREFER_SIZE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
-	OrE::ADT::HashMap MySHM3( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_RESIZE_MODERATE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
-	OrE::ADT::HashMap MySHM4( 128, OrE::ADT::HashMapMode( OrE::ADT::HashMapMode::HM_PREFER_PERFORMANCE | OrE::ADT::HashMapMode::HM_USE_STRING_MODE ) );
+	OrE::ADT::HashMap MySHM1( 128, OrE::ADT::HashMap::Mode::HM_NO_RESIZE );
+	OrE::ADT::HashMap MySHM2( 128, OrE::ADT::HashMap::Mode::HM_PREFER_SIZE );
+	OrE::ADT::HashMap MySHM3( 128, OrE::ADT::HashMap::Mode::HM_RESIZE_MODERATE );
+	OrE::ADT::HashMap MySHM4( 128, OrE::ADT::HashMap::Mode::HM_PREFER_PERFORMANCE );
 
 	std::cout << "\tThe following tests use the STRING_MODE.\n\tThe test data is a list of the 1024 mostly used German words.\n";
 	test_hmstring( MySHM1, "NO_RESIZE" );
@@ -108,7 +108,7 @@ void test_hminteger( OrE::ADT::HashMap& _HM, const char* _pcMode )
 	for( int i=0; i<10000; ++i )
 		_HM.Insert( (void*)OrE::Algorithm::Rand(0,1000), i );
 
-	std::cout << '\t' << _pcMode << " - 10000 insertions: " << OrE::Utils::TimeQuery( Time0 ) << " s\n";
+	std::cout << '\t' << _pcMode << " - 10000 insertions: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 #ifdef _DEBUG
 	std::cout << "\t\t- " << (_HM.m_dwCollsionCounter/10000.0f) << " Collisions/Insertion" <<  '\n';
 #endif
@@ -122,21 +122,21 @@ void test_hminteger( OrE::ADT::HashMap& _HM, const char* _pcMode )
 		It->pObject = (void*)((int)It->pObject + 500);
 	}
 
-	std::cout << "\t\t- Iteration over 10000 elements: " << OrE::Utils::TimeQuery( Time0 ) << " s\n";
+	std::cout << "\t\t- Iteration over 10000 elements: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 
 	// Search 1000 random elements (in map and not in map 50%)
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<1000; ++i )
 		_HM.Search( OrE::Algorithm::Rand(0,20000) );
 
-	std::cout << "\t\t- Time to search for 1000 elements: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\t\t- Time to search for 1000 elements: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 
 	// Delete 1000 elements
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<1000; ++i )
 		_HM.Delete( OrE::Algorithm::Rand(0,10000) );
 
-	std::cout << "\t\t- Time to remove 1000 elements: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\t\t- Time to remove 1000 elements: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 	_HM.Clear();
 }
 
@@ -151,7 +151,7 @@ void test_hmstring( OrE::ADT::HashMap& _HM, const char* _pcMode )
 	for( int i=0; i<1024; ++i )
 		_HM.Insert( (void*)OrE::Algorithm::Rand(0,1000), TEST_STRINGS[i] );
 
-	std::cout << '\t' << _pcMode << " - 1024 insertions: " << OrE::Utils::TimeQuery( Time0 ) << " s\n";
+	std::cout << '\t' << _pcMode << " - 1024 insertions: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 #ifdef _DEBUG
 	std::cout << "\t\t- " << (_HM.m_dwCollsionCounter/1024.0f) << " Collisions/Insertion" <<  '\n';
 #endif
@@ -165,7 +165,7 @@ void test_hmstring( OrE::ADT::HashMap& _HM, const char* _pcMode )
 		It->pObject = (void*)((int)It->pObject + 500);
 	}
 
-	std::cout << "\t\t- Iteration over 1024 elements: " << OrE::Utils::TimeQuery( Time0 ) << " s\n";
+	std::cout << "\t\t- Iteration over 1024 elements: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 
 	// Search 1000 random elements (in map and not in map 50%)
 	OrE::Utils::TimeQuery( Time0 );
@@ -175,13 +175,13 @@ void test_hmstring( OrE::ADT::HashMap& _HM, const char* _pcMode )
 		_HM.Search( (iEntry<1024) ? TEST_STRINGS[iEntry] : "NotInMap" );
 	}
 
-	std::cout << "\t\t- Time to search for 1000 elements: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\t\t- Time to search for 1000 elements: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 
 	// Delete 1000 elements
 	OrE::Utils::TimeQuery( Time0 );
 	for( int i=0; i<1000; ++i )
 		_HM.Delete( TEST_STRINGS[OrE::Algorithm::Rand(0,1023)] );
 
-	std::cout << "\t\t- Time to remove 1000 elements: " << OrE::Utils::TimeQuery( Time0 ) << '\n';
+	std::cout << "\t\t- Time to remove 1000 elements: " << OrE::Utils::TimeQuery( Time0 )*1000.0 << " ms\n";
 	_HM.Clear();
 }

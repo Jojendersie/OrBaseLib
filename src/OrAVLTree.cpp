@@ -13,13 +13,13 @@
 // For details on this project see: Readme.txt										//
 // ******************************************************************************** //
 
-#include "..\include\OrTypeDef.h"
-#include "..\include\OrAssert.h"
-#include "..\include\OrADTObjects.h"
-#include "..\include\OrBinaryTree.h"
-#include "..\include\OrAVLTree.h"
-#include "..\include\OrFastMath.h"
-#include "..\include\OrDebug.h"
+#include "../include/OrTypeDef.h"
+#include "../include/OrAssert.h"
+#include "../include/OrADTObjects.h"
+#include "../include/OrBinaryTree.h"
+#include "../include/OrAVLTree.h"
+#include "../include/OrFastMath.h"
+#include "../include/OrDebug.h"
 
 using namespace OrE::ADT;
 
