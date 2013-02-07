@@ -103,6 +103,32 @@ uint32 OrE::Algorithm::CreateCRCHash(uint32 dwPolynom, void* pData, uint32 dwSiz
 
 
 // ******************************************************************************** //
+// Bucket																			//
+// ******************************************************************************** //
+
+// Operators for the tree search
+bool OrE::ADT::Bucket::IsLess( uint64 uiKey, const char* _Str ) const
+{
+	// Standard mode
+	if( qwKey < uiKey ) return true;
+	// String mode - hash collisions between two different string
+	// objects are allowed
+	return ( qwKey == uiKey && pcName && _Str
+		&& strcmp( pcName, _Str ) < 0 );
+}
+
+bool OrE::ADT::Bucket::IsGreater( uint64 uiKey, const char* _Str ) const
+{
+	// Standard mode
+	if( qwKey > uiKey ) return true;
+	// String mode - hash collisions between two different string
+	// objects are allowed
+	return ( qwKey == uiKey && pcName && _Str
+		&& strcmp( pcName, _Str ) > 0 );
+}
+
+
+// ******************************************************************************** //
 // Hash map																			//
 // ******************************************************************************** //
 
@@ -286,19 +312,20 @@ ADTElementP OrE::ADT::HashMap::Insert(void* _pObject, uint64 _qwKey)
 			++m_dwCollsionCounter;
 #endif
 			// compare key -> tree search
-			if(_qwKey < pBucket->qwKey)
+			if( pBucket->IsGreater( _qwKey ) )
 				if(pBucket->pLeft) pBucket = pBucket->pLeft;	// traverse
 				else {pBucket->pLeft = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pLeft;}
-			else if(_qwKey > pBucket->qwKey)
+			else if( pBucket->IsLess( _qwKey ) )
 				if(pBucket->pRight) pBucket = pBucket->pRight;	// traverse
 				else {pBucket->pRight = new Bucket(_pObject, _qwKey, pBucket); ++m_dwNumElements; return pBucket->pRight;}
 			else {
+				// This data already exists. It is obvious that this element collides with itself.
 #ifdef _DEBUG
 				--m_dwCollsionCounter;
 #endif
 				pBucket->AddRef();
 				return pBucket;
-			}			// This data already exists. It is obvious that this element collides with itself.
+			}
 		}
 	} else
 	{
@@ -322,35 +349,26 @@ void OrE::ADT::HashMap::Delete( ADTElementP _pElement )
 	if(!_pElement) return;
 	BucketP pElement = BucketP(_pElement);
 	// Are there more references?
-	if( _pElement->Release() > 0 ) return;
+	if( pElement->Release() > 0 ) return;
 
 	// Repair tree
 	// If _pElement has children search for a replacement of the _pElement node.
 	BucketP pReplacement = nullptr;
-	if( (BucketP(_pElement))->pLeft )
+	if( pElement->pLeft )
 	{
 		pReplacement = pElement->pLeft;
 		// There is a left subtree - use maximum, it preserves tree properties
-		BucketP pBuck = pElement->pLeft;
-		while( pBuck->pRight ) pBuck = pBuck->pRight;
+		BucketP pBuck = pElement->pLeft->GetLargestChild();
 		// Attach right subtree at the left one (all elements larger than in the chosen node)
 		pBuck->pRight = pElement->pRight;
 		if( pBuck->pRight )
 			pBuck->pRight->pParent = pBuck;
 		// Remove reference from old node and set to left tree instead
 		pElement->pLeft->pParent = pElement->pParent;
-	} else if( (BucketP(_pElement))->pRight )
+	} else if( pElement->pRight )
 	{
 		pReplacement = pElement->pRight;
-		// There is only a right subtree - use minimum, it preserves tree properties
-		BucketP pBuck = (BucketP(_pElement))->pRight;
-		while(pBuck->pLeft) pBuck = pBuck->pLeft;
-
-		Assert( !pElement->pLeft );
-
-//		pBuck->pLeft = (BucketP(_pElement))->pLeft;
-//		if(pBuck->pLeft)
-//			pBuck->pLeft->pParent = pBuck;
+		// There is not left tree which can be attached to the right one.
 	
 		// Remove reference from old node and set to right tree instead
 		pElement->pRight->pParent = pElement->pParent;
@@ -382,9 +400,9 @@ ADTElementP OrE::ADT::HashMap::Search( uint64 _qwKey )
 	// Tree search
 	while(pBucket)
 	{
-		if(_qwKey==pBucket->qwKey) return pBucket;
-		else if(_qwKey<pBucket->qwKey) pBucket = pBucket->pLeft;
-		else pBucket = pBucket->pRight;
+		if( pBucket->IsGreater( _qwKey ) ) pBucket = pBucket->pLeft;
+		else if( pBucket->IsLess( _qwKey ) ) pBucket = pBucket->pRight;
+		else return pBucket;
 	}
 	return nullptr;
 }
@@ -397,9 +415,9 @@ const ADTElement* OrE::ADT::HashMap::Search( uint64 _qwKey ) const
 	// Tree search
 	while(pBucket)
 	{
-		if(_qwKey==pBucket->qwKey) return pBucket;
-		else if(_qwKey<pBucket->qwKey) pBucket = pBucket->pLeft;
-		else pBucket = pBucket->pRight;
+		if( pBucket->IsGreater( _qwKey ) ) pBucket = pBucket->pLeft;
+		else if( pBucket->IsLess( _qwKey ) ) pBucket = pBucket->pRight;
+		else return pBucket;
 	}
 	return nullptr;
 }
@@ -417,8 +435,8 @@ ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 	TestSize();
 	
 	// Insert new element now
-	uint64 uiH = OrStringHash(_pcKey);
-	uint32 dwHash = uiH%m_dwSize;
+	uint64 uiKey = OrStringHash(_pcKey);
+	uint32 dwHash = uiKey%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
 	if( pBucket )
 	{
@@ -428,42 +446,28 @@ ADTElementP OrE::ADT::HashMap::Insert( void* _pObject, const char* _pcKey )
 #ifdef _DEBUG
 			++m_dwCollsionCounter;
 #endif
-			// Compare strings -> Tree search
-			// In string mode the upper 32 bit of the 64 Bit key represents a
-			// pointer to the string. It could be that the map contains elements
-			// without a string.
-			if( !pBucket->pcName ) 
-			{
-				if(!pBucket->pRight)
-				{
-					pBucket->pRight = new Bucket(_pObject, uiH, pBucket);
-					bAdded = true;
-				}
-				pBucket = pBucket->pRight;
-			} else
-			{
-				int iCmp = strcmp( _pcKey, pBucket->pcName );
-				if(iCmp < 0) {
-					if(!pBucket->pLeft) {pBucket->pLeft = new Bucket(_pObject, uiH, pBucket); bAdded = true;}
-					pBucket = pBucket->pLeft;	// traverse
-				} else if(iCmp > 0) {
-					if(!pBucket->pRight) {pBucket->pRight = new Bucket(_pObject, uiH, pBucket); bAdded = true;}
-					pBucket = pBucket->pRight;	// traverse
-				} else {
-					// This data already exists. It is obvious that this element collides with itself.
+			// Compare key and strings -> tree search
+			// It could be that the map contains elements without a string.
+			if( pBucket->IsGreater( uiKey, _pcKey ) )
+				if(pBucket->pLeft) pBucket = pBucket->pLeft;	// traverse
+				else {pBucket->pLeft = new Bucket(_pObject, uiKey, pBucket); bAdded = true;}
+			else if( pBucket->IsLess( uiKey, _pcKey ) )
+				if(pBucket->pRight) pBucket = pBucket->pRight;	// traverse
+				else {pBucket->pRight = new Bucket(_pObject, uiKey, pBucket); bAdded = true;}
+			else {
+				// This data already exists. It is obvious that this element collides with itself.
 #ifdef _DEBUG
-					--m_dwCollsionCounter;
+				--m_dwCollsionCounter;
 #endif
-					pBucket->AddRef();
-					return pBucket;
-				}
+				pBucket->AddRef();
+				return pBucket;
 			}
 		}
 		// The loop terminates iff pBucket points to the new node.
 	} else
 	{
 		// Empty bucket
-		pBucket = m_apBuckets[dwHash] = new Bucket(_pObject, uiH, BucketP(m_apBuckets+dwHash));
+		pBucket = m_apBuckets[dwHash] = new Bucket(_pObject, uiKey, BucketP(m_apBuckets+dwHash));
 	}
 
 	// Copy string.
@@ -489,18 +493,15 @@ ADTElementP OrE::ADT::HashMap::Search( const char* _pcKey )
 	Assert( _pcKey );
 
 	// Find bucket with hashing
-	uint32 dwHash = OrStringHash(_pcKey)%m_dwSize;
+	uint64 uiKey = OrStringHash(_pcKey);
+	uint32 dwHash = uiKey%m_dwSize;
 	BucketP pBucket = m_apBuckets[dwHash];
 	// tree search with strings
 	while(pBucket)
 	{
-		if( pBucket->pcName )
-		{
-			int iCmp = strcmp( _pcKey, pBucket->pcName );
-			if(iCmp==0) return pBucket;
-			else if(iCmp<0) pBucket = pBucket->pLeft;
-			else pBucket = pBucket->pRight;
-		} else pBucket = pBucket->pRight;
+		if( pBucket->IsGreater( uiKey, _pcKey ) ) pBucket = pBucket->pLeft;
+		else if( pBucket->IsLess( uiKey, _pcKey ) ) pBucket = pBucket->pRight;
+		else return pBucket;
 	}
 	return nullptr;
 }
@@ -512,10 +513,8 @@ ADTElementP OrE::ADT::HashMap::GetFirst()
 		// Skip all empty buckets.
 		if(m_apBuckets[i])
 		{
-			BucketP pBuck = m_apBuckets[i];
 			// Goto the smallest element in the bucket
-			while(pBuck->pLeft) pBuck = pBuck->pLeft;
-			return pBuck;
+			return m_apBuckets[i]->GetSmallestChild();
 		}
 
 	return nullptr;
@@ -528,10 +527,8 @@ ADTElementP OrE::ADT::HashMap::GetLast()
 		// Skip all empty buckets.
 		if(m_apBuckets[i])
 		{
-			BucketP pBuck = m_apBuckets[i];
 			// Goto the largest element in the bucket
-			while(pBuck->pRight) pBuck = pBuck->pRight;
-			return pBuck;
+			return m_apBuckets[i]->GetLargestChild();
 		}
 
 	return nullptr;
@@ -544,13 +541,11 @@ ADTElementP OrE::ADT::HashMap::GetNext(ADTElementP _pCurrent)
 	// Inorder traverse -> left site was seen before
 	if(pBuck->pRight) 
 	{
-		pBuck = pBuck->pRight;
-		while(pBuck->pLeft) pBuck = pBuck->pLeft;
-		return pBuck;
+		return pBuck->pRight->GetSmallestChild();
 	} else {
 		// With no right child we have to move to the parent. We could have seen this,
 		// if we are in the right branch now. Then we have to move much more upwards
-		// until we come back from an left branch.
+		// until we come back from a left branch.
 		int iIndex = ListIndex(pBuck->pParent);
 		while(pBuck->pParent->pRight == pBuck && iIndex==-1)
 		{
@@ -559,14 +554,11 @@ ADTElementP OrE::ADT::HashMap::GetNext(ADTElementP _pCurrent)
 		}
 		if(iIndex!=-1)
 		{
-			++iIndex;
-			if(iIndex == (int)m_dwSize) return nullptr;			// Reached the end - no next element
-			while(!m_apBuckets[iIndex])
-				if(++iIndex == (int)m_dwSize) return nullptr;	// Reached the end - no next element
+			do
+				if( ++iIndex == (int)m_dwSize ) return 0;	// Reached the end - no next element
+			while( !m_apBuckets[iIndex] );
 			// Smallest element in bucket
-			pBuck = m_apBuckets[iIndex];
-			while(pBuck->pLeft) pBuck = pBuck->pLeft;
-			return pBuck;
+			return m_apBuckets[iIndex]->GetSmallestChild();
 		} else
 			return pBuck->pParent;
 	}
@@ -579,13 +571,11 @@ ADTElementP OrE::ADT::HashMap::GetPrevious(ADTElementP _pCurrent)
 	// Inorder traverse -> left site was seen before
 	if(pBuck->pLeft) 
 	{
-		pBuck = pBuck->pLeft;
-		while(pBuck->pRight) pBuck = pBuck->pRight;
-		return pBuck;
+		return pBuck->pLeft->GetLargestChild();
 	} else {
-		// With no right child we have to move to the parent. We could have seen this,
-		// if we are in the right branch now. Then we have to move much more upwards
-		// until we come back from an left branch.
+		// With no left child we have to move to the parent. We could have seen this,
+		// if we are in the left branch now. Then we have to move much more upwards
+		// until we come back from a right branch.
 		int iIndex = ListIndex(pBuck->pParent);
 		while(pBuck->pParent->pLeft == pBuck && iIndex==-1) 
 		{
@@ -594,14 +584,11 @@ ADTElementP OrE::ADT::HashMap::GetPrevious(ADTElementP _pCurrent)
 		}
 		if(iIndex != -1)
 		{
-			--iIndex;
-			if(iIndex == -1) return nullptr;		// Reached the end - no next element
-			while(!m_apBuckets[iIndex])
-				if(--iIndex == -1) return nullptr;	// Reached the end - no next element
+			do
+				if( --iIndex == -1 ) return 0;	// Reached the end - no next element
+			while( !m_apBuckets[iIndex] );
 			// Largest element in bucket
-			pBuck = m_apBuckets[iIndex];
-			while(pBuck->pRight) pBuck = pBuck->pRight;
-			return pBuck;
+			return m_apBuckets[iIndex]->GetLargestChild();
 		} else
 			return pBuck->pParent;
 	}

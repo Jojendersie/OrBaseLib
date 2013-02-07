@@ -90,6 +90,15 @@ private:
 	// The name of the element is only used in string mode.
 	char* pcName;
 
+	// Return the right/left end of a branch. This can be 'this' too.
+	Bucket* GetLargestChild()	{ Bucket* pRes = this; while(pRes->pRight) pRes = pRes->pRight; return pRes; }
+	Bucket* GetSmallestChild()	{ Bucket* pRes = this; while(pRes->pLeft) pRes = pRes->pLeft; return pRes; }
+
+	// Operators for the tree search
+	bool IsLess( uint64 uiKey, const char* _Str = nullptr ) const;
+
+	bool IsGreater( uint64 uiKey, const char* _Str = nullptr ) const;
+
 	friend class HashMap;
 
 	// Prevent copy constructor and operator = being generated.

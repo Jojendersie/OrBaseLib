@@ -72,6 +72,11 @@ namespace ADT {
 			} else pLeft = pRight = this;
 		}
 
+		// Resets all pointers of _pNewChild and of other influenced nodes.
+		// This operation should be possible for each two node, never mind
+		// where they were before.
+		void InsertToChildrenList( HeapNode* _pNewChild );
+
 	public:
 #ifdef _DEBUG
 		// Checks all invariants of a heap node. Call in debug only!

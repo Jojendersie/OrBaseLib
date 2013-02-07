@@ -57,6 +57,30 @@ using namespace OrE::ADT;
 #endif
 
 // ******************************************************************************** //
+void OrE::ADT::HeapNode::InsertToChildrenList( HeapNode* _pNewChild )
+{
+	// TODO: repair parent's child pointer if necessary
+	_pNewChild->pParent = this;
+	// Remove the _pNewChild from an old list. Always succeeds, because pLeft and
+	// pRight are always defined (_pNewChild if nothing else -> then no changes).
+	_pNewChild->pLeft->pRight = _pNewChild->pRight;
+	_pNewChild->pRight->pLeft = _pNewChild->pLeft;
+	if( pChild )
+	{
+		_pNewChild->pRight = pChild->pRight;
+		pChild->pRight->pLeft = _pNewChild;
+		_pNewChild->pLeft = pChild;
+		pChild->pRight = _pNewChild;
+	} else
+	{
+		pChild = _pNewChild;
+		_pNewChild->pLeft = _pNewChild->pRight = _pNewChild;
+	}
+}
+
+
+
+// ******************************************************************************** //
 OrE::ADT::Heap::~Heap()
 {
 	if(m_pDeleteCallback)
@@ -121,42 +145,17 @@ void OrE::ADT::Heap::Consolidate()
 				if(pRef->qwKey < pCurrent->qwKey)
 				{
 					// Assert that the root element is always in the root list
-					if(m_pRoot == pCurrent) m_pRoot = pCurrent->pRight;
+					if(m_pRoot == pCurrent)
+						m_pRoot = pCurrent->pRight; // Take the right one to stop the while loop
 
-					pCurrent->pParent = pRef;
-					pCurrent->pLeft->pRight = pCurrent->pRight;
-					pCurrent->pRight->pLeft = pCurrent->pLeft;
-					if(pRef->pChild)
-					{
-						pCurrent->pRight = pRef->pChild->pRight;
-						pRef->pChild->pRight->pLeft = pCurrent;
-						pCurrent->pLeft = pRef->pChild;
-						pRef->pChild->pRight = pCurrent;
-					} else
-					{
-						pRef->pChild = pCurrent;
-						pCurrent->pLeft = pCurrent->pRight = pCurrent;
-					}
-
+					pRef->InsertToChildrenList( pCurrent );
 					pCurrent = pRef;	// Skip back in traversing (degree of the smaller one will be updated after this if-else statement)
 				} else {
 					// Assert that the root element is always in the root list
-					if(m_pRoot == pRef) m_pRoot = pRef->pRight;
+					if(m_pRoot == pRef)
+						m_pRoot = pRef->pRight;
 
-					pRef->pParent = pCurrent;
-					pRef->pLeft->pRight = pRef->pRight;
-					pRef->pRight->pLeft = pRef->pLeft;
-					if(pCurrent->pChild)
-					{
-						pRef->pRight = pCurrent->pChild->pRight;
-						pCurrent->pChild->pRight->pLeft = pRef;
-						pRef->pLeft = pCurrent->pChild;
-						pCurrent->pChild->pRight = pRef;
-					} else
-					{
-						pCurrent->pChild = pRef;
-						pRef->pLeft = pRef->pRight = pRef;
-					}
+					pCurrent->InsertToChildrenList( pRef );
 				}
 				aDegrees[pCurrent->iDegree] = nullptr;
 				++pCurrent->iDegree;
@@ -197,6 +196,7 @@ void* OrE::ADT::Heap::DeleteMin()
 		m_pRoot->pLeft->pRight = m_pRoot->pRight;
 		m_pRoot->pRight->pLeft = m_pRoot->pLeft;
 		m_pRoot = m_pRoot->pLeft;
+		Assert( m_pRoot != pNode );
 	} else m_pRoot = nullptr;
 
 	// Meld the children and the now consistent remaining root list
@@ -295,7 +295,7 @@ void OrE::ADT::Heap::ChangeKey( HeapNodeP _pElement, uint64 _qwNewKey )
 
 // ******************************************************************************** //
 // Unsupported function
-void OrE::ADT::Heap::Delete(uint64 _qwKey) {}
+void OrE::ADT::Heap::Delete(uint64 _qwKey) {Assert(false);}
 
 // ******************************************************************************** //
 // The only arbitrary delete operation for the heap
@@ -345,7 +345,8 @@ HeapNodeP OrE::ADT::Heap::Search(uint64 _qwKey)
 {
 /*	Iterator<HeapNode> It(this);
 	while(++It)
-		if(*/
+	if(*/
+	Assert(false);
 	return nullptr;
 }
 
