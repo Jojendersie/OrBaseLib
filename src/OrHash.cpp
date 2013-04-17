@@ -88,7 +88,7 @@ uint32 OrE::Algorithm::CreateCRCHash(uint32 dwPolynom, void* pData, uint32 dwSiz
 	for(uint32 i=0; i<dwSize; ++i)
 	{
 		// For each bit
-		for(uint32 j=7; j>=0; --j)
+		for(int32 j=7; j>=0; --j)
 		{
 			// Compare first bit of data with current check sum
 			if((dwCRC>>31) != (uint32)((((byte*)pData)[i]>>j) & 1))

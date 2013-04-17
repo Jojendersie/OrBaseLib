@@ -21,6 +21,7 @@
 #include "../include/OrFastMath.h"
 #include "../include/OrVector2.h"
 #include "../include/OrVector3.h"
+#include "../include/OrAssert.h"
 
 using namespace OrE::Math;
 using namespace OrE::Algorithm;
@@ -241,9 +242,13 @@ float OrE::Algorithm::PerlinNoise::Rand1D(float _fX, float _fFrequence, float& _
 
 float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX)
 {
+	// Octaves cannot be smaller than zero and the height octave
+	// must be larger than the low one.
+	Assert( _iLowOctave >= 0 && _iHeightOctave >= _iLowOctave );
+
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
+	float fFrequence = float(1<<_iLowOctave);
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		fRes += fAmplitude*Rand1D(_fX, fFrequence);
@@ -258,10 +263,14 @@ float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, f
 
 float OrE::Algorithm::PerlinNoise::Rand1D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float& _vOutGrad)
 {
+	// Octaves cannot be smaller than zero and the height octave
+	// must be larger than the low one.
+	Assert( _iLowOctave >= 0 && _iHeightOctave >= _iLowOctave );
+
 	_vOutGrad = 0.0f;
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
+	float fFrequence = float(1<<_iLowOctave);
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		float vNormal;
@@ -336,9 +345,13 @@ float OrE::Algorithm::PerlinNoise::Rand2D(float _fX, float _fY, float _fFrequenc
 
 float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY)
 {
+	// Octaves cannot be smaller than zero and the height octave
+	// must be larger than the low one.
+	Assert( _iLowOctave >= 0 && _iHeightOctave >= _iLowOctave );
+
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
+	float fFrequence = float(1<<_iLowOctave);
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		fRes += fAmplitude*Rand2D(_fX, _fY, fFrequence);
@@ -355,10 +368,14 @@ float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, f
 
 float OrE::Algorithm::PerlinNoise::Rand2D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, OrE::Math::Vec2& _vOutGrad)
 {
+	// Octaves cannot be smaller than zero and the height octave
+	// must be larger than the low one.
+	Assert( _iLowOctave >= 0 && _iHeightOctave >= _iLowOctave );
+
 	_vOutGrad.x = _vOutGrad.y = 0.0f;
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
+	float fFrequence = float(1<<_iLowOctave);
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		OrE::Math::Vec2 vNormal;
@@ -460,9 +477,13 @@ float OrE::Algorithm::PerlinNoise::Rand3D(float _fX, float _fY, float _fZ, float
 
 float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ)
 {
+	// Octaves cannot be smaller than zero and the height octave
+	// must be larger than the low one.
+	Assert( _iLowOctave >= 0 && _iHeightOctave >= _iLowOctave );
+
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
+	float fFrequence = float(1<<_iLowOctave);
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		fRes += fAmplitude*Rand3D(_fX, _fY, _fZ, fFrequence);
@@ -477,10 +498,14 @@ float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, f
 
 float OrE::Algorithm::PerlinNoise::Rand3D(int _iLowOctave, int _iHeightOctave, float _fPersistence, float _fX, float _fY, float _fZ, OrE::Math::Vec3& _vOutGrad)
 {
+	// Octaves cannot be smaller than zero and the height octave
+	// must be larger than the low one.
+	Assert( _iLowOctave >= 0 && _iHeightOctave >= _iLowOctave );
+
 	_vOutGrad.x = _vOutGrad.y = _vOutGrad.z = 0.0f;
 	float fRes = 0.0f;
 	float fAmplitude = 1.0f;
-	float fFrequence = OrE::Math::Pow( 2.0f, (float)_iLowOctave );
+	float fFrequence = float(1<<_iLowOctave);
 	for(int i=_iLowOctave; i<=_iHeightOctave; ++i)
 	{
 		OrE::Math::Vec3 vNormal;

@@ -72,23 +72,25 @@ inline uint32 CreateCRC16Hash(void* pData, uint32 dwSize)			{return CreateCRCHas
 namespace ADT {
 
 
-// ******************************************************************************** //
-// The buckets are a very simple binary trees without any optimization.
+/******************************************************************************
+ * The buckets are a very simple binary trees without any optimization.
+ *
+ * The constructor and everything else is hidden so that only the hashmap can
+ * change buckets.
+ *****************************************************************************/
 class Bucket: public ADTElement
 {
+private:
 	Bucket(void* _pObj, const uint64& _qwKey, Bucket* _pParent) :
 			ADTElement(_pObj, _qwKey),
 			pLeft(nullptr),
 			pRight(nullptr),
 			pParent(_pParent),
 			pcName(nullptr) {}
-private:
+
 	Bucket* pLeft;
 	Bucket* pRight;
 	Bucket* pParent;
-
-	// The name of the element is only used in string mode.
-	char* pcName;
 
 	// Return the right/left end of a branch. This can be 'this' too.
 	Bucket* GetLargestChild()	{ Bucket* pRes = this; while(pRes->pRight) pRes = pRes->pRight; return pRes; }
@@ -104,6 +106,14 @@ private:
 	// Prevent copy constructor and operator = being generated.
 	Bucket(const Bucket&);
 	const Bucket& operator = (const Bucket&);
+
+	// The name of the element is only used in string mode.
+	char* pcName;
+
+public:
+	/// \brief Returns the name which was used during element insertion.
+	/// \details This can be nullptr if the element was inserted with a key only.
+	const char* GetName() const		{ return pcName; }
 };
 typedef Bucket* BucketP;
 

@@ -63,6 +63,7 @@ public:
 	// Parameter:
 	//	_fFrequence - used to determine periodically edges and octave distances in sampling
 	//	_iLowOctave - Octave with the lowest frequency (inclusive)
+	//		It is not allowed to use negative numbers.
 	//	_iHeightOctave - Octave with the highest frequency (inclusive). All frequencies between are sampled too.
 	//	_fPersistence - Relative height of a frequency relative to the last one. Recommended: 0.5f.
 	//	_fX - 1 float coordinate.

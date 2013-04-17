@@ -133,6 +133,7 @@
       <ExceptionHandling>false</ExceptionHandling>
       <FloatingPointModel>Fast</FloatingPointModel>
       <PreprocessorDefinitions>WINDOWS;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DisableSpecificWarnings>4530</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

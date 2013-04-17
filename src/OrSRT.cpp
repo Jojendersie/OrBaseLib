@@ -62,7 +62,7 @@ void OrE::Math::SRT::SetTransformation( const Matrix& _mTr )
 	m_vScale.y = ((Vec3*)(M.m2))->Length();
 	m_vScale.z = ((Vec3*)(M.m3))->Length();
 
-	// After normalization M should by an orthonormal basis.
+	// After normalization M should be an orthonormal basis.
 	// If not _mTr was no affine transformation. This is not tested here!
 	(*(Vec3*)(M.m1)) /= m_vScale.x;
 	(*(Vec3*)(M.m2)) /= m_vScale.y;
