@@ -27,9 +27,28 @@ using namespace OrE::Math;
 // The most operators and functions are implemented inline in the header
 
 // ******************************************************************************** //
-Vec4 OrE::Math::Vec4::Random()
+// Create a uniformly distributed random direction vector ( length == 1 ).
+// No inline because of Rand-dependency (-> more includes)
+Vec4 Vec4::RandomDirection()
 {
-	return Vec4(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f).NormalizeEx();
+	float x,y,z,w;
+	float fLenSq;
+	do {
+		x = Rand()*2.0f-1.0f;
+		y = Rand()*2.0f-1.0f;
+		z = Rand()*2.0f-1.0f;
+		w = Rand()*2.0f-1.0f;
+		fLenSq = x*x + y*y + z*z + w*w;
+	} while( fLenSq > 1.0f );
+	fLenSq = 1.0f/sqrt(fLenSq);
+	return Vec4( x*fLenSq, y*fLenSq, z*fLenSq, w*fLenSq );
+}
+
+// ******************************************************************************** //
+// Create a random point uniformly distributed in the [-1,1]^3 cube.
+Vec4 Vec4::RandomPosition()
+{
+	return Vec4(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f, Rand()*2.0f-1.0f);
 }
 
 // ******************************************************************************** //

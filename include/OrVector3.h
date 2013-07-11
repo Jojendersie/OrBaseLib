@@ -99,8 +99,12 @@ public:
 	inline static Vec3	Cross(const Vec3& v1, const Vec3& v2)		{return Vec3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);}
 	inline float		Dot(const Vec3& v) const					{return x * v.x + y * v.y + z * v.z;}
 	inline float		Angle(const Vec3& v) const					{return Arccos((x * v.x + y * v.y + z * v.z) * InvSqrt((x * x + y * y + z * z) * (v.x * v.x + v.y * v.y + v.z * v.z)));}
-	// Create a random direction vector ( length == 1 ).
-	static Vec3			Random();
+	
+	// Create a uniformly distributed random direction vector ( length == 1 ).
+	static Vec3			RandomDirection();
+
+	// Create a random point uniformly distributed in the [-1,1]^3 cube.
+	static Vec3			RandomPosition();
 
 	// Multiply a directional vector (left) with the matrix (from right).
 	// The w component is ignored (9mul + 9add).

@@ -122,7 +122,8 @@ namespace Math {
 	//	inline static float	Dot(const Vec4& v1, const Vec4& v2)						{return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w;}
 		inline float		Angle(const Vec4& v) const								{return Arccos((x * v.x + y * v.y + z * v.z + w * v.w) * InvSqrt((x * x + y * y + z * z + w * w) * (v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w)));}
 	//	inline static float	Angle(const Vec4& v1, const Vec4& v2)					{return Arccos((v1.x * v2.x + v1.y * v2.y + v1.z * v2.z + v1.w * v2.w) * InvSqrt((v1.x * v1.x + v1.y * v1.y + v1.z * v1.z + v1.w * v1.w) * (v2.x * v2.x + v2.y * v2.y + v2.z * v2.z + v2.w * v2.w)));}
-		static Vec4			Random();
+		static Vec4			RandomDirection();
+		static Vec4			RandomPosition();
 		const Vec4&			Cross(const Vec4& v2, const Vec4& v3);
 		static Vec4			Cross(const Vec4& v1, const Vec4& v2, const Vec4& v3);
 	};

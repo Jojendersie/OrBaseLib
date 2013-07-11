@@ -96,7 +96,8 @@ public:
 //	inline static Vec2	Perpendicular(const Vec2& v)			{return Vec2(-v.y, v.x);}		// Orthogonal vector
 	inline float		Angle(const Vec2& v) const				{return Cos((x * v.x + y * v.y) * InvSqrt((x * x + y * y) * (v.x * v.x + v.y * v.y)));}
 //	inline static float	Angle(const Vec2& v1, const Vec2& v2)	{return Cos((v1.x * v2.x + v1.y * v2.y) * InvSqrt((v1.x * v1.x + v1.y * v1.y) * (v2.x * v2.x + v2.y * v2.y)));}
-	static Vec2			Random();
+	static Vec2			RandomDirection();
+	static Vec2			RandomPosition();
 	Vec2				Rotate(const float _fAlpha) const;		// Rotate a point in 2D space
 };
 

@@ -26,9 +26,19 @@ using namespace OrE::Math;
 // The most operators and functions are implemented inline in the header
 
 // ******************************************************************************** //
-Vec2 OrE::Math::Vec2::Random()
+// Create a uniformly distributed random direction vector ( length == 1 ).
+// No inline because of Rand-dependency (-> more includes)
+Vec2 Vec2::RandomDirection()
 {
-	return Vec2(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f).NormalizeEx();
+	float fAngle = Rand()*f2Pi;
+	return Vec2( cos(fAngle), sin(fAngle) );
+}
+
+// ******************************************************************************** //
+// Create a random point uniformly distributed in the [-1,1]^3 cube.
+Vec2 Vec2::RandomPosition()
+{
+	return Vec2(Rand()*2.0f-1.0f, Rand()*2.0f-1.0f);
 }
 
 // ******************************************************************************** //
