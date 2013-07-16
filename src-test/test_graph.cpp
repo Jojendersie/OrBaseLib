@@ -44,7 +44,7 @@ void test_graph()
 	for( int i=0; i<100; ++i )
 	{
 		Node* pN = MyGraph.AddNode<Node>();
-		pN->m_vPos = OrE::Math::Vec3::Random();
+		pN->m_vPos = OrE::Math::Vec3::RandomPosition();
 	}
 
 	// Connect all of them with weighted edges

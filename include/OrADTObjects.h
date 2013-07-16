@@ -208,6 +208,29 @@ public:
 	_DerivedIteratorName operator - (const int64 ) const {return *this + (-_rng)};
 };
 
+
+
+
+/// A base class to add reference counting to determine correct point of
+/// destruction time.
+class ObjectRef
+{
+protected:
+	int iRef;					///< Reference counter
+
+public:
+
+	/// \brief After construction any object has the reference counter 1
+	///
+	ObjectRef() : iRef(1)	{}
+
+	virtual ~ObjectRef()	{}
+
+	void AddRef()	{++iRef;}
+	int Release()	{return --iRef;}
+	int GetRef()	{return iRef;}
+};
+
 }; // namespace ADT
 }; // namespace OrE
 // *************************************EOF**************************************** //

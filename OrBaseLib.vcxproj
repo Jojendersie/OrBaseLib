@@ -183,6 +183,7 @@
     <ClInclude Include="include\OrGraph.h" />
     <ClInclude Include="include\OrHash.h" />
     <ClInclude Include="include\OrHeap.h" />
+    <ClInclude Include="include\OrFibHeap.h" />
     <ClInclude Include="include\OrHuffman.h" />
     <ClInclude Include="include\OrList.h" />
     <ClInclude Include="include\OrMatrix.h" />

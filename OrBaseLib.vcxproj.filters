@@ -141,6 +141,9 @@
     <ClInclude Include="include\OrAssert.h">
       <Filter>Headerdateien</Filter>
     </ClInclude>
+    <ClInclude Include="include\OrFibHeap.h">
+      <Filter>Headerdateien\ADT</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\OrAVLTree.cpp">

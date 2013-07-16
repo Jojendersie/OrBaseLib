@@ -188,7 +188,7 @@ void test_SRT()
 {
 	bool bSucc = true;
 
-	Vec3 vAxis = Vec3::Random();
+	Vec3 vAxis = Vec3::RandomDirection();
 	Vec3 vTranslation( 10.0f, 32.326f, 0.00001f );
 	Vec3 vScale(0.1f, 2.0f, 3.5621f);
 	Matrix mTr1 = MatrixScaling( vScale )
@@ -198,7 +198,7 @@ void test_SRT()
 	SRT Srt1( mTr1 );
 	SRT Srt1_2( vScale, vAxis, 1.456f, vTranslation );
 	SRT Srt2( mTr2 );
-	Vec3 v1 = Vec3::Random();
+	Vec3 v1 = Vec3::RandomDirection();
 	Vec3 v2(1.0f, 0.0f, 0.0f);
 	Vec3 v3(0.0f, 0.0f, 0.0f);
 	Vec3 v4(-1.0f, 0.0f, -1.0f);

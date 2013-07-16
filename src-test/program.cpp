@@ -21,8 +21,8 @@ int main()
 
 //	test_hashmap();
 //	test_graph();
-	test_tokenizer();
 	test_heap();
+	test_tokenizer();
 	test_math();
 //	test_multimap();
 //	test_list();
